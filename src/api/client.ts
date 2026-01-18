@@ -1,5 +1,5 @@
 import axios from "axios";
-import { RawExcelPayload } from "types/excel/excel";
+import { RawExcelPayload } from "@/types/excel/excel";
 
 const api = axios.create({
   baseURL: "http://localhost:3000",

@@ -1,12 +1,21 @@
 "use client";
 
-import { useExcelJob } from "hooks/excel/useExcelJob";
-import { useState } from "react";
-import { RawExcelSheet } from "types/excel/excel";
+import { useExcelJob } from "@/hooks/excel/useExcelJob";
+import { useState, useEffect } from "react";
+import { RawExcelSheet } from "@/types/excel/excel";
+import { OceanFreightResult } from "@/types/ocean";
 import * as XLSX from "xlsx";
 import { FileSelectButton } from "./FileSelectButton";
 
-export default function ExcelUpload() {
+export type ExcelUploadProps = {
+  onUploadSuccess?: (data: OceanFreightResult) => void;
+  onUploadError?: (error: string) => void;
+};
+
+export default function ExcelUpload({
+  onUploadSuccess,
+  onUploadError,
+}: ExcelUploadProps) {
   const { submit, job, loading } = useExcelJob();
   const [fileName, setFileName] = useState<string | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
@@ -18,6 +27,21 @@ export default function ExcelUpload() {
         cell === undefined ||
         (typeof cell === "string" && cell.trim() === ""),
     );
+
+  // Listen for job completion and notify parent
+  useEffect(() => {
+    if (job?.status === "COMPLETED" && job.result) {
+      if (onUploadSuccess) {
+        onUploadSuccess(job.result as OceanFreightResult);
+      }
+    } else if (job?.status === "FAILED") {
+      const errorMsg = job.error || "Failed to process Excel file";
+      setParseError(errorMsg);
+      if (onUploadError) {
+        onUploadError(errorMsg);
+      }
+    }
+  }, [job?.status, job?.result, job?.error, onUploadSuccess, onUploadError]);
 
   const handleFileUpload = async (file: File) => {
     setParseError(null);
@@ -49,7 +73,11 @@ export default function ExcelUpload() {
       });
     } catch (err) {
       console.error(err);
-      setParseError("Failed to read Excel file");
+      const errorMsg = "Failed to read Excel file";
+      setParseError(errorMsg);
+      if (onUploadError) {
+        onUploadError(errorMsg);
+      }
     }
   };
 
@@ -90,13 +118,13 @@ export default function ExcelUpload() {
         <p className="text-sm text-red-600">❌ Failed: {job.error}</p>
       )}
 
-      {/* Result */}
+      {/* Result Debug (optional, can be removed) */}
       {job?.status === "COMPLETED" && (
         <div>
-          <h3 className="text-sm font-semibold mb-2">✅ Structured Output</h3>
-          <pre className="bg-black text-green-400 p-4 rounded-md overflow-auto max-h-96 text-xs">
-            {JSON.stringify(job.result, null, 2)}
-          </pre>
+          <h3 className="text-sm font-semibold mb-2">✅ Processing Complete</h3>
+          <p className="text-xs text-gray-600">
+            Data is now displayed above
+          </p>
         </div>
       )}
     </div>

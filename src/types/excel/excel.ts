@@ -1,3 +1,8 @@
+/**
+ * Raw Excel data contracts
+ * Used in file upload and backend processing
+ */
+
 export type RawExcelSheet = {
   sheetName: string;
   rows: unknown[][];

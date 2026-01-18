@@ -1,14 +1,14 @@
-import Image from "next/image";
-import { useTranslations } from "next-intl";
-import ExcelUpload from "./components/ExcelUpload";
-
 export default function Home() {
-  const t = useTranslations("HomePage");
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main>
-        <ExcelUpload />
-      </main>
+    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Welcome to Atlas Logistics
+        </h1>
+        <p className="text-lg text-gray-600">
+          Select an option from the sidebar to get started
+        </p>
+      </div>
     </div>
   );
 }
