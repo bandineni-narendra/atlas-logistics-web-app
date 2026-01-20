@@ -23,6 +23,16 @@ export function Sidebar({ currentPath }: SidebarProps) {
       href: "/ocean",
       icon: "🌊",
     },
+    {
+      label: "Multi-Sheet Upload",
+      href: "/multi-sheet-upload",
+      icon: "📊",
+    },
+    {
+      label: "Flow",
+      href: "/excel-flow",
+      icon: "📊",
+    },
     // Future menu items:
     // { label: "Air Freight", href: "/air", icon: "✈️" },
     // { label: "Customs", href: "/customs", icon: "📋" },
