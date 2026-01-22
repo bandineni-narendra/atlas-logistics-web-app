@@ -1,6 +1,6 @@
-import { createExcelJob, getExcelJob } from "api/client";
+import { createExcelJob, getExcelJob } from "@/api/client";
 import { useEffect, useState } from "react";
-import { RawExcelPayload } from "types/excel/excel";
+import { RawExcelPayload } from "@/types/excel/excel";
 
 export function useExcelJob() {
   const [jobId, setJobId] = useState<string | null>(null);
@@ -24,7 +24,7 @@ export function useExcelJob() {
         setLoading(false);
         clearInterval(interval);
       }
-    }, 2000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [jobId]);
