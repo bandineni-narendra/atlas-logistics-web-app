@@ -25,7 +25,7 @@ export type MultiSheetResult = {
   sheets: Array<{
     sheetName: string;
     result: any; // StructuredOutputSchema type
-    status: 'COMPLETED' | 'FAILED';
+    status: "COMPLETED" | "FAILED";
     error?: string;
   }>;
 };

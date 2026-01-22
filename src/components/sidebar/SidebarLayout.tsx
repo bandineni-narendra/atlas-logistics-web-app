@@ -17,7 +17,9 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
   return (
     <div className="flex h-screen bg-white">
       <Sidebar currentPath={pathname} />
-      <main className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-50">{children}</main>
+      <main className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-50">
+        {children}
+      </main>
     </div>
   );
 }

@@ -24,11 +24,6 @@ export function Sidebar({ currentPath }: SidebarProps) {
       icon: "🌊",
     },
     {
-      label: "Multi-Sheet Upload",
-      href: "/multi-sheet-upload",
-      icon: "📊",
-    },
-    {
       label: "Flow",
       href: "/excel-flow",
       icon: "📊",

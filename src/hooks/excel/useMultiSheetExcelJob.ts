@@ -15,7 +15,8 @@ export function useMultiSheetExcelJob() {
       const { jobId } = await createMutliSheetExcelJob(payload);
       setJobId(jobId);
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to create job";
+      const errorMsg =
+        err instanceof Error ? err.message : "Failed to create job";
       setError(errorMsg);
       setLoading(false);
     }
@@ -34,7 +35,8 @@ export function useMultiSheetExcelJob() {
           clearInterval(interval);
         }
       } catch (err) {
-        const errorMsg = err instanceof Error ? err.message : "Failed to fetch job";
+        const errorMsg =
+          err instanceof Error ? err.message : "Failed to fetch job";
         setError(errorMsg);
         setLoading(false);
         clearInterval(interval);

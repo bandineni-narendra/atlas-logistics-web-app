@@ -122,11 +122,9 @@ export default function ExcelUpload({
       {job?.status === "COMPLETED" && (
         <div>
           <h3 className="text-sm font-semibold mb-2">✅ Processing Complete</h3>
-          <p className="text-xs text-gray-600">
-            Data is now displayed above
-          </p>
+          <p className="text-xs text-gray-600">Data is now displayed above</p>
         </div>
       )}
-    </div> 
+    </div>
   );
 }

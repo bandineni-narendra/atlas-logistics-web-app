@@ -31,8 +31,8 @@ export function TableRow<T>({ row, columns, index }: TableRowProps<T>) {
             className="px-3 text-xs text-gray-900 overflow-hidden text-ellipsis whitespace-nowrap"
             style={{
               width: column.width || undefined,
-              paddingTop: '0.5rem',
-              paddingBottom: '0.5rem',
+              paddingTop: "0.5rem",
+              paddingBottom: "0.5rem",
             }}
           >
             {displayValue}
