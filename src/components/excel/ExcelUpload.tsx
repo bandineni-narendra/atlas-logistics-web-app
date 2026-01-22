@@ -9,6 +9,7 @@ import { FileSelectButton } from "@/components/excel/FileSelectButton";
 import { ErrorText, FileLabel } from "@/components/feedback";
 import { JobStatus } from "@/components/job";
 import { isRowEmpty } from "@/utils";
+import { useTranslations } from "next-intl";
 
 export type ExcelUploadProps = {
   onUploadSuccess?: (data: OceanFreightResult) => void;
@@ -19,6 +20,7 @@ export default function ExcelUpload({
   onUploadSuccess,
   onUploadError,
 }: ExcelUploadProps) {
+  const t = useTranslations();
   const { submit, job, loading } = useExcelJob();
   const [fileName, setFileName] = useState<string | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
@@ -30,7 +32,7 @@ export default function ExcelUpload({
         onUploadSuccess(job.result as OceanFreightResult);
       }
     } else if (job?.status === "FAILED") {
-      const errorMsg = job.error || "Failed to process Excel file";
+      const errorMsg = job.error || t("errors.failedToProcessExcel");
       setParseError(errorMsg);
       if (onUploadError) {
         onUploadError(errorMsg);
@@ -69,7 +71,7 @@ export default function ExcelUpload({
         });
       } catch (err) {
         console.error(err);
-        const errorMsg = "Failed to read Excel file";
+        const errorMsg = t("errors.failedToReadExcel");
         setParseError(errorMsg);
         if (onUploadError) {
           onUploadError(errorMsg);
@@ -85,7 +87,7 @@ export default function ExcelUpload({
       <FileSelectButton
         onFileSelect={handleFileUpload}
         disabled={loading}
-        label={loading ? "Processing…" : "Select Excel File"}
+        label={loading ? t("buttons.processing") : t("buttons.selectExcelFile")}
       />
 
       {fileName && <FileLabel fileName={fileName} />}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { TableHeader } from "@/components/table/TableHeader";
 import { TableRow } from "@/components/table/TableRow";
 import { Pagination } from "@/components/table/Pagination";
@@ -19,8 +20,11 @@ export function DataTable<T extends Record<string, unknown>>({
   totalItems,
   onPageChange,
   isLoading = false,
-  emptyMessage = "No data available",
+  emptyMessage,
 }: TableProps<T>) {
+  const t = useTranslations();
+  const displayEmptyMessage = emptyMessage ?? t("table.noDataAvailable");
+
   const { paginatedData, totalPages } = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
     return {
@@ -42,7 +46,7 @@ export function DataTable<T extends Record<string, unknown>>({
                   colSpan={columns.length}
                   className="px-3 py-6 text-center text-gray-500"
                 >
-                  {isLoading ? "Loading..." : emptyMessage}
+                  {isLoading ? t("common.loading") : displayEmptyMessage}
                 </td>
               </tr>
             ) : (

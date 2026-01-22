@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { SideBarMenu } from "@/components/sidebar/SideBarMenu";
 
 export type SidebarProps = {
@@ -13,20 +14,22 @@ export type SidebarProps = {
  * Uses SideBarMenu for each item
  */
 export function Sidebar({ currentPath }: SidebarProps) {
+  const t = useTranslations();
+
   const menuItems = useMemo(
     () => [
       {
-        label: "Home",
+        label: t("navigation.home"),
         href: "/",
         icon: "🏠",
       },
       {
-        label: "Ocean Freight",
+        label: t("navigation.oceanFreight"),
         href: "/ocean",
         icon: "🌊",
       },
       {
-        label: "Flow",
+        label: t("navigation.flow"),
         href: "/excel-flow",
         icon: "📊",
       },
@@ -34,14 +37,14 @@ export function Sidebar({ currentPath }: SidebarProps) {
       // { label: "Air Freight", href: "/air", icon: "✈️" },
       // { label: "Customs", href: "/customs", icon: "📋" },
     ],
-    [],
+    [t],
   );
 
   return (
     <aside className="w-64 bg-white border-r border-gray-200 p-6 h-screen overflow-y-auto">
       <div className="mb-8">
-        <h1 className="text-xl font-bold text-gray-900">Atlas</h1>
-        <p className="text-xs text-gray-500 mt-1">Logistics Platform</p>
+        <h1 className="text-xl font-bold text-gray-900">{t("common.appName")}</h1>
+        <p className="text-xs text-gray-500 mt-1">{t("common.appTagline")}</p>
       </div>
 
       <nav className="space-y-2">

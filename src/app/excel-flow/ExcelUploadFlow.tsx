@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import * as XLSX from "xlsx";
+import { useTranslations } from "next-intl";
 
 import { OceanFreightResult } from "@/types/ocean";
 
@@ -29,6 +30,7 @@ export default function ExcelUploadFlow({
   onSheetCompleted,
   onUploadError,
 }: ExcelUploadFlowProps) {
+  const t = useTranslations();
   const { submit, getJob } = useExcelJob();
 
   const [sheetJobs, setSheetJobs] = useState<SheetJobState[]>([]);
@@ -60,13 +62,13 @@ export default function ExcelUploadFlow({
           !Array.isArray(workbook.SheetNames) ||
           workbook.SheetNames.length === 0
         ) {
-          throw new Error("Invalid or empty Excel file");
+          throw new Error(t("errors.invalidOrEmptyExcel"));
         }
 
         const sheets: RawExcelSheet[] = workbook.SheetNames.map((sheetName) => {
           const ws = workbook.Sheets[sheetName];
           if (!ws) {
-            throw new Error(`Cannot read sheet "${sheetName}"`);
+            throw new Error(t("errors.cannotReadSheet", { sheetName }));
           }
 
           const rows = XLSX.utils.sheet_to_json(ws, {
@@ -124,7 +126,7 @@ export default function ExcelUploadFlow({
           sheetCompletedRef.current?.(sheet.sheetName, result);
         }
       } catch (e: any) {
-        uploadErrorRef.current?.(e?.message ?? "Excel processing failed");
+        uploadErrorRef.current?.(e?.message ?? t("errors.excelProcessingFailed"));
       }
     },
     [submit, getJob],
@@ -134,7 +136,7 @@ export default function ExcelUploadFlow({
     <div className="space-y-4">
       <FileSelectButton
         onFileSelect={handleFileUpload}
-        label="Select Excel File"
+        label={t("buttons.selectExcelFile")}
       />
 
       {fileName && <FileLabel fileName={fileName} variant="muted" />}

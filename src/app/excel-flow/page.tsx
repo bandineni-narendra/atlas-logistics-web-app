@@ -3,6 +3,7 @@
 import { formatSheetName } from "@/utils";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 
 import { OceanTable, ErrorBox, ProgressLabel, PageTitle } from "@/components";
 import { OceanFreightResult } from "@/types/ocean";
@@ -14,6 +15,7 @@ type SheetResult = {
 };
 
 export default function OceanPage() {
+  const t = useTranslations();
   const [results, setResults] = useState<SheetResult[]>([]);
   const [totalSheets, setTotalSheets] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +59,7 @@ export default function OceanPage() {
 
   return (
     <div className="px-8 py-6 space-y-8">
-      <PageTitle>Ocean Freight Rates</PageTitle>
+      <PageTitle>{t("ocean.pageTitle")}</PageTitle>
 
       {/* ✅ Render ONCE */}
       <ExcelUploadFlow

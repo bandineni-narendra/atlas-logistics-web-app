@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { DataTable } from "@/components/table/DataTable";
 import { formatCurrency } from "@/utils";
 import { ColumnDef } from "@/types/table";
@@ -24,6 +25,7 @@ export function OceanTable({
   currentPage,
   onPageChange,
 }: OceanTableProps) {
+  const t = useTranslations();
   // Debug: log the data received for this table
   console.log("OceanTable data:", data);
 
@@ -33,44 +35,44 @@ export function OceanTable({
 
   const columns: ColumnDef<OceanFreightRow>[] = useMemo(
     () => [
-      { key: "origin", label: "Origin", width: "11%" },
-      { key: "destination", label: "Destination", width: "11%" },
-      { key: "carrier", label: "Carrier", width: "11%" },
+      { key: "origin", label: t("ocean.columns.origin"), width: "11%" },
+      { key: "destination", label: t("ocean.columns.destination"), width: "11%" },
+      { key: "carrier", label: t("ocean.columns.carrier"), width: "11%" },
       {
         key: "container20",
-        label: "20FT",
+        label: t("ocean.columns.container20"),
         width: "9%",
         render: (value) => formatCurrency(value as number | null),
       },
       {
         key: "container40",
-        label: "40FT",
+        label: t("ocean.columns.container40"),
         width: "9%",
         render: (value) => formatCurrency(value as number | null),
       },
       {
         key: "container40HQ",
-        label: "40HQ",
+        label: t("ocean.columns.container40HQ"),
         width: "9%",
         render: (value) => formatCurrency(value as number | null),
       },
       {
         key: "isps",
-        label: "ISPS",
+        label: t("ocean.columns.isps"),
         width: "8%",
         render: (value) => formatCurrency(value as number | null),
       },
       {
         key: "blFees",
-        label: "BL Fees",
+        label: t("ocean.columns.blFees"),
         width: "8%",
         render: (value) => formatCurrency(value as number | null),
       },
-      { key: "transitTime", label: "Transit Time", width: "9%" },
-      { key: "routing", label: "Routing", width: "9%" },
-      { key: "validity", label: "Validity", width: "8%" },
+      { key: "transitTime", label: t("ocean.columns.transitTime"), width: "9%" },
+      { key: "routing", label: t("ocean.columns.routing"), width: "9%" },
+      { key: "validity", label: t("ocean.columns.validity"), width: "8%" },
     ],
-    [],
+    [t],
   );
 
   const handlePageChange = useCallback(
@@ -88,7 +90,7 @@ export function OceanTable({
         totalItems={totalItems}
         onPageChange={handlePageChange}
         isLoading={isLoading}
-        emptyMessage="No ocean freight data available"
+        emptyMessage={t("ocean.noDataAvailable")}
       />
     </div>
   );

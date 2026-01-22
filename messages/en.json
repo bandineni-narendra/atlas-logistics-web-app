@@ -1,5 +1,66 @@
 {
-  "HomePage": {
-    "title": "Hello world! B"
+  "common": {
+    "appName": "Atlas",
+    "appTagline": "Logistics Platform",
+    "loading": "Loading...",
+    "page": "Page",
+    "of": "of",
+    "sheets": "sheets",
+    "file": "File"
+  },
+  "navigation": {
+    "home": "Home",
+    "oceanFreight": "Ocean Freight",
+    "flow": "Flow"
+  },
+  "buttons": {
+    "previous": "Previous",
+    "next": "Next",
+    "tryAgain": "Try Again",
+    "selectExcelFile": "Select Excel File",
+    "processing": "Processing…",
+    "uploadDifferentFile": "← Upload Different File"
+  },
+  "errors": {
+    "title": "Error",
+    "failedToProcessExcel": "Failed to process Excel file",
+    "failedToReadExcel": "Failed to read Excel file",
+    "invalidOrEmptyExcel": "Invalid or empty Excel file",
+    "cannotReadSheet": "Cannot read sheet \"{sheetName}\"",
+    "excelProcessingFailed": "Excel processing failed"
+  },
+  "status": {
+    "loading": "AI is analyzing your Excel…",
+    "waiting": "Waiting",
+    "pending": "Queued",
+    "running": "Processing",
+    "completed": "Completed",
+    "failed": "Failed"
+  },
+  "ocean": {
+    "pageTitle": "Ocean Freight Rates",
+    "uploadDescription": "Upload an Excel file to extract and analyze Ocean Freight rate data.",
+    "noDataAvailable": "No ocean freight data available",
+    "confidence": "Confidence",
+    "columns": {
+      "origin": "Origin",
+      "destination": "Destination",
+      "carrier": "Carrier",
+      "container20": "20FT",
+      "container40": "40FT",
+      "container40HQ": "40HQ",
+      "isps": "ISPS",
+      "blFees": "BL Fees",
+      "transitTime": "Transit Time",
+      "routing": "Routing",
+      "validity": "Validity"
+    }
+  },
+  "progress": {
+    "processed": "Processed",
+    "ofSheets": "of {total} sheets"
+  },
+  "table": {
+    "noDataAvailable": "No data available"
   }
 }

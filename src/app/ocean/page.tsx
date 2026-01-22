@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { OceanFreightResult } from "@/types/ocean";
 import { ExcelUpload } from "@/components/excel";
 import {
@@ -17,6 +18,7 @@ import {
  * Shows Excel upload and displays processed results
  */
 export default function OceanPage() {
+  const t = useTranslations();
   const [result, setResult] = useState<OceanFreightResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +41,7 @@ export default function OceanPage() {
   if (error) {
     return (
       <div className="px-8 py-6">
-        <PageTitle>Ocean Freight Rates</PageTitle>
+        <PageTitle>{t("ocean.pageTitle")}</PageTitle>
         <div className="mb-6 mt-6">
           <ErrorBox message={error} onRetry={handleReset} />
         </div>
@@ -54,9 +56,9 @@ export default function OceanPage() {
   if (!result) {
     return (
       <div className="px-8 py-6">
-        <PageTitle>Ocean Freight Rates</PageTitle>
+        <PageTitle>{t("ocean.pageTitle")}</PageTitle>
         <p className="text-gray-600 mb-6 mt-6">
-          Upload an Excel file to extract and analyze Ocean Freight rate data.
+          {t("ocean.uploadDescription")}
         </p>
         <ExcelUpload
           onUploadSuccess={handleUploadSuccess}
@@ -72,7 +74,7 @@ export default function OceanPage() {
       <OceanWarnings warnings={result.warnings} />
       <OceanTable data={result.data} isLoading={isLoading} />
       <div className="px-8 py-4 border-t border-gray-200">
-        <LinkButton onClick={handleReset}>← Upload Different File</LinkButton>
+        <LinkButton onClick={handleReset}>{t("buttons.uploadDifferentFile")}</LinkButton>
       </div>
     </>
   );

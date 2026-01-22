@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useTranslations } from "next-intl";
 
 export type JobStatusType =
   | "LOADING"
@@ -8,13 +11,22 @@ export type JobStatusType =
   | "COMPLETED"
   | "FAILED";
 
-const STATUS_CONFIG: Record<JobStatusType, { icon: string; label: string }> = {
-  LOADING: { icon: "🧠", label: "AI is analyzing your Excel…" },
-  WAITING: { icon: "⏸", label: "Waiting" },
-  PENDING: { icon: "⏳", label: "Queued" },
-  RUNNING: { icon: "⚙️", label: "Processing" },
-  COMPLETED: { icon: "✅", label: "Completed" },
-  FAILED: { icon: "❌", label: "Failed" },
+const STATUS_ICONS: Record<JobStatusType, string> = {
+  LOADING: "🧠",
+  WAITING: "⏸",
+  PENDING: "⏳",
+  RUNNING: "⚙️",
+  COMPLETED: "✅",
+  FAILED: "❌",
+};
+
+const STATUS_KEYS: Record<JobStatusType, string> = {
+  LOADING: "status.loading",
+  WAITING: "status.waiting",
+  PENDING: "status.pending",
+  RUNNING: "status.running",
+  COMPLETED: "status.completed",
+  FAILED: "status.failed",
 };
 
 export interface JobStatusProps {
@@ -31,23 +43,26 @@ export const JobStatus: React.FC<JobStatusProps> = ({
   status,
   variant = "inline",
 }) => {
-  if (!status || !(status in STATUS_CONFIG)) {
+  const t = useTranslations();
+
+  if (!status || !(status in STATUS_ICONS)) {
     return null;
   }
 
-  const config = STATUS_CONFIG[status as JobStatusType];
+  const icon = STATUS_ICONS[status as JobStatusType];
+  const label = t(STATUS_KEYS[status as JobStatusType]);
 
   if (variant === "block") {
     return (
       <p className="text-sm text-gray-600">
-        {config.icon} {config.label}
+        {icon} {label}
       </p>
     );
   }
 
   return (
     <span>
-      {config.icon} {config.label}
+      {icon} {label}
     </span>
   );
 };
