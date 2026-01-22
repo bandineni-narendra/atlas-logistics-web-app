@@ -19,3 +19,13 @@ export type StructuredResult = {
   confidence: number;
   warnings: string[];
 };
+
+export type MultiSheetResult = {
+  fileName: string;
+  sheets: Array<{
+    sheetName: string;
+    result: any; // StructuredOutputSchema type
+    status: "COMPLETED" | "FAILED";
+    error?: string;
+  }>;
+};

@@ -1,8 +1,8 @@
 "use client";
 
-import { TableHeader } from "./TableHeader";
-import { TableRow } from "./TableRow";
-import { Pagination } from "./Pagination";
+import { TableHeader } from "@/components/table/TableHeader";
+import { TableRow } from "@/components/table/TableRow";
+import { Pagination } from "@/components/table/Pagination";
 import { TableProps } from "@/types/table";
 
 /**
@@ -20,7 +20,8 @@ export function DataTable<T extends Record<string, unknown>>({
   isLoading = false,
   emptyMessage = "No data available",
 }: TableProps<T>) {
-  const paginatedData = data.slice(0, pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedData = data.slice(startIndex, startIndex + pageSize);
   const totalPages = Math.ceil(totalItems / pageSize);
 
   return (

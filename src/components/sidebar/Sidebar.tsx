@@ -1,6 +1,6 @@
 "use client";
 
-import { SideBarMenu } from "./SideBarMenu";
+import { SideBarMenu } from "@/components/sidebar/SideBarMenu";
 
 export type SidebarProps = {
   currentPath: string;
@@ -22,6 +22,11 @@ export function Sidebar({ currentPath }: SidebarProps) {
       label: "Ocean Freight",
       href: "/ocean",
       icon: "🌊",
+    },
+    {
+      label: "Flow",
+      href: "/excel-flow",
+      icon: "📊",
     },
     // Future menu items:
     // { label: "Air Freight", href: "/air", icon: "✈️" },

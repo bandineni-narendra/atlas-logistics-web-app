@@ -21,7 +21,7 @@ export type UsePaginationReturn = {
  */
 export function usePagination(
   totalItems: number,
-  options: UsePaginationOptions = {}
+  options: UsePaginationOptions = {},
 ): UsePaginationReturn {
   const { initialPage = 1, pageSize = 10 } = options;
 
@@ -53,6 +53,14 @@ export function usePagination(
       onPageChange,
       reset,
     }),
-    [validPage, pageSize, totalPages, startIndex, endIndex, onPageChange, reset]
+    [
+      validPage,
+      pageSize,
+      totalPages,
+      startIndex,
+      endIndex,
+      onPageChange,
+      reset,
+    ],
   );
 }
