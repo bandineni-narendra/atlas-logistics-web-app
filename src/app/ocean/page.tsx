@@ -4,14 +4,19 @@ import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { OceanFreightResult } from "@/types/ocean";
 import { ExcelUpload } from "@/components/excel";
+import { OceanHeader, OceanWarnings, OceanTable } from "@/components/ocean";
 import {
-  OceanHeader,
-  OceanWarnings,
-  OceanTable,
-  ErrorBox,
-  PageTitle,
-  LinkButton,
-} from "@/components";
+  PageContainer,
+  PageHeader,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  Alert,
+  Button,
+  EmptyState,
+} from "@/components/ui";
 
 /**
  * Ocean Freight page
@@ -38,44 +43,92 @@ export default function OceanPage() {
     setResult(null);
   }, []);
 
+  // Error state
   if (error) {
     return (
-      <div className="px-8 py-6">
-        <PageTitle>{t("ocean.pageTitle")}</PageTitle>
-        <div className="mb-6 mt-6">
-          <ErrorBox message={error} onRetry={handleReset} />
-        </div>
-        <ExcelUpload
-          onUploadSuccess={handleUploadSuccess}
-          onUploadError={handleUploadError}
+      <PageContainer>
+        <PageHeader
+          title={t("ocean.pageTitle")}
+          description={t("ocean.uploadDescription")}
         />
-      </div>
+        <div className="space-y-6">
+          <Alert
+            variant="error"
+            title={t("errors.title")}
+            action={
+              <Button variant="ghost" size="sm" onClick={handleReset}>
+                {t("buttons.tryAgain")}
+              </Button>
+            }
+          >
+            {error}
+          </Alert>
+          <Card>
+            <CardHeader>
+              <CardTitle>Upload File</CardTitle>
+              <CardDescription>Select an Excel file to process</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ExcelUpload
+                onUploadSuccess={handleUploadSuccess}
+                onUploadError={handleUploadError}
+              />
+            </CardContent>
+          </Card>
+        </div>
+      </PageContainer>
     );
   }
 
+  // Empty state - no result yet
   if (!result) {
     return (
-      <div className="px-8 py-6">
-        <PageTitle>{t("ocean.pageTitle")}</PageTitle>
-        <p className="text-gray-600 mb-6 mt-6">
-          {t("ocean.uploadDescription")}
-        </p>
-        <ExcelUpload
-          onUploadSuccess={handleUploadSuccess}
-          onUploadError={handleUploadError}
+      <PageContainer>
+        <PageHeader
+          title={t("ocean.pageTitle")}
+          description={t("ocean.uploadDescription")}
         />
-      </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Upload Rate Sheet</CardTitle>
+            <CardDescription>
+              Upload an Excel file containing ocean freight rates for AI-powered
+              extraction
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ExcelUpload
+              onUploadSuccess={handleUploadSuccess}
+              onUploadError={handleUploadError}
+            />
+          </CardContent>
+        </Card>
+      </PageContainer>
     );
   }
 
+  // Result state - show data
   return (
-    <>
-      <OceanHeader confidence={result.confidence} />
-      <OceanWarnings warnings={result.warnings} />
-      <OceanTable data={result.data} isLoading={isLoading} />
-      <div className="px-8 py-4 border-t border-gray-200">
-        <LinkButton onClick={handleReset}>{t("buttons.uploadDifferentFile")}</LinkButton>
+    <PageContainer maxWidth="full">
+      <PageHeader
+        title={t("ocean.pageTitle")}
+        actions={
+          <Button variant="secondary" onClick={handleReset}>
+            {t("buttons.uploadDifferentFile")}
+          </Button>
+        }
+      />
+
+      <div className="space-y-6">
+        {/* Confidence & Warnings Section */}
+        <OceanHeader confidence={result.confidence} />
+        <OceanWarnings warnings={result.warnings} />
+
+        {/* Data Table */}
+        <Card padding="none">
+          <OceanTable data={result.data} isLoading={isLoading} />
+        </Card>
       </div>
-    </>
+    </PageContainer>
   );
 }

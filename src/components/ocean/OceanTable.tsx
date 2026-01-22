@@ -36,7 +36,11 @@ export function OceanTable({
   const columns: ColumnDef<OceanFreightRow>[] = useMemo(
     () => [
       { key: "origin", label: t("ocean.columns.origin"), width: "11%" },
-      { key: "destination", label: t("ocean.columns.destination"), width: "11%" },
+      {
+        key: "destination",
+        label: t("ocean.columns.destination"),
+        width: "11%",
+      },
       { key: "carrier", label: t("ocean.columns.carrier"), width: "11%" },
       {
         key: "container20",
@@ -68,7 +72,11 @@ export function OceanTable({
         width: "8%",
         render: (value) => formatCurrency(value as number | null),
       },
-      { key: "transitTime", label: t("ocean.columns.transitTime"), width: "9%" },
+      {
+        key: "transitTime",
+        label: t("ocean.columns.transitTime"),
+        width: "9%",
+      },
       { key: "routing", label: t("ocean.columns.routing"), width: "9%" },
       { key: "validity", label: t("ocean.columns.validity"), width: "8%" },
     ],
@@ -81,17 +89,15 @@ export function OceanTable({
   );
 
   return (
-    <div className="mx-8 my-6">
-      <DataTable
-        columns={columns}
-        data={data}
-        currentPage={currentPage || 1}
-        pageSize={pageSize}
-        totalItems={totalItems}
-        onPageChange={handlePageChange}
-        isLoading={isLoading}
-        emptyMessage={t("ocean.noDataAvailable")}
-      />
-    </div>
+    <DataTable
+      columns={columns}
+      data={data}
+      currentPage={currentPage || 1}
+      pageSize={pageSize}
+      totalItems={totalItems}
+      onPageChange={handlePageChange}
+      isLoading={isLoading}
+      emptyMessage={t("ocean.noDataAvailable")}
+    />
   );
 }

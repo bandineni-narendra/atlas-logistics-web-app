@@ -126,7 +126,9 @@ export default function ExcelUploadFlow({
           sheetCompletedRef.current?.(sheet.sheetName, result);
         }
       } catch (e: any) {
-        uploadErrorRef.current?.(e?.message ?? t("errors.excelProcessingFailed"));
+        uploadErrorRef.current?.(
+          e?.message ?? t("errors.excelProcessingFailed"),
+        );
       }
     },
     [submit, getJob],
@@ -141,17 +143,21 @@ export default function ExcelUploadFlow({
 
       {fileName && <FileLabel fileName={fileName} variant="muted" />}
 
-      {sheetJobs.map((job) => (
-        <div
-          key={job.sheetName}
-          className="flex justify-between text-sm border rounded px-3 py-2"
-        >
-          <span>{job.sheetName}</span>
-          <span>
-            <JobStatus status={job.status} />
-          </span>
+      {sheetJobs.length > 0 && (
+        <div className="space-y-2">
+          {sheetJobs.map((job) => (
+            <div
+              key={job.sheetName}
+              className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3 border border-gray-100"
+            >
+              <span className="text-sm font-medium text-gray-700">
+                {job.sheetName}
+              </span>
+              <JobStatus status={job.status} />
+            </div>
+          ))}
         </div>
-      ))}
+      )}
     </div>
   );
 }

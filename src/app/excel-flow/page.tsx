@@ -5,9 +5,17 @@ import { formatSheetName } from "@/utils";
 import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 
-import { OceanTable, ErrorBox, ProgressLabel, PageTitle } from "@/components";
+import { OceanTable, ErrorBox, ProgressLabel } from "@/components";
 import { OceanFreightResult } from "@/types/ocean";
 import ExcelUploadFlow from "@/app/excel-flow/ExcelUploadFlow";
+import {
+  PageContainer,
+  PageHeader,
+  Card,
+  CardContent,
+  Alert,
+  ProgressBar,
+} from "@/components/ui";
 
 type SheetResult = {
   sheetName: string;
@@ -58,43 +66,65 @@ export default function OceanPage() {
   }, []);
 
   return (
-    <div className="px-8 py-6 space-y-8">
-      <PageTitle>{t("ocean.pageTitle")}</PageTitle>
-
-      {/* ✅ Render ONCE */}
-      <ExcelUploadFlow
-        onTotalSheetsDetected={handleTotalSheetsDetected}
-        onSheetCompleted={handleSheetCompleted}
-        onUploadError={handleUploadError}
+    <PageContainer>
+      <PageHeader
+        title="Excel Flow Processing"
+        description="Process multi-sheet Excel files with sequential job handling"
       />
 
-      {error && <ErrorBox message={error} />}
+      {/* Upload Section */}
+      <Card>
+        <CardContent>
+          <ExcelUploadFlow
+            onTotalSheetsDetected={handleTotalSheetsDetected}
+            onSheetCompleted={handleSheetCompleted}
+            onUploadError={handleUploadError}
+          />
+        </CardContent>
+      </Card>
+
+      {error && (
+        <Alert variant="error" title="Processing Error">
+          {error}
+        </Alert>
+      )}
 
       {totalSheets > 0 && (
-        <ProgressLabel completed={completedCount} total={totalSheets} />
+        <Card padding="sm">
+          <CardContent className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-600">Processing sheets...</span>
+              <span className="font-medium text-gray-900">
+                {completedCount} / {totalSheets} completed
+              </span>
+            </div>
+            <ProgressBar value={completedCount} max={totalSheets} showLabel />
+          </CardContent>
+        </Card>
       )}
 
       {/* Tab UI for sheets */}
       {results.length > 0 && (
-        <div className="mt-6">
-          <div className="flex border-b border-gray-200 mb-4">
-            {results.map(({ sheetName }, idx) => (
-              <button
-                key={sheetName}
-                className={`px-4 py-2 -mb-px border-b-2 font-medium focus:outline-none transition-colors duration-150 ${
-                  activeTab === idx
-                    ? "border-blue-600 text-blue-700 bg-white"
-                    : "border-transparent text-gray-500 hover:text-blue-600"
-                }`}
-                onClick={() => setActiveTab(idx)}
-                type="button"
-              >
-                {formatSheetName(sheetName, `Sheet ${idx + 1}`)}
-              </button>
-            ))}
+        <Card padding="none">
+          <div className="border-b border-gray-200 bg-gray-50 px-4">
+            <div className="flex gap-1 overflow-x-auto">
+              {results.map(({ sheetName }, idx) => (
+                <button
+                  key={sheetName}
+                  className={`px-4 py-3 text-sm font-medium transition-colors duration-150 border-b-2 -mb-px whitespace-nowrap ${
+                    activeTab === idx
+                      ? "border-blue-600 text-blue-700 bg-white"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setActiveTab(idx)}
+                  type="button"
+                >
+                  {formatSheetName(sheetName, `Sheet ${idx + 1}`)}
+                </button>
+              ))}
+            </div>
           </div>
-          {/* Tab content: show only active sheet */}
-          <div className="border rounded-lg overflow-hidden">
+          <CardContent className="p-0">
             <OceanTable
               data={results[activeTab].result.data}
               isLoading={false}
@@ -103,9 +133,9 @@ export default function OceanPage() {
                 handleTabPageChange(activeTab, page)
               }
             />
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
-    </div>
+    </PageContainer>
   );
 }

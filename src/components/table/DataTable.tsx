@@ -6,6 +6,7 @@ import { TableHeader } from "@/components/table/TableHeader";
 import { TableRow } from "@/components/table/TableRow";
 import { Pagination } from "@/components/table/Pagination";
 import { TableProps } from "@/types/table";
+import { EmptyState, LoadingState } from "@/components/ui";
 
 /**
  * Generic, reusable data table component
@@ -34,19 +35,26 @@ export function DataTable<T extends Record<string, unknown>>({
   }, [data, currentPage, pageSize, totalItems]);
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
+    <div className="overflow-hidden">
       {/* Table */}
-      <div className="w-full">
-        <table className="w-full" style={{ tableLayout: "fixed" }}>
+      <div className="overflow-x-auto">
+        <table className="w-full" style={{ tableLayout: "fixed", minWidth: "800px" }}>
           <TableHeader columns={columns} />
-          <tbody>
-            {paginatedData.length === 0 ? (
+          <tbody className="divide-y divide-gray-100">
+            {isLoading ? (
               <tr>
-                <td
-                  colSpan={columns.length}
-                  className="px-3 py-6 text-center text-gray-500"
-                >
-                  {isLoading ? t("common.loading") : displayEmptyMessage}
+                <td colSpan={columns.length}>
+                  <LoadingState />
+                </td>
+              </tr>
+            ) : paginatedData.length === 0 ? (
+              <tr>
+                <td colSpan={columns.length}>
+                  <EmptyState
+                    icon="📋"
+                    title={displayEmptyMessage}
+                    description="Upload a file to see data here"
+                  />
                 </td>
               </tr>
             ) : (
@@ -64,12 +72,14 @@ export function DataTable<T extends Record<string, unknown>>({
       </div>
 
       {/* Pagination */}
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={onPageChange}
-        isDisabled={isLoading}
-      />
+      {totalPages > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+          isDisabled={isLoading}
+        />
+      )}
     </div>
   );
 }

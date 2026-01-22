@@ -13,9 +13,9 @@ export type TableRowProps<T> = {
 export function TableRow<T>({ row, columns, index }: TableRowProps<T>) {
   return (
     <tr
-      className={`border-b border-gray-200 ${
-        index % 2 === 0 ? "bg-white" : "bg-gray-50"
-      } hover:bg-gray-100 transition-colors`}
+      className={`${
+        index % 2 === 0 ? "bg-white" : "bg-gray-50/50"
+      } hover:bg-blue-50/50 transition-colors duration-150`}
     >
       {columns.map((column) => {
         const value = row[column.key];
@@ -28,12 +28,8 @@ export function TableRow<T>({ row, columns, index }: TableRowProps<T>) {
         return (
           <td
             key={String(column.key)}
-            className="px-3 text-xs text-gray-900 overflow-hidden text-ellipsis whitespace-nowrap"
-            style={{
-              width: column.width || undefined,
-              paddingTop: "0.5rem",
-              paddingBottom: "0.5rem",
-            }}
+            className="px-4 py-3 text-sm text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap"
+            style={column.width ? { width: column.width } : undefined}
           >
             {displayValue}
           </td>
