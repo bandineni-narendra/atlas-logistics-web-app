@@ -111,7 +111,9 @@ export default function OceanPage() {
               data={results[activeTab].result.data}
               isLoading={false}
               currentPage={tabPages[activeTab] || 1}
-              onPageChange={(page: number) => handleTabPageChange(activeTab, page)}
+              onPageChange={(page: number) =>
+                handleTabPageChange(activeTab, page)
+              }
             />
           </div>
         </div>
