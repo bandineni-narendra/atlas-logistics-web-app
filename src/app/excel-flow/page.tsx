@@ -2,7 +2,7 @@
 
 import { formatSheetName } from "@/utils";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 import { OceanTable, ErrorBox, ProgressLabel, PageTitle } from "@/components";
 import { OceanFreightResult } from "@/types/ocean";
@@ -23,40 +23,37 @@ export default function OceanPage() {
 
   const completedCount = Array.isArray(results) ? results.length : 0;
 
-  const handleTotalSheetsDetected = (count: number) => {
+  const handleTotalSheetsDetected = useCallback((count: number) => {
     setTotalSheets(count);
     setResults([]);
     setError(null);
     setActiveTab(0);
     setTabPages(Array(count).fill(1)); // Reset all tab pages to 1
-  };
+  }, []);
 
-  const handleSheetCompleted = (
-    sheetName: string,
-    result: OceanFreightResult,
-  ) => {
-    setResults((prev) => {
-      const next = [...prev, { sheetName, result }];
-      // Ensure tabPages array matches results length
-      if (next.length > tabPages.length) {
-        setTabPages((prevPages) => [...prevPages, 1]);
-      }
-      return next;
-    });
-  };
+  const handleSheetCompleted = useCallback(
+    (sheetName: string, result: OceanFreightResult) => {
+      setResults((prev) => {
+        const next = [...prev, { sheetName, result }];
+        return next;
+      });
+      setTabPages((prevPages) => [...prevPages, 1]);
+    },
+    [],
+  );
 
-  const handleUploadError = (msg: string) => {
+  const handleUploadError = useCallback((msg: string) => {
     setError(msg);
-  };
+  }, []);
 
   // Handler for changing page in a tab
-  const handleTabPageChange = (tabIdx: number, page: number) => {
+  const handleTabPageChange = useCallback((tabIdx: number, page: number) => {
     setTabPages((prev) => {
       const updated = [...prev];
       updated[tabIdx] = page;
       return updated;
     });
-  };
+  }, []);
 
   return (
     <div className="px-8 py-6 space-y-8">

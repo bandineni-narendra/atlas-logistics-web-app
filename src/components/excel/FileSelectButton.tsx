@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 
 type FileSelectButtonProps = {
   accept?: string;
@@ -17,14 +17,17 @@ export function FileSelectButton({
 }: FileSelectButtonProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      onFileSelect(file);
-      // allow selecting the same file again
-      e.target.value = "";
-    }
-  };
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        onFileSelect(file);
+        // allow selecting the same file again
+        e.target.value = "";
+      }
+    },
+    [onFileSelect],
+  );
 
   return (
     <>

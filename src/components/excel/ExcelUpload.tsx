@@ -1,7 +1,7 @@
 "use client";
 
 import { useExcelJob } from "@/hooks/excel/useExcelJob";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { RawExcelSheet } from "@/types/excel/excel";
 import { OceanFreightResult } from "@/types/ocean";
 import * as XLSX from "xlsx";
@@ -38,43 +38,46 @@ export default function ExcelUpload({
     }
   }, [job?.status, job?.result, job?.error, onUploadSuccess, onUploadError]);
 
-  const handleFileUpload = async (file: File) => {
-    setParseError(null);
-    setFileName(file.name);
+  const handleFileUpload = useCallback(
+    async (file: File) => {
+      setParseError(null);
+      setFileName(file.name);
 
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      const workbook = XLSX.read(arrayBuffer, { type: "array" });
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type: "array" });
 
-      const sheets: RawExcelSheet[] = workbook.SheetNames.map((sheetName) => {
-        const worksheet = workbook.Sheets[sheetName];
-        const rawRows = XLSX.utils.sheet_to_json(worksheet, {
-          header: 1,
-          raw: true,
-        }) as unknown[][];
+        const sheets: RawExcelSheet[] = workbook.SheetNames.map((sheetName) => {
+          const worksheet = workbook.Sheets[sheetName];
+          const rawRows = XLSX.utils.sheet_to_json(worksheet, {
+            header: 1,
+            raw: true,
+          }) as unknown[][];
 
-        // ✅ Remove fully empty rows
-        const cleanedRows = rawRows.filter((row) => !isRowEmpty(row));
+          // ✅ Remove fully empty rows
+          const cleanedRows = rawRows.filter((row) => !isRowEmpty(row));
 
-        return {
-          sheetName,
-          rows: cleanedRows,
-        };
-      });
+          return {
+            sheetName,
+            rows: cleanedRows,
+          };
+        });
 
-      await submit({
-        fileName: file.name,
-        sheets,
-      });
-    } catch (err) {
-      console.error(err);
-      const errorMsg = "Failed to read Excel file";
-      setParseError(errorMsg);
-      if (onUploadError) {
-        onUploadError(errorMsg);
+        await submit({
+          fileName: file.name,
+          sheets,
+        });
+      } catch (err) {
+        console.error(err);
+        const errorMsg = "Failed to read Excel file";
+        setParseError(errorMsg);
+        if (onUploadError) {
+          onUploadError(errorMsg);
+        }
       }
-    }
-  };
+    },
+    [submit, onUploadError],
+  );
 
   return (
     <div className="max-w-3xl space-y-4">
@@ -87,28 +90,11 @@ export default function ExcelUpload({
 
       {fileName && <FileLabel fileName={fileName} />}
 
-      {/* Parsing Error */}
+      {/* Parsing Error - shows errors from both parse failures and job.error */}
       {parseError && <ErrorText message={parseError} />}
 
-      {/* Job Status */}
-      {loading && <JobStatus status="LOADING" variant="block" />}
-      {job?.status === "PENDING" && (
-        <JobStatus status="PENDING" variant="block" />
-      )}
-      {job?.status === "RUNNING" && (
-        <JobStatus status="RUNNING" variant="block" />
-      )}
-      {job?.status === "FAILED" && (
-        <ErrorText message={`❌ Failed: ${job.error}`} />
-      )}
-
-      {/* Result Debug (optional, can be removed) */}
-      {job?.status === "COMPLETED" && (
-        <div>
-          <h3 className="text-sm font-semibold mb-2">✅ Processing Complete</h3>
-          <p className="text-xs text-gray-600">Data is now displayed above</p>
-        </div>
-      )}
+      {/* Job Status - component handles null/undefined/loading internally */}
+      <JobStatus status={loading ? "LOADING" : job?.status} variant="block" />
     </div>
   );
 }

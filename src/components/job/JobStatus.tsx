@@ -18,19 +18,24 @@ const STATUS_CONFIG: Record<JobStatusType, { icon: string; label: string }> = {
 };
 
 export interface JobStatusProps {
-  status: JobStatusType;
+  status?: JobStatusType | string | null;
   variant?: "inline" | "block";
 }
 
 /**
  * Reusable job status component
  * Renders icon + label based on status
+ * Returns null if status is not provided or not recognized
  */
 export const JobStatus: React.FC<JobStatusProps> = ({
   status,
   variant = "inline",
 }) => {
-  const config = STATUS_CONFIG[status];
+  if (!status || !(status in STATUS_CONFIG)) {
+    return null;
+  }
+
+  const config = STATUS_CONFIG[status as JobStatusType];
 
   if (variant === "block") {
     return (

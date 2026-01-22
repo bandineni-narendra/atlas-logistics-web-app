@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { TableHeader } from "@/components/table/TableHeader";
 import { TableRow } from "@/components/table/TableRow";
 import { Pagination } from "@/components/table/Pagination";
@@ -20,9 +21,13 @@ export function DataTable<T extends Record<string, unknown>>({
   isLoading = false,
   emptyMessage = "No data available",
 }: TableProps<T>) {
-  const startIndex = (currentPage - 1) * pageSize;
-  const paginatedData = data.slice(startIndex, startIndex + pageSize);
-  const totalPages = Math.ceil(totalItems / pageSize);
+  const { paginatedData, totalPages } = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    return {
+      paginatedData: data.slice(startIndex, startIndex + pageSize),
+      totalPages: Math.ceil(totalItems / pageSize),
+    };
+  }, [data, currentPage, pageSize, totalItems]);
 
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden">

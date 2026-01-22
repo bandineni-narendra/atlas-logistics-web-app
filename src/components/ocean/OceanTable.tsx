@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useCallback } from "react";
 import { DataTable } from "@/components/table/DataTable";
 import { formatCurrency } from "@/utils";
 import { ColumnDef } from "@/types/table";
@@ -30,44 +31,52 @@ export function OceanTable({
   const totalItems = data.length;
   const totalPages = Math.ceil(totalItems / pageSize);
 
-  const columns: ColumnDef<OceanFreightRow>[] = [
-    { key: "origin", label: "Origin", width: "11%" },
-    { key: "destination", label: "Destination", width: "11%" },
-    { key: "carrier", label: "Carrier", width: "11%" },
-    {
-      key: "container20",
-      label: "20FT",
-      width: "9%",
-      render: (value) => formatCurrency(value as number | null),
-    },
-    {
-      key: "container40",
-      label: "40FT",
-      width: "9%",
-      render: (value) => formatCurrency(value as number | null),
-    },
-    {
-      key: "container40HQ",
-      label: "40HQ",
-      width: "9%",
-      render: (value) => formatCurrency(value as number | null),
-    },
-    {
-      key: "isps",
-      label: "ISPS",
-      width: "8%",
-      render: (value) => formatCurrency(value as number | null),
-    },
-    {
-      key: "blFees",
-      label: "BL Fees",
-      width: "8%",
-      render: (value) => formatCurrency(value as number | null),
-    },
-    { key: "transitTime", label: "Transit Time", width: "9%" },
-    { key: "routing", label: "Routing", width: "9%" },
-    { key: "validity", label: "Validity", width: "8%" },
-  ];
+  const columns: ColumnDef<OceanFreightRow>[] = useMemo(
+    () => [
+      { key: "origin", label: "Origin", width: "11%" },
+      { key: "destination", label: "Destination", width: "11%" },
+      { key: "carrier", label: "Carrier", width: "11%" },
+      {
+        key: "container20",
+        label: "20FT",
+        width: "9%",
+        render: (value) => formatCurrency(value as number | null),
+      },
+      {
+        key: "container40",
+        label: "40FT",
+        width: "9%",
+        render: (value) => formatCurrency(value as number | null),
+      },
+      {
+        key: "container40HQ",
+        label: "40HQ",
+        width: "9%",
+        render: (value) => formatCurrency(value as number | null),
+      },
+      {
+        key: "isps",
+        label: "ISPS",
+        width: "8%",
+        render: (value) => formatCurrency(value as number | null),
+      },
+      {
+        key: "blFees",
+        label: "BL Fees",
+        width: "8%",
+        render: (value) => formatCurrency(value as number | null),
+      },
+      { key: "transitTime", label: "Transit Time", width: "9%" },
+      { key: "routing", label: "Routing", width: "9%" },
+      { key: "validity", label: "Validity", width: "8%" },
+    ],
+    [],
+  );
+
+  const handlePageChange = useCallback(
+    (page: number) => onPageChange?.(page),
+    [onPageChange],
+  );
 
   return (
     <div className="mx-8 my-6">
@@ -77,7 +86,7 @@ export function OceanTable({
         currentPage={currentPage || 1}
         pageSize={pageSize}
         totalItems={totalItems}
-        onPageChange={onPageChange ?? (() => {})}
+        onPageChange={handlePageChange}
         isLoading={isLoading}
         emptyMessage="No ocean freight data available"
       />

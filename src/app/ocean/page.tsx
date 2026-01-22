@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { OceanFreightResult } from "@/types/ocean";
 import { ExcelUpload } from "@/components/excel";
 import {
@@ -21,28 +21,27 @@ export default function OceanPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleUploadSuccess = (data: OceanFreightResult) => {
+  const handleUploadSuccess = useCallback((data: OceanFreightResult) => {
     setResult(data);
     setError(null);
-  };
+  }, []);
 
-  const handleUploadError = (errorMsg: string) => {
+  const handleUploadError = useCallback((errorMsg: string) => {
     setError(errorMsg);
     setResult(null);
-  };
+  }, []);
+
+  const handleReset = useCallback(() => {
+    setError(null);
+    setResult(null);
+  }, []);
 
   if (error) {
     return (
       <div className="px-8 py-6">
         <PageTitle>Ocean Freight Rates</PageTitle>
         <div className="mb-6 mt-6">
-          <ErrorBox
-            message={error}
-            onRetry={() => {
-              setError(null);
-              setResult(null);
-            }}
-          />
+          <ErrorBox message={error} onRetry={handleReset} />
         </div>
         <ExcelUpload
           onUploadSuccess={handleUploadSuccess}
@@ -73,14 +72,7 @@ export default function OceanPage() {
       <OceanWarnings warnings={result.warnings} />
       <OceanTable data={result.data} isLoading={isLoading} />
       <div className="px-8 py-4 border-t border-gray-200">
-        <LinkButton
-          onClick={() => {
-            setResult(null);
-            setError(null);
-          }}
-        >
-          ← Upload Different File
-        </LinkButton>
+        <LinkButton onClick={handleReset}>← Upload Different File</LinkButton>
       </div>
     </>
   );
