@@ -6,7 +6,8 @@ import { RawExcelSheet } from "@/types/excel/excel";
 import { OceanFreightResult } from "@/types/ocean";
 import * as XLSX from "xlsx";
 import { FileSelectButton } from "@/components/excel/FileSelectButton";
-import { ErrorText, FileLabel, StatusMessage } from "@/components/feedback";
+import { ErrorText, FileLabel } from "@/components/feedback";
+import { JobStatus } from "@/components/job";
 import { isRowEmpty } from "@/utils";
 
 export type ExcelUploadProps = {
@@ -90,17 +91,12 @@ export default function ExcelUpload({
       {parseError && <ErrorText message={parseError} />}
 
       {/* Job Status */}
-      {loading && (
-        <StatusMessage icon="🧠" message="AI is analyzing your Excel…" />
-      )}
+      {loading && <JobStatus status="LOADING" variant="block" />}
       {job?.status === "PENDING" && (
-        <StatusMessage icon="⏳" message="Job queued" />
+        <JobStatus status="PENDING" variant="block" />
       )}
       {job?.status === "RUNNING" && (
-        <StatusMessage
-          icon="⚙️"
-          message="Processing (LLM is thinking and structuring your Excel data)"
-        />
+        <JobStatus status="RUNNING" variant="block" />
       )}
       {job?.status === "FAILED" && (
         <ErrorText message={`❌ Failed: ${job.error}`} />

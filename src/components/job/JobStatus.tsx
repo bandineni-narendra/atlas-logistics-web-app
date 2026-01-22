@@ -1,22 +1,48 @@
 import React from "react";
 
+export type JobStatusType =
+  | "LOADING"
+  | "WAITING"
+  | "PENDING"
+  | "RUNNING"
+  | "COMPLETED"
+  | "FAILED";
+
+const STATUS_CONFIG: Record<JobStatusType, { icon: string; label: string }> = {
+  LOADING: { icon: "🧠", label: "AI is analyzing your Excel…" },
+  WAITING: { icon: "⏸", label: "Waiting" },
+  PENDING: { icon: "⏳", label: "Queued" },
+  RUNNING: { icon: "⚙️", label: "Processing" },
+  COMPLETED: { icon: "✅", label: "Completed" },
+  FAILED: { icon: "❌", label: "Failed" },
+};
+
 export interface JobStatusProps {
-  status: string;
+  status: JobStatusType;
+  variant?: "inline" | "block";
 }
 
-export const JobStatus: React.FC<JobStatusProps> = ({ status }) => {
-  switch (status) {
-    case "WAITING":
-      return <span>⏸ Waiting</span>;
-    case "PENDING":
-      return <span>⏳ Queued</span>;
-    case "RUNNING":
-      return <span>⚙️ Processing</span>;
-    case "COMPLETED":
-      return <span>✅ Completed</span>;
-    case "FAILED":
-      return <span>❌ Failed</span>;
-    default:
-      return <span>{status}</span>;
+/**
+ * Reusable job status component
+ * Renders icon + label based on status
+ */
+export const JobStatus: React.FC<JobStatusProps> = ({
+  status,
+  variant = "inline",
+}) => {
+  const config = STATUS_CONFIG[status];
+
+  if (variant === "block") {
+    return (
+      <p className="text-sm text-gray-600">
+        {config.icon} {config.label}
+      </p>
+    );
   }
+
+  return (
+    <span>
+      {config.icon} {config.label}
+    </span>
+  );
 };
