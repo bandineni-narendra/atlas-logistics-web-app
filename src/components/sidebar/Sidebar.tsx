@@ -1,6 +1,6 @@
 "use client";
 
-import { SideBarMenu } from "./SideBarMenu";
+import { SideBarMenu } from "@/components/sidebar/SideBarMenu";
 
 export type SidebarProps = {
   currentPath: string;

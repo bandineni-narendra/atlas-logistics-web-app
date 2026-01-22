@@ -1,6 +1,7 @@
 "use client";
 
 import { DataTable } from "@/components/table/DataTable";
+import { formatCurrency } from "@/utils";
 import { ColumnDef } from "@/types/table";
 import { OceanFreightRow } from "@/types/ocean";
 // No pagination logic here; parent controls paging
@@ -16,9 +17,14 @@ export type OceanTableProps = {
  * Ocean freight specific table
  * Configures columns and wires DataTable
  */
-export function OceanTable({ data, isLoading = false, currentPage, onPageChange }: OceanTableProps) {
+export function OceanTable({
+  data,
+  isLoading = false,
+  currentPage,
+  onPageChange,
+}: OceanTableProps) {
   // Debug: log the data received for this table
-  console.log('OceanTable data:', data);
+  console.log("OceanTable data:", data);
 
   const pageSize = 10;
   const totalItems = data.length;
@@ -32,31 +38,31 @@ export function OceanTable({ data, isLoading = false, currentPage, onPageChange 
       key: "container20",
       label: "20FT",
       width: "9%",
-      render: (value) => (value ? `$${value.toLocaleString()}` : "—"),
+      render: (value) => formatCurrency(value as number | null),
     },
     {
       key: "container40",
       label: "40FT",
       width: "9%",
-      render: (value) => (value ? `$${value.toLocaleString()}` : "—"),
+      render: (value) => formatCurrency(value as number | null),
     },
     {
       key: "container40HQ",
       label: "40HQ",
       width: "9%",
-      render: (value) => (value ? `$${value.toLocaleString()}` : "—"),
+      render: (value) => formatCurrency(value as number | null),
     },
     {
       key: "isps",
       label: "ISPS",
       width: "8%",
-      render: (value) => (value ? `$${value.toLocaleString()}` : "—"),
+      render: (value) => formatCurrency(value as number | null),
     },
     {
       key: "blFees",
       label: "BL Fees",
       width: "8%",
-      render: (value) => (value ? `$${value.toLocaleString()}` : "—"),
+      render: (value) => formatCurrency(value as number | null),
     },
     { key: "transitTime", label: "Transit Time", width: "9%" },
     { key: "routing", label: "Routing", width: "9%" },

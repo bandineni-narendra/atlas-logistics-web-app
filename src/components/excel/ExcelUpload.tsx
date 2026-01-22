@@ -5,7 +5,9 @@ import { useState, useEffect } from "react";
 import { RawExcelSheet } from "@/types/excel/excel";
 import { OceanFreightResult } from "@/types/ocean";
 import * as XLSX from "xlsx";
-import { FileSelectButton } from "./FileSelectButton";
+import { FileSelectButton } from "@/components/excel/FileSelectButton";
+import { ErrorText, FileLabel, StatusMessage } from "@/components/feedback";
+import { isRowEmpty } from "@/utils";
 
 export type ExcelUploadProps = {
   onUploadSuccess?: (data: OceanFreightResult) => void;
@@ -19,14 +21,6 @@ export default function ExcelUpload({
   const { submit, job, loading } = useExcelJob();
   const [fileName, setFileName] = useState<string | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
-
-  const isRowEmpty = (row: unknown[]) =>
-    row.every(
-      (cell) =>
-        cell === null ||
-        cell === undefined ||
-        (typeof cell === "string" && cell.trim() === ""),
-    );
 
   // Listen for job completion and notify parent
   useEffect(() => {
@@ -90,32 +84,26 @@ export default function ExcelUpload({
         label={loading ? "Processing…" : "Select Excel File"}
       />
 
-      {fileName && (
-        <p className="text-sm text-gray-700">
-          <strong>File:</strong> {fileName}
-        </p>
-      )}
+      {fileName && <FileLabel fileName={fileName} />}
 
       {/* Parsing Error */}
-      {parseError && <p className="text-sm text-red-600">{parseError}</p>}
+      {parseError && <ErrorText message={parseError} />}
 
       {/* Job Status */}
       {loading && (
-        <p className="text-sm text-gray-600">🧠 AI is analyzing your Excel…</p>
+        <StatusMessage icon="🧠" message="AI is analyzing your Excel…" />
       )}
-
       {job?.status === "PENDING" && (
-        <p className="text-sm text-gray-600">⏳ Job queued</p>
+        <StatusMessage icon="⏳" message="Job queued" />
       )}
-
       {job?.status === "RUNNING" && (
-        <p className="text-sm text-gray-600">
-          ⚙️ Processing (LLM is thinking and structuring your Excel data)
-        </p>
+        <StatusMessage
+          icon="⚙️"
+          message="Processing (LLM is thinking and structuring your Excel data)"
+        />
       )}
-
       {job?.status === "FAILED" && (
-        <p className="text-sm text-red-600">❌ Failed: {job.error}</p>
+        <ErrorText message={`❌ Failed: ${job.error}`} />
       )}
 
       {/* Result Debug (optional, can be removed) */}

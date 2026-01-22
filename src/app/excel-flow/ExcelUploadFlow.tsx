@@ -8,7 +8,10 @@ import { OceanFreightResult } from "@/types/ocean";
 import { RawExcelSheet } from "@/types/excel/excel";
 import { RawExcelSheetFlowPayload } from "@/types/excel/excel-flow";
 import { useExcelJob } from "@/hooks/excel/useExcelFlowJob";
-import { FileSelectButton } from "../components/FileSelectButton";
+import { FileSelectButton } from "@/components/excel";
+import { FileLabel } from "@/components/feedback";
+import { JobStatus } from "@/components/job";
+import { isRowEmpty, waitForJobCompletion } from "@/utils";
 
 type ExcelUploadFlowProps = {
   onTotalSheetsDetected?: (count: number) => void;
@@ -41,33 +44,6 @@ export default function ExcelUploadFlow({
     sheetCompletedRef.current = onSheetCompleted;
     uploadErrorRef.current = onUploadError;
   }, [onTotalSheetsDetected, onSheetCompleted, onUploadError]);
-
-  const sleep = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
-
-  const isRowEmpty = (row: unknown[]) =>
-    row.every(
-      (cell) =>
-        cell === null ||
-        cell === undefined ||
-        (typeof cell === "string" && cell.trim() === ""),
-    );
-
-  const waitForJobCompletion = async <T,>(jobId: string): Promise<T> => {
-    while (true) {
-      const job = await getJob<T>(jobId);
-
-      if (job.status === "COMPLETED") {
-        return job.result as T;
-      }
-
-      if (job.status === "FAILED") {
-        throw new Error(job.error ?? "Sheet processing failed");
-      }
-
-      await sleep(1000);
-    }
-  };
 
   const handleFileUpload = async (file: File) => {
     setFileName(file.name);
@@ -132,7 +108,10 @@ export default function ExcelUploadFlow({
           prev.map((j, idx) => (idx === i ? { ...j, status: "RUNNING" } : j)),
         );
 
-        const result = await waitForJobCompletion<OceanFreightResult>(jobId);
+        const result = await waitForJobCompletion<OceanFreightResult>(
+          getJob,
+          jobId,
+        );
 
         setSheetJobs((prev) =>
           prev.map((j, idx) => (idx === i ? { ...j, status: "COMPLETED" } : j)),
@@ -153,11 +132,7 @@ export default function ExcelUploadFlow({
         label="Select Excel File"
       />
 
-      {fileName && (
-        <p className="text-sm text-gray-600">
-          <strong>File:</strong> {fileName}
-        </p>
-      )}
+      {fileName && <FileLabel fileName={fileName} variant="muted" />}
 
       {sheetJobs.map((job) => (
         <div
@@ -166,11 +141,7 @@ export default function ExcelUploadFlow({
         >
           <span>{job.sheetName}</span>
           <span>
-            {job.status === "WAITING" && "⏸ Waiting"}
-            {job.status === "PENDING" && "⏳ Queued"}
-            {job.status === "RUNNING" && "⚙️ Processing"}
-            {job.status === "COMPLETED" && "✅ Completed"}
-            {job.status === "FAILED" && "❌ Failed"}
+            <JobStatus status={job.status} />
           </span>
         </div>
       ))}

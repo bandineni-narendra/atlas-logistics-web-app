@@ -1,17 +1,12 @@
 "use client";
-// Helper to format sheet names: first letter capital, rest lower case
-function formatSheetName(name: string, fallback: string): string {
-  if (typeof name === "string" && name.length > 0) {
-    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-  }
-  return fallback;
-}
+
+import { formatSheetName } from "@/utils";
 
 import { useState } from "react";
 
-import { OceanTable } from "@/components/ocean/OceanTable";
+import { OceanTable, ErrorBox, ProgressLabel, PageTitle } from "@/components";
 import { OceanFreightResult } from "@/types/ocean";
-import ExcelUploadFlow from "./ExcelUploadFlow";
+import ExcelUploadFlow from "@/app/excel-flow/ExcelUploadFlow";
 
 type SheetResult = {
   sheetName: string;
@@ -65,7 +60,7 @@ export default function OceanPage() {
 
   return (
     <div className="px-8 py-6 space-y-8">
-      <h1 className="text-3xl font-bold text-gray-900">Ocean Freight Rates</h1>
+      <PageTitle>Ocean Freight Rates</PageTitle>
 
       {/* ✅ Render ONCE */}
       <ExcelUploadFlow
@@ -74,16 +69,10 @@ export default function OceanPage() {
         onUploadError={handleUploadError}
       />
 
-      {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded">
-          <p className="text-sm text-red-800">{error}</p>
-        </div>
-      )}
+      {error && <ErrorBox message={error} />}
 
       {totalSheets > 0 && (
-        <p className="text-sm text-gray-600">
-          Processed {completedCount} of {totalSheets} sheets
-        </p>
+        <ProgressLabel completed={completedCount} total={totalSheets} />
       )}
 
       {/* Tab UI for sheets */}

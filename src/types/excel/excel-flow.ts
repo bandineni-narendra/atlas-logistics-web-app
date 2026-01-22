@@ -4,7 +4,7 @@
  * (Kotlin Flow–style)
  */
 
-import { RawExcelSheet } from "./excel";
+import { RawExcelSheet } from "@/types/excel/excel";
 import { OceanFreightResult } from "@/types/ocean";
 
 /**

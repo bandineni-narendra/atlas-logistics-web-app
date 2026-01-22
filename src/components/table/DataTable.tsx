@@ -1,8 +1,8 @@
 "use client";
 
-import { TableHeader } from "./TableHeader";
-import { TableRow } from "./TableRow";
-import { Pagination } from "./Pagination";
+import { TableHeader } from "@/components/table/TableHeader";
+import { TableRow } from "@/components/table/TableRow";
+import { Pagination } from "@/components/table/Pagination";
 import { TableProps } from "@/types/table";
 
 /**

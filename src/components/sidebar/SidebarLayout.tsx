@@ -1,6 +1,6 @@
 "use client";
 
-import { Sidebar } from "./Sidebar";
+import { Sidebar } from "@/components/sidebar/Sidebar";
 import { usePathname } from "next/navigation";
 
 export type SidebarLayoutProps = {
