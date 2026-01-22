@@ -28,7 +28,7 @@ export function TableRow<T>({ row, columns, index }: TableRowProps<T>) {
         return (
           <td
             key={String(column.key)}
-            className="px-4 py-3 text-sm text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap"
+            className="px-4 py-2.5 text-sm text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap"
             style={column.width ? { width: column.width } : undefined}
           >
             {displayValue}

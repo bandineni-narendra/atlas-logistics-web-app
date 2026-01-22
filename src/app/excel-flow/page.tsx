@@ -67,10 +67,40 @@ export default function OceanPage() {
 
   return (
     <PageContainer>
-      <PageHeader
-        title="Excel Flow Processing"
-        description="Process multi-sheet Excel files with sequential job handling"
-      />
+      <div className="flex items-start justify-between gap-4">
+        <PageHeader
+          title="Excel Flow Processing"
+          description="Process multi-sheet Excel files with sequential job handling"
+        />
+
+        {/* Compact progress indicator */}
+        {totalSheets > 0 && completedCount < totalSheets && (
+          <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-100 shrink-0">
+            <svg
+              className="w-4 h-4 text-blue-600 animate-spin"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+            <span className="text-sm font-medium text-blue-700">
+              {completedCount}/{totalSheets} sheets
+            </span>
+          </div>
+        )}
+      </div>
 
       {/* Upload Section */}
       <Card>
@@ -87,20 +117,6 @@ export default function OceanPage() {
         <Alert variant="error" title="Processing Error">
           {error}
         </Alert>
-      )}
-
-      {totalSheets > 0 && (
-        <Card padding="sm">
-          <CardContent className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Processing sheets...</span>
-              <span className="font-medium text-gray-900">
-                {completedCount} / {totalSheets} completed
-              </span>
-            </div>
-            <ProgressBar value={completedCount} max={totalSheets} showLabel />
-          </CardContent>
-        </Card>
       )}
 
       {/* Tab UI for sheets */}

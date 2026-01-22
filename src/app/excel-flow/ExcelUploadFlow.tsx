@@ -135,29 +135,13 @@ export default function ExcelUploadFlow({
   );
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-wrap items-center gap-4">
       <FileSelectButton
         onFileSelect={handleFileUpload}
         label={t("buttons.selectExcelFile")}
       />
 
       {fileName && <FileLabel fileName={fileName} variant="muted" />}
-
-      {sheetJobs.length > 0 && (
-        <div className="space-y-2">
-          {sheetJobs.map((job) => (
-            <div
-              key={job.sheetName}
-              className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3 border border-gray-100"
-            >
-              <span className="text-sm font-medium text-gray-700">
-                {job.sheetName}
-              </span>
-              <JobStatus status={job.status} />
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
