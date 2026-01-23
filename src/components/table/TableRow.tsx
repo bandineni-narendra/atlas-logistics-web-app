@@ -4,13 +4,21 @@ export type TableRowProps<T> = {
   row: T;
   columns: ColumnDef<T>[];
   index: number;
+  rowIndex: number;
+  onCellChange?: (rowIndex: number, key: keyof T, value: string) => void;
 };
 
 /**
  * Generic table row
- * Renders a single data row with custom render support
+ * Renders a single data row with editable input cells
  */
-export function TableRow<T>({ row, columns, index }: TableRowProps<T>) {
+export function TableRow<T>({
+  row,
+  columns,
+  index,
+  rowIndex,
+  onCellChange,
+}: TableRowProps<T>) {
   return (
     <tr
       className={`${
@@ -19,19 +27,23 @@ export function TableRow<T>({ row, columns, index }: TableRowProps<T>) {
     >
       {columns.map((column) => {
         const value = row[column.key];
-        const displayValue = column.render
-          ? column.render(value, row)
-          : value === null || value === undefined
-            ? "—"
-            : String(value);
+        const stringValue =
+          value === null || value === undefined ? "" : String(value);
 
         return (
           <td
             key={String(column.key)}
-            className="px-4 py-2.5 text-sm text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap"
-            style={column.width ? { width: column.width } : undefined}
+            className="px-1 py-1 text-sm text-gray-700"
+            style={column.width ? { minWidth: column.width } : undefined}
           >
-            {displayValue}
+            <input
+              type="text"
+              value={stringValue}
+              onChange={(e) =>
+                onCellChange?.(rowIndex, column.key, e.target.value)
+              }
+              className="w-full px-2 py-1.5 text-sm border border-transparent rounded focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 bg-transparent hover:bg-gray-100 transition-colors"
+            />
           </td>
         );
       })}

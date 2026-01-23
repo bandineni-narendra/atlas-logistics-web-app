@@ -12,16 +12,18 @@ import { isRowEmpty } from "@/utils";
 import { useTranslations } from "next-intl";
 
 export type ExcelUploadProps = {
-  onUploadSuccess?: (data: OceanFreightResult) => void;
+  onUploadSuccess?: (data: any) => void;
   onUploadError?: (error: string) => void;
+  endpoint?: "ocean" | "air";
 };
 
 export default function ExcelUpload({
   onUploadSuccess,
   onUploadError,
+  endpoint = "ocean",
 }: ExcelUploadProps) {
   const t = useTranslations();
-  const { submit, job, loading } = useExcelJob();
+  const { submit, job, loading } = useExcelJob(endpoint);
   const [fileName, setFileName] = useState<string | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
 

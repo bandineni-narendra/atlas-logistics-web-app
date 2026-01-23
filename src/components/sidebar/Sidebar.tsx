@@ -29,6 +29,11 @@ export function Sidebar({ currentPath }: SidebarProps) {
         icon: "🚢",
       },
       {
+        label: t("navigation.airFreight"),
+        href: "/air",
+        icon: "✈️",
+      },
+      {
         label: t("navigation.flow"),
         href: "/excel-flow",
         icon: "📊",

@@ -1,0 +1,146 @@
+"use client";
+
+import { useState, useRef, useEffect, useCallback } from "react";
+import * as XLSX from "xlsx";
+import { useTranslations } from "next-intl";
+
+import { AirFreightResult } from "@/types/air";
+
+import { RawExcelSheet } from "@/types/excel/excel";
+import { RawExcelSheetFlowPayload } from "@/types/excel/excel-flow";
+import { useAirFreightFlowJob } from "@/hooks/excel/useAirFreightFlowJob";
+import { FileSelectButton } from "@/components/excel";
+import { FileLabel } from "@/components/feedback";
+import { isRowEmpty, waitForJobCompletion } from "@/utils";
+
+type AirUploadFlowProps = {
+  onTotalSheetsDetected?: (count: number) => void;
+  onSheetCompleted?: (sheetName: string, result: AirFreightResult) => void;
+  onUploadError?: (error: string) => void;
+};
+
+type SheetJobState = {
+  sheetName: string;
+  status: "WAITING" | "PENDING" | "RUNNING" | "COMPLETED" | "FAILED";
+};
+
+export default function AirUploadFlow({
+  onTotalSheetsDetected,
+  onSheetCompleted,
+  onUploadError,
+}: AirUploadFlowProps) {
+  const t = useTranslations();
+  const { submit, getJob } = useAirFreightFlowJob();
+
+  const [sheetJobs, setSheetJobs] = useState<SheetJobState[]>([]);
+  const [fileName, setFileName] = useState<string | null>(null);
+
+  // ✅ Stable refs for async-safe callbacks
+  const totalSheetsRef = useRef(onTotalSheetsDetected);
+  const sheetCompletedRef = useRef(onSheetCompleted);
+  const uploadErrorRef = useRef(onUploadError);
+
+  useEffect(() => {
+    totalSheetsRef.current = onTotalSheetsDetected;
+    sheetCompletedRef.current = onSheetCompleted;
+    uploadErrorRef.current = onUploadError;
+  }, [onTotalSheetsDetected, onSheetCompleted, onUploadError]);
+
+  const handleFileUpload = useCallback(
+    async (file: File) => {
+      setFileName(file.name);
+      setSheetJobs([]);
+
+      try {
+        const buffer = await file.arrayBuffer();
+        const workbook = XLSX.read(buffer, { type: "array" });
+
+        // ✅ HARD SAFETY CHECK
+        if (
+          !workbook ||
+          !Array.isArray(workbook.SheetNames) ||
+          workbook.SheetNames.length === 0
+        ) {
+          throw new Error(t("errors.invalidOrEmptyExcel"));
+        }
+
+        const sheets: RawExcelSheet[] = workbook.SheetNames.map((sheetName) => {
+          const ws = workbook.Sheets[sheetName];
+          if (!ws) {
+            throw new Error(t("errors.cannotReadSheet", { sheetName }));
+          }
+
+          const rows = XLSX.utils.sheet_to_json(ws, {
+            header: 1,
+            raw: true,
+          }) as unknown[][];
+
+          return {
+            sheetName,
+            rows: rows.filter((r) => !isRowEmpty(r)),
+          };
+        });
+
+        // ✅ SAFE callback call
+        totalSheetsRef.current?.(sheets.length);
+
+        setSheetJobs(
+          sheets.map((s) => ({
+            sheetName: s.sheetName,
+            status: "WAITING",
+          })),
+        );
+
+        // 🔁 FLOW (sequential, stable)
+        for (let i = 0; i < sheets.length; i++) {
+          const sheet = sheets[i];
+
+          setSheetJobs((prev) =>
+            prev.map((j, idx) => (idx === i ? { ...j, status: "PENDING" } : j)),
+          );
+
+          const payload: RawExcelSheetFlowPayload = {
+            fileName: file.name,
+            sheet,
+          };
+
+          const { jobId } = await submit(payload);
+
+          setSheetJobs((prev) =>
+            prev.map((j, idx) => (idx === i ? { ...j, status: "RUNNING" } : j)),
+          );
+
+          const result = await waitForJobCompletion<AirFreightResult>(
+            getJob,
+            jobId,
+          );
+
+          setSheetJobs((prev) =>
+            prev.map((j, idx) =>
+              idx === i ? { ...j, status: "COMPLETED" } : j,
+            ),
+          );
+
+          // ✅ SAFE emit
+          sheetCompletedRef.current?.(sheet.sheetName, result);
+        }
+      } catch (e: any) {
+        uploadErrorRef.current?.(
+          e?.message ?? t("errors.excelProcessingFailed"),
+        );
+      }
+    },
+    [submit, getJob],
+  );
+
+  return (
+    <div className="flex flex-wrap items-center gap-4">
+      <FileSelectButton
+        onFileSelect={handleFileUpload}
+        label={t("buttons.selectExcelFile")}
+      />
+
+      {fileName && <FileLabel fileName={fileName} variant="muted" />}
+    </div>
+  );
+}

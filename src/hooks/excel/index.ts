@@ -6,3 +6,6 @@ export { useExcelJob } from "./useExcelFlowJob";
 
 // Multi-sheet hook
 export * from "./useMultiSheetExcelJob";
+
+// Air Freight flow-based hook
+export * from "./useAirFreightFlowJob";

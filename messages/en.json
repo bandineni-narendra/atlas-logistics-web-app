@@ -11,6 +11,7 @@
   "navigation": {
     "home": "Home",
     "oceanFreight": "Ocean Freight",
+    "airFreight": "Air Freight",
     "flow": "Flow"
   },
   "buttons": {
@@ -53,6 +54,31 @@
       "blFees": "BL Fees",
       "transitTime": "Transit Time",
       "routing": "Routing",
+      "validity": "Validity"
+    }
+  },
+  "air": {
+    "pageTitle": "Air Freight Rates",
+    "uploadDescription": "Upload an Excel file to extract and analyze Air Freight rate data.",
+    "noDataAvailable": "No air freight data available",
+    "confidence": "Confidence",
+    "columns": {
+      "origin": "Origin",
+      "destination": "Destination",
+      "carrier": "Carrier",
+      "minimum": "Min",
+      "rateBelow45kg": "-45kg",
+      "rate45kg": "+45kg",
+      "rate100kg": "+100kg",
+      "rate300kg": "+300kg",
+      "rate500kg": "+500kg",
+      "rate1000kg": "+1000kg",
+      "fuelSurcharge": "Fuel",
+      "securitySurcharge": "Security",
+      "xrayCharges": "X-Ray",
+      "handlingCharges": "Handling",
+      "transitTime": "Transit",
+      "currency": "Currency",
       "validity": "Validity"
     }
   },

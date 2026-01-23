@@ -125,7 +125,7 @@ export default function OceanPage() {
         <OceanWarnings warnings={result.warnings} />
 
         {/* Data Table */}
-        <Card padding="none">
+        <Card padding="none" shadow="md">
           <OceanTable data={result.data} isLoading={isLoading} />
         </Card>
       </div>

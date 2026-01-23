@@ -15,8 +15,8 @@ export function TableHeader<T>({ columns }: TableHeaderProps<T>) {
         {columns.map((column) => (
           <th
             key={String(column.key)}
-            className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider overflow-hidden text-ellipsis"
-            style={column.width ? { width: column.width } : undefined}
+            className="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap"
+            style={column.width ? { minWidth: column.width } : undefined}
           >
             {column.label}
           </th>

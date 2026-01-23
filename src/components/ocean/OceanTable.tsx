@@ -13,6 +13,11 @@ export type OceanTableProps = {
   isLoading?: boolean;
   currentPage?: number;
   onPageChange?: (page: number) => void;
+  onCellChange?: (
+    rowIndex: number,
+    key: keyof OceanFreightRow,
+    value: string,
+  ) => void;
 };
 
 /**
@@ -24,6 +29,7 @@ export function OceanTable({
   isLoading = false,
   currentPage,
   onPageChange,
+  onCellChange,
 }: OceanTableProps) {
   const t = useTranslations();
   // Debug: log the data received for this table
@@ -35,50 +41,50 @@ export function OceanTable({
 
   const columns: ColumnDef<OceanFreightRow>[] = useMemo(
     () => [
-      { key: "origin", label: t("ocean.columns.origin"), width: "11%" },
+      { key: "origin", label: t("ocean.columns.origin"), width: "100px" },
       {
         key: "destination",
         label: t("ocean.columns.destination"),
-        width: "11%",
+        width: "100px",
       },
-      { key: "carrier", label: t("ocean.columns.carrier"), width: "11%" },
+      { key: "carrier", label: t("ocean.columns.carrier"), width: "100px" },
       {
         key: "container20",
         label: t("ocean.columns.container20"),
-        width: "9%",
+        width: "90px",
         render: (value) => formatCurrency(value as number | null),
       },
       {
         key: "container40",
         label: t("ocean.columns.container40"),
-        width: "9%",
+        width: "90px",
         render: (value) => formatCurrency(value as number | null),
       },
       {
         key: "container40HQ",
         label: t("ocean.columns.container40HQ"),
-        width: "9%",
+        width: "100px",
         render: (value) => formatCurrency(value as number | null),
       },
       {
         key: "isps",
         label: t("ocean.columns.isps"),
-        width: "8%",
+        width: "80px",
         render: (value) => formatCurrency(value as number | null),
       },
       {
         key: "blFees",
         label: t("ocean.columns.blFees"),
-        width: "8%",
+        width: "80px",
         render: (value) => formatCurrency(value as number | null),
       },
       {
         key: "transitTime",
         label: t("ocean.columns.transitTime"),
-        width: "9%",
+        width: "100px",
       },
-      { key: "routing", label: t("ocean.columns.routing"), width: "9%" },
-      { key: "validity", label: t("ocean.columns.validity"), width: "8%" },
+      { key: "routing", label: t("ocean.columns.routing"), width: "100px" },
+      { key: "validity", label: t("ocean.columns.validity"), width: "100px" },
     ],
     [t],
   );
@@ -96,6 +102,7 @@ export function OceanTable({
       pageSize={pageSize}
       totalItems={totalItems}
       onPageChange={handlePageChange}
+      onCellChange={onCellChange}
       isLoading={isLoading}
       emptyMessage={t("ocean.noDataAvailable")}
     />

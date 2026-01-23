@@ -20,17 +20,19 @@ export function DataTable<T extends Record<string, unknown>>({
   pageSize,
   totalItems,
   onPageChange,
+  onCellChange,
   isLoading = false,
   emptyMessage,
 }: TableProps<T>) {
   const t = useTranslations();
   const displayEmptyMessage = emptyMessage ?? t("table.noDataAvailable");
 
-  const { paginatedData, totalPages } = useMemo(() => {
+  const { paginatedData, totalPages, startIndex } = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
     return {
       paginatedData: data.slice(startIndex, startIndex + pageSize),
       totalPages: Math.ceil(totalItems / pageSize),
+      startIndex,
     };
   }, [data, currentPage, pageSize, totalItems]);
 
@@ -38,7 +40,7 @@ export function DataTable<T extends Record<string, unknown>>({
     <div className="overflow-hidden">
       {/* Table */}
       <div className="overflow-x-auto">
-        <table className="w-full" style={{ tableLayout: "fixed", minWidth: "800px" }}>
+        <table className="w-full" style={{ minWidth: "1200px" }}>
           <TableHeader columns={columns} />
           <tbody className="divide-y divide-gray-100">
             {isLoading ? (
@@ -64,6 +66,8 @@ export function DataTable<T extends Record<string, unknown>>({
                   row={row}
                   columns={columns}
                   index={index}
+                  rowIndex={startIndex + index}
+                  onCellChange={onCellChange}
                 />
               ))
             )}

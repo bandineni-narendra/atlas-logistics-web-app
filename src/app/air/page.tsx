@@ -5,24 +5,27 @@ import { formatSheetName } from "@/utils";
 import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 
-import { OceanTable, ErrorBox, ProgressLabel } from "@/components";
-import { OceanFreightResult, OceanFreightRow } from "@/types/ocean";
-import ExcelUploadFlow from "@/app/excel-flow/ExcelUploadFlow";
+import { AirTable } from "@/components/air";
+import { AirFreightResult, AirFreightRow } from "@/types/air";
+import AirUploadFlow from "@/components/air/AirUploadFlow";
 import {
   PageContainer,
   PageHeader,
   Card,
   CardContent,
   Alert,
-  ProgressBar,
 } from "@/components/ui";
 
 type SheetResult = {
   sheetName: string;
-  result: OceanFreightResult;
+  result: AirFreightResult;
 };
 
-export default function OceanPage() {
+/**
+ * Air Freight page
+ * Shows Excel upload and displays processed results with multi-sheet support
+ */
+export default function AirPage() {
   const t = useTranslations();
   const [results, setResults] = useState<SheetResult[]>([]);
   const [totalSheets, setTotalSheets] = useState<number>(0);
@@ -42,7 +45,7 @@ export default function OceanPage() {
   }, []);
 
   const handleSheetCompleted = useCallback(
-    (sheetName: string, result: OceanFreightResult) => {
+    (sheetName: string, result: AirFreightResult) => {
       setResults((prev) => {
         const next = [...prev, { sheetName, result }];
         return next;
@@ -67,7 +70,7 @@ export default function OceanPage() {
 
   // Handler for cell edits
   const handleCellChange = useCallback(
-    (rowIndex: number, key: keyof OceanFreightRow, value: string) => {
+    (rowIndex: number, key: keyof AirFreightRow, value: string) => {
       setResults((prev) => {
         const updated = [...prev];
         const sheetData = [...updated[activeTab].result.data];
@@ -92,8 +95,8 @@ export default function OceanPage() {
     <PageContainer>
       <div className="flex items-start justify-between gap-4">
         <PageHeader
-          title="Excel Flow Processing"
-          description="Process multi-sheet Excel files with sequential job handling"
+          title={t("air.pageTitle")}
+          description={t("air.uploadDescription")}
         />
 
         {/* Compact progress indicator */}
@@ -128,7 +131,7 @@ export default function OceanPage() {
       {/* Upload Section */}
       <Card>
         <CardContent>
-          <ExcelUploadFlow
+          <AirUploadFlow
             onTotalSheetsDetected={handleTotalSheetsDetected}
             onSheetCompleted={handleSheetCompleted}
             onUploadError={handleUploadError}
@@ -144,7 +147,7 @@ export default function OceanPage() {
 
       {/* Tab UI for sheets */}
       {results.length > 0 && (
-        <Card padding="none">
+        <Card padding="none" shadow="md">
           <div className="border-b border-gray-200 bg-gray-50 px-4">
             <div className="flex gap-1 overflow-x-auto">
               {results.map(({ sheetName }, idx) => (
@@ -164,7 +167,7 @@ export default function OceanPage() {
             </div>
           </div>
           <CardContent className="p-0">
-            <OceanTable
+            <AirTable
               data={results[activeTab].result.data}
               isLoading={false}
               currentPage={tabPages[activeTab] || 1}
