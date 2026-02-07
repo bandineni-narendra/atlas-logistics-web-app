@@ -1,0 +1,189 @@
+/**
+ * Core Sheet Builder - Main Component
+ *
+ * Generic, reusable Excel-like sheet builder.
+ * Completely domain-agnostic.
+ *
+ * Features:
+ * - Multiple sheets with tabs
+ * - Add/remove rows and columns
+ * - Inline editable cells
+ * - Configurable via props
+ *
+ * @example
+ * ```tsx
+ * <SheetBuilder
+ *   initialColumns={myColumns}
+ *   onChange={(sheets) => console.log(sheets)}
+ * />
+ * ```
+ */
+
+"use client";
+
+import { useEffect } from "react";
+import { Column, createSheet } from "./models";
+import { useSheetManager } from "@/hooks/sheet-builder";
+import { SheetTabs, SheetTable } from "@/components/sheet-builder";
+
+export interface SheetBuilderProps {
+  /**
+   * Initial column definitions.
+   * Defines the structure of the sheet.
+   */
+  initialColumns?: Column[];
+
+  /**
+   * Callback when sheet data changes.
+   * Returns all sheets for export/validation.
+   */
+  onChange?: (sheets: ReturnType<typeof useSheetManager>["sheets"]) => void;
+
+  /**
+   * Enable/disable multiple sheets.
+   * Default: true
+   */
+  multiSheet?: boolean;
+
+  /**
+   * Optional localStorage key for persisting sheet data.
+   * If provided, data will be saved and restored from localStorage.
+   */
+  storageKey?: string;
+}
+
+export function SheetBuilder({
+  initialColumns = [],
+  onChange,
+  multiSheet = true,
+  storageKey,
+}: SheetBuilderProps) {
+  const {
+    sheets,
+    activeSheetId,
+    activeSheet,
+    addSheet,
+    removeSheet,
+    setActiveSheet,
+    updateSheet,
+    updateSheetName,
+    resetSheet,
+  } = useSheetManager([
+    createSheet({
+      id: "1",
+      name: "Sheet 1",
+      columns: initialColumns,
+      rows: [],
+    }),
+  ], storageKey);
+
+  // Notify parent of changes
+  useEffect(() => {
+    if (onChange) {
+      onChange(sheets);
+    }
+  }, [sheets, onChange]);
+
+  if (!activeSheet) {
+    return <div className="p-8 text-center text-gray-500">No active sheet</div>;
+  }
+
+  return (
+    <div className="flex flex-col h-full bg-white rounded-lg shadow-sm border border-gray-200">
+      {/* Sheet tabs */}
+      {multiSheet && (
+        <SheetTabs
+          sheets={sheets}
+          activeSheetId={activeSheetId}
+          onSelectSheet={setActiveSheet}
+          onAddSheet={() => addSheet(initialColumns)}
+          onDeleteSheet={removeSheet}
+          onUpdateSheetName={updateSheetName}
+          onResetSheet={resetSheet}
+        />
+      )}
+
+      {/* Sheet table */}
+      <div className="flex-1 overflow-auto p-4">
+        <SheetTable
+          sheet={activeSheet}
+          onCellChange={(rowId, columnId, value) => {
+            updateSheet(activeSheetId, (sheet) => {
+              const updatedRows = sheet.rows.map((row) => {
+                if (row.id !== rowId) return row;
+                return {
+                  ...row,
+                  cells: {
+                    ...row.cells,
+                    [columnId]: value,
+                  },
+                };
+              });
+              return { ...sheet, rows: updatedRows };
+            });
+          }}
+          onAddRow={() => {
+            updateSheet(activeSheetId, (sheet) => {
+              const newRowId = `row-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+              const cells: Record<string, string | number | boolean | null> =
+                {};
+              sheet.columns.forEach((col) => {
+                cells[col.id] = null;
+              });
+              return {
+                ...sheet,
+                rows: [...sheet.rows, { id: newRowId, cells }],
+              };
+            });
+          }}
+          onDeleteRow={(rowId) => {
+            updateSheet(activeSheetId, (sheet) => ({
+              ...sheet,
+              rows: sheet.rows.filter((r) => r.id !== rowId),
+            }));
+          }}
+          onAddColumn={(column) => {
+            updateSheet(activeSheetId, (sheet) => {
+              const updatedRows = sheet.rows.map((row) => ({
+                ...row,
+                cells: {
+                  ...row.cells,
+                  [column.id]: null,
+                },
+              }));
+              return {
+                ...sheet,
+                columns: [...sheet.columns, column],
+                rows: updatedRows,
+              };
+            });
+          }}
+          onDeleteColumn={(columnId) => {
+            updateSheet(activeSheetId, (sheet) => {
+              const updatedRows = sheet.rows.map((row) => {
+                const { [columnId]: removed, ...remainingCells } = row.cells;
+                return {
+                  ...row,
+                  cells: remainingCells,
+                };
+              });
+              return {
+                ...sheet,
+                columns: sheet.columns.filter((c) => c.id !== columnId),
+                rows: updatedRows,
+              };
+            });
+          }}
+          onUpdateColumnName={(columnId, newName) => {
+            updateSheet(activeSheetId, (sheet) => ({
+              ...sheet,
+              columns: sheet.columns.map((col) =>
+                col.id === columnId ? { ...col, label: newName } : col,
+              ),
+            }));
+          }}
+        />
+      </div>
+    </div>
+  );
+}

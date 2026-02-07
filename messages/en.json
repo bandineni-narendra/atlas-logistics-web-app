@@ -12,7 +12,9 @@
     "home": "Home",
     "oceanFreight": "Ocean Freight",
     "airFreight": "Air Freight",
-    "flow": "Flow"
+    "flow": "Flow",
+    "createAirSheet": "Create Air Rate Sheet",
+    "createOceanSheet": "Create Ocean Rate Sheet"
   },
   "buttons": {
     "previous": "Previous",

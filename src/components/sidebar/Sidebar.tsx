@@ -38,6 +38,16 @@ export function Sidebar({ currentPath }: SidebarProps) {
         href: "/excel-flow",
         icon: "📊",
       },
+      {
+        label: t("navigation.createAirSheet"),
+        href: "/air-freight-sheet",
+        icon: "📋",
+      },
+      {
+        label: t("navigation.createOceanSheet"),
+        href: "/ocean-freight-sheet",
+        icon: "📄",
+      },
     ],
     [t],
   );
