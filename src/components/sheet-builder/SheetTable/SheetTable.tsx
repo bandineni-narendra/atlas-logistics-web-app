@@ -6,6 +6,7 @@
 
 "use client";
 
+import { useCallback, useMemo } from "react";
 import {
   Sheet,
   Column,
@@ -36,7 +37,7 @@ export function SheetTable({
   onDeleteColumn,
   onUpdateColumnName,
 }: SheetTableProps) {
-  const handleAddColumn = () => {
+  const handleAddColumn = useCallback(() => {
     const newColumnId = `col-${Date.now()}`;
     const newColumn = createColumn({
       id: newColumnId,
@@ -44,12 +45,12 @@ export function SheetTable({
       type: ColumnType.TEXT,
     });
     onAddColumn(newColumn);
-  };
+  }, [sheet.columns.length, onAddColumn]);
 
   return (
     <div className="flex flex-col gap-4">
       {/* Modern minimalistic spreadsheet container */}
-      <div className="overflow-auto rounded-2xl bg-white shadow-lg border border-gray-200 pb-4">
+      <div className="overflow-auto rounded-2xl bg-white shadow-lg border border-gray-200 p-4">
         <table className="border-collapse w-full">
           <TableHeader
             columns={sheet.columns}
@@ -58,18 +59,26 @@ export function SheetTable({
             onUpdateColumnName={onUpdateColumnName}
           />
           <tbody>
-            {sheet.rows.map((row, index) => (
-              <TableRow
-                key={row.id}
-                row={row}
-                columns={sheet.columns}
-                rowIndex={index}
-                onCellChange={(columnId, value) =>
-                  onCellChange(row.id, columnId, value)
-                }
-                onDelete={() => onDeleteRow(row.id)}
-              />
-            ))}
+            {sheet.rows.length === 0 ? (
+              <tr>
+                <td colSpan={sheet.columns.length + 1} className="text-center py-16">
+                  <p className="text-gray-400 text-sm">Click Add row to add data</p>
+                </td>
+              </tr>
+            ) : (
+              sheet.rows.map((row, index) => (
+                <TableRow
+                  key={row.id}
+                  row={row}
+                  columns={sheet.columns}
+                  rowIndex={index}
+                  onCellChange={(columnId, value) =>
+                    onCellChange(row.id, columnId, value)
+                  }
+                  onDelete={() => onDeleteRow(row.id)}
+                />
+              ))
+            )}
           </tbody>
         </table>
       </div>

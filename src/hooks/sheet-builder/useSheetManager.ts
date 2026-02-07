@@ -81,9 +81,24 @@ export function useSheetManager(
   const addSheet = useCallback(
     (columns?: Column[]) => {
       const newSheetId = nextSheetId.toString();
+      
+      // Find the next available sheet number based on existing sheet names
+      const existingNumbers = sheets
+        .map((s) => {
+          const match = s.name.match(/^Sheet (\d+)$/);
+          return match ? parseInt(match[1]) : 0;
+        })
+        .filter((n) => n > 0);
+      
+      // Find the smallest available number starting from 1
+      let sheetNumber = 1;
+      while (existingNumbers.includes(sheetNumber)) {
+        sheetNumber++;
+      }
+      
       const newSheet = createSheet({
         id: newSheetId,
-        name: `Sheet ${newSheetId}`,
+        name: `Sheet ${sheetNumber}`,
         columns: columns || [],
         rows: [],
       });
@@ -91,7 +106,7 @@ export function useSheetManager(
       setActiveSheetId(newSheetId);
       setNextSheetId((prev) => prev + 1);
     },
-    [nextSheetId],
+    [nextSheetId, sheets],
   );
 
   const removeSheet = useCallback(

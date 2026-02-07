@@ -6,8 +6,9 @@
 
 "use client";
 
+import { memo, useCallback } from "react";
 import { Row as RowModel, Column, CellValue } from "@/core/sheet-builder";
-import { TableCell } from "../TableCell";
+import { MemoizedTableCell } from "./MemoizedTableCell";
 
 interface TableRowProps {
   row: RowModel;
@@ -17,7 +18,7 @@ interface TableRowProps {
   onDelete: () => void;
 }
 
-export function TableRow({
+export const TableRow = memo(function TableRow({
   row,
   columns,
   rowIndex,
@@ -26,35 +27,26 @@ export function TableRow({
 }: TableRowProps) {
   return (
     <tr className="group hover:bg-gray-50 transition-all duration-200">
-      {/* Row number */}
-      <td
-        className="bg-gray-50 border-b border-gray-100 text-center px-4 py-0 sticky left-0 z-[1]"
-        style={{ width: "60px", minWidth: "60px" }}
-      >
-        <span className="text-xs text-gray-600 font-semibold tabular-nums tracking-wider">
-          {rowIndex + 1}
-        </span>
-      </td>
-
       {/* Data cells */}
       {columns.map((column) => (
-        <TableCell
+        <MemoizedTableCell
           key={column.id}
           column={column}
           value={row.cells[column.id]}
-          onChange={(value) => onCellChange(column.id, value)}
+          columnId={column.id}
+          onCellChange={onCellChange}
         />
       ))}
 
       {/* Delete row button */}
       <td
-        className="border-b border-gray-100 bg-white hover:bg-gray-50 text-center px-3 py-0 transition-all duration-200"
-        style={{ width: "60px", minWidth: "60px" }}
+        className="border-b border-gray-100 bg-white hover:bg-gray-50 text-center px-2 py-0 transition-all duration-200"
+        style={{ width: "70px", minWidth: "70px" }}
       >
-        <div className="flex items-center justify-center h-11">
+        <div className="flex items-center justify-center h-8">
           <button
             onClick={onDelete}
-            className="inline-flex items-center gap-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md px-2 py-1.5 transition-all duration-200 hover:scale-105"
+            className="inline-flex items-center gap-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md px-1.5 py-1 transition-all duration-200 hover:scale-105"
             title="Delete row"
             type="button"
             aria-label={`Delete row ${rowIndex + 1}`}
@@ -66,7 +58,7 @@ export function TableRow({
               viewBox="0 0 24 24"
               strokeWidth={2}
               stroke="currentColor"
-              className="w-3.5 h-3.5"
+              className="w-3 h-3"
             >
               <path
                 strokeLinecap="round"
@@ -81,8 +73,8 @@ export function TableRow({
       {/* Empty cell for Add Column header alignment */}
       <td
         className="border-b border-gray-100 bg-white"
-        style={{ minWidth: "120px" }}
+        style={{ minWidth: "100px" }}
       ></td>
     </tr>
   );
-}
+});

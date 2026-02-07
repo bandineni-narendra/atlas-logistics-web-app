@@ -6,7 +6,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Sheet } from "@/core/sheet-builder";
 import { useFeedbackModal, WarningModal } from "@/core/feedback";
 
@@ -39,26 +39,26 @@ export function SheetTabs({
     closeWarningModal,
   } = useFeedbackModal();
 
-  const startEditing = (sheet: Sheet, e: React.MouseEvent) => {
+  const startEditing = useCallback((sheet: Sheet, e: React.MouseEvent) => {
     e.stopPropagation();
     setEditingSheetId(sheet.id);
     setEditingValue(sheet.name);
-  };
+  }, []);
 
-  const saveEdit = (sheetId: string) => {
+  const saveEdit = useCallback((sheetId: string) => {
     if (editingValue.trim()) {
       onUpdateSheetName(sheetId, editingValue.trim());
     }
     setEditingSheetId(null);
     setEditingValue("");
-  };
+  }, [editingValue, onUpdateSheetName]);
 
-  const cancelEdit = () => {
+  const cancelEdit = useCallback(() => {
     setEditingSheetId(null);
     setEditingValue("");
-  };
+  }, []);
 
-  const handleReset = (sheetId: string, sheetName: string, e: React.MouseEvent) => {
+  const handleReset = useCallback((sheetId: string, sheetName: string, e: React.MouseEvent) => {
     e.stopPropagation();
     openWarningModal(
       `Reset all data in "${sheetName}"? This cannot be undone.`,
@@ -67,7 +67,7 @@ export function SheetTabs({
       },
       "Confirm Reset"
     );
-  };
+  }, [openWarningModal, onResetSheet]);
 
   return (
     <div className="flex items-center gap-0.5 border-b-2 border-neutral-200 bg-neutral-50 px-3 py-1.5">

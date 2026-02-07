@@ -21,7 +21,7 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { Column, createSheet } from "./models";
 import { useSheetManager } from "@/hooks/sheet-builder";
 import { SheetTabs, SheetTable } from "@/components/sheet-builder";
@@ -107,7 +107,7 @@ export function SheetBuilder({
       <div className="flex-1 overflow-auto p-4">
         <SheetTable
           sheet={activeSheet}
-          onCellChange={(rowId, columnId, value) => {
+          onCellChange={useCallback((rowId: string, columnId: string, value: any) => {
             updateSheet(activeSheetId, (sheet) => {
               const updatedRows = sheet.rows.map((row) => {
                 if (row.id !== rowId) return row;
@@ -121,8 +121,8 @@ export function SheetBuilder({
               });
               return { ...sheet, rows: updatedRows };
             });
-          }}
-          onAddRow={() => {
+          }, [updateSheet, activeSheetId])}
+          onAddRow={useCallback(() => {
             updateSheet(activeSheetId, (sheet) => {
               const newRowId = `row-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
               const cells: Record<string, string | number | boolean | null> =
@@ -135,14 +135,14 @@ export function SheetBuilder({
                 rows: [...sheet.rows, { id: newRowId, cells }],
               };
             });
-          }}
-          onDeleteRow={(rowId) => {
+          }, [updateSheet, activeSheetId])}
+          onDeleteRow={useCallback((rowId: string) => {
             updateSheet(activeSheetId, (sheet) => ({
               ...sheet,
               rows: sheet.rows.filter((r) => r.id !== rowId),
             }));
-          }}
-          onAddColumn={(column) => {
+          }, [updateSheet, activeSheetId])}
+          onAddColumn={useCallback((column: Column) => {
             updateSheet(activeSheetId, (sheet) => {
               const updatedRows = sheet.rows.map((row) => ({
                 ...row,
@@ -157,8 +157,8 @@ export function SheetBuilder({
                 rows: updatedRows,
               };
             });
-          }}
-          onDeleteColumn={(columnId) => {
+          }, [updateSheet, activeSheetId])}
+          onDeleteColumn={useCallback((columnId: string) => {
             updateSheet(activeSheetId, (sheet) => {
               const updatedRows = sheet.rows.map((row) => {
                 const { [columnId]: removed, ...remainingCells } = row.cells;
@@ -173,15 +173,15 @@ export function SheetBuilder({
                 rows: updatedRows,
               };
             });
-          }}
-          onUpdateColumnName={(columnId, newName) => {
+          }, [updateSheet, activeSheetId])}
+          onUpdateColumnName={useCallback((columnId: string, newName: string) => {
             updateSheet(activeSheetId, (sheet) => ({
               ...sheet,
               columns: sheet.columns.map((col) =>
                 col.id === columnId ? { ...col, label: newName } : col,
               ),
             }));
-          }}
+          }, [updateSheet, activeSheetId])}
         />
       </div>
     </div>

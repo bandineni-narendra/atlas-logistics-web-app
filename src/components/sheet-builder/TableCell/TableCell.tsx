@@ -7,6 +7,7 @@
 
 "use client";
 
+import { useCallback, useMemo, memo } from "react";
 import { ColumnType, CellValue, Column } from "@/core/sheet-builder";
 
 interface TableCellProps {
@@ -15,8 +16,8 @@ interface TableCellProps {
   onChange: (value: CellValue) => void;
 }
 
-export function TableCell({ column, value, onChange }: TableCellProps) {
-  const handleChange = (
+export const TableCell = memo(function TableCell({ column, value, onChange }: TableCellProps) {
+  const handleChange = useCallback((
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const newValue = e.target.value;
@@ -28,21 +29,21 @@ export function TableCell({ column, value, onChange }: TableCellProps) {
     } else {
       onChange(newValue || null);
     }
-  };
+  }, [column.type, onChange]);
 
   // Modern minimalistic input styles
-  const baseInputClasses = `
-    w-full h-full px-5 py-3
-    text-sm font-normal text-black
+  const baseInputClasses = useMemo(() => `
+    w-full h-full px-2 py-1.5
+    text-xs font-normal text-black
     placeholder:text-gray-400
     bg-white
     border-0 outline-none
     focus:ring-0 focus:outline-none focus:border-0 focus:shadow-none
     cursor-text
     [color-scheme:light]
-  `;
+  `, []);
 
-  const columnWidth = column.width || 150;
+  const columnWidth = useMemo(() => column.width || 150, [column.width]);
 
   const renderInput = () => {
     switch (column.type) {
@@ -127,12 +128,12 @@ export function TableCell({ column, value, onChange }: TableCellProps) {
     <td
       className="relative border-r border-b border-gray-100 bg-white hover:bg-gray-50 outline-none focus-within:bg-white focus-within:shadow-md focus-within:border-gray-300 focus-within:z-10"
       style={{
-        minWidth: "150px",
+        minWidth: "100px",
         transition:
           "background-color 200ms, box-shadow 200ms, border-color 200ms",
       }}
     >
-      <div className="relative h-11">{renderInput()}</div>
+      <div className="relative h-8">{renderInput()}</div>
     </td>
   );
-}
+});
