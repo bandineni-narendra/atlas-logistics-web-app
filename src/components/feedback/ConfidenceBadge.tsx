@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useTranslations } from "next-intl";
 
 export interface ConfidenceBadgeProps {
   confidence: number;
@@ -10,6 +13,7 @@ export interface ConfidenceBadgeProps {
 export const ConfidenceBadge: React.FC<ConfidenceBadgeProps> = ({
   confidence,
 }) => {
+  const t = useTranslations();
   const confidencePercent = Math.round(confidence * 100);
   const confidenceColor =
     confidencePercent >= 80
@@ -20,7 +24,7 @@ export const ConfidenceBadge: React.FC<ConfidenceBadgeProps> = ({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-gray-700">Confidence:</span>
+      <span className="text-sm text-gray-700">{t("ocean.confidence")}:</span>
       <div className="flex items-center gap-2">
         <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
           <div

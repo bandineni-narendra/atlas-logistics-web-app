@@ -2,11 +2,20 @@
 
 import { formatSheetName } from "@/utils";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 
-import { OceanTable, ErrorBox, ProgressLabel, PageTitle } from "@/components";
-import { OceanFreightResult } from "@/types/ocean";
+import { OceanTable, ErrorBox, ProgressLabel } from "@/components";
+import { OceanFreightResult, OceanFreightRow } from "@/types/ocean";
 import ExcelUploadFlow from "@/app/excel-flow/ExcelUploadFlow";
+import {
+  PageContainer,
+  PageHeader,
+  Card,
+  CardContent,
+  Alert,
+  ProgressBar,
+} from "@/components/ui";
 
 type SheetResult = {
   sheetName: string;
@@ -14,6 +23,7 @@ type SheetResult = {
 };
 
 export default function OceanPage() {
+  const t = useTranslations();
   const [results, setResults] = useState<SheetResult[]>([]);
   const [totalSheets, setTotalSheets] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
@@ -23,79 +33,137 @@ export default function OceanPage() {
 
   const completedCount = Array.isArray(results) ? results.length : 0;
 
-  const handleTotalSheetsDetected = (count: number) => {
+  const handleTotalSheetsDetected = useCallback((count: number) => {
     setTotalSheets(count);
     setResults([]);
     setError(null);
     setActiveTab(0);
     setTabPages(Array(count).fill(1)); // Reset all tab pages to 1
-  };
+  }, []);
 
-  const handleSheetCompleted = (
-    sheetName: string,
-    result: OceanFreightResult,
-  ) => {
-    setResults((prev) => {
-      const next = [...prev, { sheetName, result }];
-      // Ensure tabPages array matches results length
-      if (next.length > tabPages.length) {
-        setTabPages((prevPages) => [...prevPages, 1]);
-      }
-      return next;
-    });
-  };
+  const handleSheetCompleted = useCallback(
+    (sheetName: string, result: OceanFreightResult) => {
+      setResults((prev) => {
+        const next = [...prev, { sheetName, result }];
+        return next;
+      });
+      setTabPages((prevPages) => [...prevPages, 1]);
+    },
+    [],
+  );
 
-  const handleUploadError = (msg: string) => {
+  const handleUploadError = useCallback((msg: string) => {
     setError(msg);
-  };
+  }, []);
 
   // Handler for changing page in a tab
-  const handleTabPageChange = (tabIdx: number, page: number) => {
+  const handleTabPageChange = useCallback((tabIdx: number, page: number) => {
     setTabPages((prev) => {
       const updated = [...prev];
       updated[tabIdx] = page;
       return updated;
     });
-  };
+  }, []);
+
+  // Handler for cell edits
+  const handleCellChange = useCallback(
+    (rowIndex: number, key: keyof OceanFreightRow, value: string) => {
+      setResults((prev) => {
+        const updated = [...prev];
+        const sheetData = [...updated[activeTab].result.data];
+        sheetData[rowIndex] = {
+          ...sheetData[rowIndex],
+          [key]: value,
+        };
+        updated[activeTab] = {
+          ...updated[activeTab],
+          result: {
+            ...updated[activeTab].result,
+            data: sheetData,
+          },
+        };
+        return updated;
+      });
+    },
+    [activeTab],
+  );
 
   return (
-    <div className="px-8 py-6 space-y-8">
-      <PageTitle>Ocean Freight Rates</PageTitle>
+    <PageContainer>
+      <div className="flex items-start justify-between gap-4">
+        <PageHeader
+          title="Excel Flow Processing"
+          description="Process multi-sheet Excel files with sequential job handling"
+        />
 
-      {/* ✅ Render ONCE */}
-      <ExcelUploadFlow
-        onTotalSheetsDetected={handleTotalSheetsDetected}
-        onSheetCompleted={handleSheetCompleted}
-        onUploadError={handleUploadError}
-      />
+        {/* Compact progress indicator */}
+        {totalSheets > 0 && completedCount < totalSheets && (
+          <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-100 shrink-0">
+            <svg
+              className="w-4 h-4 text-blue-600 animate-spin"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+            <span className="text-sm font-medium text-blue-700">
+              {completedCount}/{totalSheets} sheets
+            </span>
+          </div>
+        )}
+      </div>
 
-      {error && <ErrorBox message={error} />}
+      {/* Upload Section */}
+      <Card>
+        <CardContent>
+          <ExcelUploadFlow
+            onTotalSheetsDetected={handleTotalSheetsDetected}
+            onSheetCompleted={handleSheetCompleted}
+            onUploadError={handleUploadError}
+          />
+        </CardContent>
+      </Card>
 
-      {totalSheets > 0 && (
-        <ProgressLabel completed={completedCount} total={totalSheets} />
+      {error && (
+        <Alert variant="error" title="Processing Error">
+          {error}
+        </Alert>
       )}
 
       {/* Tab UI for sheets */}
       {results.length > 0 && (
-        <div className="mt-6">
-          <div className="flex border-b border-gray-200 mb-4">
-            {results.map(({ sheetName }, idx) => (
-              <button
-                key={sheetName}
-                className={`px-4 py-2 -mb-px border-b-2 font-medium focus:outline-none transition-colors duration-150 ${
-                  activeTab === idx
-                    ? "border-blue-600 text-blue-700 bg-white"
-                    : "border-transparent text-gray-500 hover:text-blue-600"
-                }`}
-                onClick={() => setActiveTab(idx)}
-                type="button"
-              >
-                {formatSheetName(sheetName, `Sheet ${idx + 1}`)}
-              </button>
-            ))}
+        <Card padding="none">
+          <div className="border-b border-gray-200 bg-gray-50 px-4">
+            <div className="flex gap-1 overflow-x-auto">
+              {results.map(({ sheetName }, idx) => (
+                <button
+                  key={sheetName}
+                  className={`px-4 py-3 text-sm font-medium transition-colors duration-150 border-b-2 -mb-px whitespace-nowrap ${
+                    activeTab === idx
+                      ? "border-blue-600 text-blue-700 bg-white"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setActiveTab(idx)}
+                  type="button"
+                >
+                  {formatSheetName(sheetName, `Sheet ${idx + 1}`)}
+                </button>
+              ))}
+            </div>
           </div>
-          {/* Tab content: show only active sheet */}
-          <div className="border rounded-lg overflow-hidden">
+          <CardContent className="p-0">
             <OceanTable
               data={results[activeTab].result.data}
               isLoading={false}
@@ -103,10 +171,11 @@ export default function OceanPage() {
               onPageChange={(page: number) =>
                 handleTabPageChange(activeTab, page)
               }
+              onCellChange={handleCellChange}
             />
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
-    </div>
+    </PageContainer>
   );
 }

@@ -22,13 +22,21 @@ export function SideBarMenu({
   return (
     <Link href={href}>
       <div
-        className={`flex items-center gap-3 px-4 py-3 rounded-md transition-colors ${
-          isActive
-            ? "bg-blue-50 text-blue-700 font-semibold"
-            : "text-gray-700 hover:bg-gray-100"
-        }`}
+        className={`
+          flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
+          transition-all duration-150 ease-in-out
+          ${
+            isActive
+              ? "bg-blue-50 text-blue-700 shadow-sm"
+              : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+          }
+        `}
       >
-        {icon && <span className="text-lg">{icon}</span>}
+        {icon && (
+          <span className={`text-base ${isActive ? "" : "opacity-70"}`}>
+            {icon}
+          </span>
+        )}
         <span>{label}</span>
       </div>
     </Link>

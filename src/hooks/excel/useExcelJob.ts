@@ -1,17 +1,24 @@
-import { createExcelJob, getExcelJob } from "@/api/client";
-import { useEffect, useState } from "react";
+import { createExcelJob, createAirFreightJob, getExcelJob } from "@/api/client";
+import { useEffect, useState, useCallback } from "react";
 import { RawExcelPayload } from "@/types/excel/excel";
 
-export function useExcelJob() {
+export type ExcelJobEndpoint = "ocean" | "air";
+
+export function useExcelJob(endpoint: ExcelJobEndpoint = "ocean") {
   const [jobId, setJobId] = useState<string | null>(null);
   const [job, setJob] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
-  const submit = async (payload: RawExcelPayload) => {
-    setLoading(true);
-    const { jobId } = await createExcelJob(payload);
-    setJobId(jobId);
-  };
+  const submit = useCallback(
+    async (payload: RawExcelPayload) => {
+      setLoading(true);
+      const createFn =
+        endpoint === "air" ? createAirFreightJob : createExcelJob;
+      const { jobId } = await createFn(payload);
+      setJobId(jobId);
+    },
+    [endpoint],
+  );
 
   useEffect(() => {
     if (!jobId) return;

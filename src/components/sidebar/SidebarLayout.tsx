@@ -13,6 +13,13 @@ export type SidebarLayoutProps = {
  */
 export function SidebarLayout({ children }: SidebarLayoutProps) {
   const pathname = usePathname();
+  
+  // Don't show sidebar on auth pages
+  const isAuthPage = ["/login", "/signup", "/forgot-password"].includes(pathname);
+
+  if (isAuthPage) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="flex h-screen bg-white">

@@ -16,6 +16,11 @@ export async function createMutliSheetExcelJob(payload: RawExcelPayload) {
   return res.data as { jobId: string };
 }
 
+export async function createAirFreightJob(payload: RawExcelPayload) {
+  const res = await api.post("/excel/jobs/air-freight", payload);
+  return res.data as { jobId: string };
+}
+
 export async function getExcelJob(jobId: string) {
   const res = await api.get(`/excel/jobs/${jobId}`);
   return res.data;

@@ -1,0 +1,77 @@
+/**
+ * Air Freight Domain - AirRate Model
+ *
+ * Strict, typed data model for Air Freight rates.
+ * Domain-specific - NOT imported into core.
+ */
+
+export interface AirRate {
+  origin: string;
+  destination: string;
+  airline: string;
+  serviceLevel: string;
+  minRate: number;
+  rate45: number;
+  rate100: number;
+  rate250: number;
+  rate500: number;
+  rate1000: number;
+  currency: string;
+  validFrom: string;
+  validTo: string;
+  transitTime?: string;
+  remarks?: string;
+}
+
+/**
+ * Map sheet row data to AirRate domain model.
+ * This is where domain validation happens.
+ */
+export function mapToAirRate(rowData: Record<string, any>): AirRate | null {
+  try {
+    return {
+      origin: rowData.origin || "",
+      destination: rowData.destination || "",
+      airline: rowData.airline || "",
+      serviceLevel: rowData.serviceLevel || "",
+      minRate: parseFloat(rowData.minRate) || 0,
+      rate45: parseFloat(rowData.rate45) || 0,
+      rate100: parseFloat(rowData.rate100) || 0,
+      rate250: parseFloat(rowData.rate250) || 0,
+      rate500: parseFloat(rowData.rate500) || 0,
+      rate1000: parseFloat(rowData.rate1000) || 0,
+      currency: rowData.currency || "USD",
+      validFrom: rowData.validFrom || "",
+      validTo: rowData.validTo || "",
+      transitTime: rowData.transitTime || undefined,
+      remarks: rowData.remarks || undefined,
+    };
+  } catch (error) {
+    console.error("Failed to map to AirRate:", error);
+    return null;
+  }
+}
+
+/**
+ * Validate AirRate data.
+ * Domain-specific business rules.
+ */
+export function validateAirRate(rate: AirRate): string[] {
+  const errors: string[] = [];
+
+  // Check required text fields
+  if (!rate.origin || rate.origin.trim() === "") errors.push("Origin is required");
+  if (!rate.destination || rate.destination.trim() === "") errors.push("Destination is required");
+  if (!rate.airline || rate.airline.trim() === "") errors.push("Airline is required");
+  if (!rate.serviceLevel || rate.serviceLevel.trim() === "") errors.push("Service Level is required");
+  if (!rate.currency || rate.currency.trim() === "") errors.push("Currency is required");
+  if (!rate.validFrom || rate.validFrom.trim() === "") errors.push("Valid From date is required");
+  if (!rate.validTo || rate.validTo.trim() === "") errors.push("Valid To date is required");
+
+  // Check number fields (they can be 0, but not negative)
+  if (rate.minRate < 0) errors.push("Min Rate cannot be negative");
+  if (rate.rate45 < 0) errors.push("Rate 45 cannot be negative");
+  if (rate.rate100 < 0) errors.push("Rate 100 cannot be negative");
+
+  return errors;
+}

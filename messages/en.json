@@ -1,5 +1,151 @@
 {
-  "HomePage": {
-    "title": "Hello world! B"
+  "common": {
+    "appName": "Atlas",
+    "appTagline": "Logistics Platform",
+    "loading": "Loading...",
+    "page": "Page",
+    "of": "of",
+    "sheets": "sheets",
+    "file": "File"
+  },
+  "navigation": {
+    "home": "Home",
+    "oceanFreight": "Ocean Freight",
+    "airFreight": "Air Freight",
+    "flow": "Flow",
+    "createAirSheet": "Create Air Rate Sheet",
+    "createOceanSheet": "Create Ocean Rate Sheet",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "fullName": "Full Name",
+    "emailPlaceholder": "you@example.com",
+    "namePlaceholder": "John Doe",
+    "welcomeBack": "Welcome back",
+    "loginSubtitle": "Enter your credentials to access your account",
+    "createAccount": "Create an account",
+    "signupSubtitle": "Start managing your logistics operations",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "signInWith": "Or sign in with",
+    "signUpWith": "Or sign up with",
+    "googleSignIn": "Continue with Google",
+    "loggingIn": "Logging in...",
+    "signingUp": "Creating account...",
+    "sessionExpired": "Your session has expired. Please login again."
+  },
+  "profile": {
+    "subtitle": "Manage your account information",
+    "account": "Account",
+    "accountDetails": "Account Details",
+    "userId": "User ID",
+    "authMethod": "Authentication Method",
+    "manual": "Email",
+    "recentActivity": "Recent Activity",
+    "oceanFreightData": "Ocean Freight Data",
+    "airFreightData": "Air Freight Data",
+    "lastAccessed": "Last accessed recently"
+  },
+  "buttons": {
+    "previous": "Previous",
+    "next": "Next",
+    "tryAgain": "Try Again",
+    "selectExcelFile": "Select Excel File",
+    "processing": "Processing…",
+    "uploadDifferentFile": "← Upload Different File"
+  },
+  "errors": {
+    "title": "Error",
+    "failedToProcessExcel": "Failed to process Excel file",
+    "failedToReadExcel": "Failed to read Excel file",
+    "invalidOrEmptyExcel": "Invalid or empty Excel file",
+    "cannotReadSheet": "Cannot read sheet \"{sheetName}\"",
+    "excelProcessingFailed": "Excel processing failed",
+    "auth": {
+      "loginFailed": "Login failed. Please try again.",
+      "signupFailed": "Signup failed. Please try again.",
+      "notAuthenticated": "You are not authenticated. Please login.",
+      "unauthorized": "You are not authorized to perform this action.",
+      "userNotFound": "No account found with this email address.",
+      "invalidCredentials": "Invalid email or password.",
+      "emailExists": "An account with this email already exists."
+    },
+    "validation": {
+      "invalidEmail": "Please enter a valid email address.",
+      "weakPassword": "Password must be at least 8 characters with uppercase, lowercase, and number."
+    },
+    "general": {
+      "badRequest": "Invalid request. Please check your input.",
+      "serverError": "Server error. Please try again later.",
+      "networkError": "Network error. Please check your connection.",
+      "requestFailed": "Request failed. Please try again."
+    }
+  },
+  "status": {
+    "loading": "AI is analyzing your Excel…",
+    "waiting": "Waiting",
+    "pending": "Queued",
+    "running": "Processing",
+    "completed": "Completed",
+    "failed": "Failed"
+  },
+  "ocean": {
+    "pageTitle": "Ocean Freight Rates",
+    "uploadDescription": "Upload an Excel file to extract and analyze Ocean Freight rate data.",
+    "noDataAvailable": "No ocean freight data available",
+    "confidence": "Confidence",
+    "columns": {
+      "origin": "Origin",
+      "destination": "Destination",
+      "carrier": "Carrier",
+      "container20": "20FT",
+      "container40": "40FT",
+      "container40HQ": "40HQ",
+      "isps": "ISPS",
+      "blFees": "BL Fees",
+      "transitTime": "Transit Time",
+      "routing": "Routing",
+      "validity": "Validity"
+    }
+  },
+  "air": {
+    "pageTitle": "Air Freight Rates",
+    "uploadDescription": "Upload an Excel file to extract and analyze Air Freight rate data.",
+    "noDataAvailable": "No air freight data available",
+    "confidence": "Confidence",
+    "columns": {
+      "origin": "Origin",
+      "destination": "Destination",
+      "carrier": "Carrier",
+      "minimum": "Min",
+      "rateBelow45kg": "-45kg",
+      "rate45kg": "+45kg",
+      "rate100kg": "+100kg",
+      "rate300kg": "+300kg",
+      "rate500kg": "+500kg",
+      "rate1000kg": "+1000kg",
+      "fuelSurcharge": "Fuel",
+      "securitySurcharge": "Security",
+      "xrayCharges": "X-Ray",
+      "handlingCharges": "Handling",
+      "transitTime": "Transit",
+      "currency": "Currency",
+      "validity": "Validity"
+    }
+  },
+  "progress": {
+    "processed": "Processed",
+    "ofSheets": "of {total} sheets"
+  },
+  "table": {
+    "noDataAvailable": "No data available"
   }
 }

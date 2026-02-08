@@ -58,3 +58,27 @@ export async function getExcelFlowJob(jobId: string) {
   const res = await api.get(`/excel-flow/jobs/${jobId}`);
   return res.data;
 }
+
+/**
+ * -----------------------------
+ * AIR FREIGHT FLOW APIs
+ * -----------------------------
+ */
+
+/**
+ * ✅ Create job for ONE sheet (Air Freight Flow-based)
+ */
+export async function createAirFreightFlowJob(
+  payload: RawExcelSheetFlowPayload,
+) {
+  const res = await api.post("/excel/jobs/air-freight/single", payload);
+  return res.data as { jobId: string };
+}
+
+/**
+ * ✅ Get Air Freight job status/result
+ */
+export async function getAirFreightJob(jobId: string) {
+  const res = await api.get(`/excel/jobs/${jobId}`);
+  return res.data;
+}

@@ -16,6 +16,7 @@ export type TableProps<T> = {
   pageSize: number;
   totalItems: number;
   onPageChange: (page: number) => void;
+  onCellChange?: (rowIndex: number, key: keyof T, value: string) => void;
   isLoading?: boolean;
   emptyMessage?: string;
 };

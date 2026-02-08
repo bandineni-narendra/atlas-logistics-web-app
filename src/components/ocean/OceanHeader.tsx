@@ -1,4 +1,7 @@
-import { ConfidenceBadge, FileLabel } from "@/components/feedback";
+"use client";
+
+import { useTranslations } from "next-intl";
+import { Card, CardContent, ConfidenceIndicator } from "@/components/ui";
 
 export type OceanHeaderProps = {
   confidence: number;
@@ -6,21 +9,34 @@ export type OceanHeaderProps = {
 };
 
 /**
- * Ocean freight page header
- * Displays title and confidence score
+ * Ocean freight results header
+ * Displays confidence score in a metric card
  */
 export function OceanHeader({ confidence, fileName }: OceanHeaderProps) {
+  const t = useTranslations();
+
   return (
-    <div className="px-8 py-6 border-b border-gray-200">
-      <h1 className="text-3xl font-bold text-gray-900">Ocean Freight Rates</h1>
-
-      {fileName && (
-        <p className="text-sm text-gray-600 mt-1">File: {fileName}</p>
-      )}
-
-      <div className="mt-4">
-        <ConfidenceBadge confidence={confidence} />
-      </div>
-    </div>
+    <Card padding="md">
+      <CardContent>
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-medium text-gray-500">
+              {t("ocean.confidence")}
+            </h3>
+            <div className="mt-2">
+              <ConfidenceIndicator value={confidence} size="md" />
+            </div>
+          </div>
+          {fileName && (
+            <div className="text-right">
+              <p className="text-sm text-gray-500">{t("common.file")}</p>
+              <p className="text-sm font-medium text-gray-900 mt-1">
+                {fileName}
+              </p>
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

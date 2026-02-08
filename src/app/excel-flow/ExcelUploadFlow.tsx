@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import * as XLSX from "xlsx";
+import { useTranslations } from "next-intl";
 
 import { OceanFreightResult } from "@/types/ocean";
 
@@ -29,6 +30,7 @@ export default function ExcelUploadFlow({
   onSheetCompleted,
   onUploadError,
 }: ExcelUploadFlowProps) {
+  const t = useTranslations();
   const { submit, getJob } = useExcelJob();
 
   const [sheetJobs, setSheetJobs] = useState<SheetJobState[]>([]);
@@ -45,106 +47,101 @@ export default function ExcelUploadFlow({
     uploadErrorRef.current = onUploadError;
   }, [onTotalSheetsDetected, onSheetCompleted, onUploadError]);
 
-  const handleFileUpload = async (file: File) => {
-    setFileName(file.name);
-    setSheetJobs([]);
+  const handleFileUpload = useCallback(
+    async (file: File) => {
+      setFileName(file.name);
+      setSheetJobs([]);
 
-    try {
-      const buffer = await file.arrayBuffer();
-      const workbook = XLSX.read(buffer, { type: "array" });
+      try {
+        const buffer = await file.arrayBuffer();
+        const workbook = XLSX.read(buffer, { type: "array" });
 
-      // ✅ HARD SAFETY CHECK
-      if (
-        !workbook ||
-        !Array.isArray(workbook.SheetNames) ||
-        workbook.SheetNames.length === 0
-      ) {
-        throw new Error("Invalid or empty Excel file");
-      }
-
-      const sheets: RawExcelSheet[] = workbook.SheetNames.map((sheetName) => {
-        const ws = workbook.Sheets[sheetName];
-        if (!ws) {
-          throw new Error(`Cannot read sheet "${sheetName}"`);
+        // ✅ HARD SAFETY CHECK
+        if (
+          !workbook ||
+          !Array.isArray(workbook.SheetNames) ||
+          workbook.SheetNames.length === 0
+        ) {
+          throw new Error(t("errors.invalidOrEmptyExcel"));
         }
 
-        const rows = XLSX.utils.sheet_to_json(ws, {
-          header: 1,
-          raw: true,
-        }) as unknown[][];
+        const sheets: RawExcelSheet[] = workbook.SheetNames.map((sheetName) => {
+          const ws = workbook.Sheets[sheetName];
+          if (!ws) {
+            throw new Error(t("errors.cannotReadSheet", { sheetName }));
+          }
 
-        return {
-          sheetName,
-          rows: rows.filter((r) => !isRowEmpty(r)),
-        };
-      });
+          const rows = XLSX.utils.sheet_to_json(ws, {
+            header: 1,
+            raw: true,
+          }) as unknown[][];
 
-      // ✅ SAFE callback call
-      totalSheetsRef.current?.(sheets.length);
+          return {
+            sheetName,
+            rows: rows.filter((r) => !isRowEmpty(r)),
+          };
+        });
 
-      setSheetJobs(
-        sheets.map((s) => ({
-          sheetName: s.sheetName,
-          status: "WAITING",
-        })),
-      );
+        // ✅ SAFE callback call
+        totalSheetsRef.current?.(sheets.length);
 
-      // 🔁 FLOW (sequential, stable)
-      for (let i = 0; i < sheets.length; i++) {
-        const sheet = sheets[i];
-
-        setSheetJobs((prev) =>
-          prev.map((j, idx) => (idx === i ? { ...j, status: "PENDING" } : j)),
+        setSheetJobs(
+          sheets.map((s) => ({
+            sheetName: s.sheetName,
+            status: "WAITING",
+          })),
         );
 
-        const payload: RawExcelSheetFlowPayload = {
-          fileName: file.name,
-          sheet,
-        };
+        // 🔁 FLOW (sequential, stable)
+        for (let i = 0; i < sheets.length; i++) {
+          const sheet = sheets[i];
 
-        const { jobId } = await submit(payload);
+          setSheetJobs((prev) =>
+            prev.map((j, idx) => (idx === i ? { ...j, status: "PENDING" } : j)),
+          );
 
-        setSheetJobs((prev) =>
-          prev.map((j, idx) => (idx === i ? { ...j, status: "RUNNING" } : j)),
+          const payload: RawExcelSheetFlowPayload = {
+            fileName: file.name,
+            sheet,
+          };
+
+          const { jobId } = await submit(payload);
+
+          setSheetJobs((prev) =>
+            prev.map((j, idx) => (idx === i ? { ...j, status: "RUNNING" } : j)),
+          );
+
+          const result = await waitForJobCompletion<OceanFreightResult>(
+            getJob,
+            jobId,
+          );
+
+          setSheetJobs((prev) =>
+            prev.map((j, idx) =>
+              idx === i ? { ...j, status: "COMPLETED" } : j,
+            ),
+          );
+
+          // ✅ SAFE emit
+          sheetCompletedRef.current?.(sheet.sheetName, result);
+        }
+      } catch (e: any) {
+        uploadErrorRef.current?.(
+          e?.message ?? t("errors.excelProcessingFailed"),
         );
-
-        const result = await waitForJobCompletion<OceanFreightResult>(
-          getJob,
-          jobId,
-        );
-
-        setSheetJobs((prev) =>
-          prev.map((j, idx) => (idx === i ? { ...j, status: "COMPLETED" } : j)),
-        );
-
-        // ✅ SAFE emit
-        sheetCompletedRef.current?.(sheet.sheetName, result);
       }
-    } catch (e: any) {
-      uploadErrorRef.current?.(e?.message ?? "Excel processing failed");
-    }
-  };
+    },
+    [submit, getJob],
+  );
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-wrap items-center gap-4">
       <FileSelectButton
         onFileSelect={handleFileUpload}
-        label="Select Excel File"
+        label={t("buttons.selectExcelFile")}
       />
 
       {fileName && <FileLabel fileName={fileName} variant="muted" />}
-
-      {sheetJobs.map((job) => (
-        <div
-          key={job.sheetName}
-          className="flex justify-between text-sm border rounded px-3 py-2"
-        >
-          <span>{job.sheetName}</span>
-          <span>
-            <JobStatus status={job.status} />
-          </span>
-        </div>
-      ))}
     </div>
   );
 }

@@ -1,87 +1,134 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { OceanFreightResult } from "@/types/ocean";
 import { ExcelUpload } from "@/components/excel";
+import { OceanHeader, OceanWarnings, OceanTable } from "@/components/ocean";
 import {
-  OceanHeader,
-  OceanWarnings,
-  OceanTable,
-  ErrorBox,
-  PageTitle,
-  LinkButton,
-} from "@/components";
+  PageContainer,
+  PageHeader,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  Alert,
+  Button,
+  EmptyState,
+} from "@/components/ui";
 
 /**
  * Ocean Freight page
  * Shows Excel upload and displays processed results
  */
 export default function OceanPage() {
+  const t = useTranslations();
   const [result, setResult] = useState<OceanFreightResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleUploadSuccess = (data: OceanFreightResult) => {
+  const handleUploadSuccess = useCallback((data: OceanFreightResult) => {
     setResult(data);
     setError(null);
-  };
+  }, []);
 
-  const handleUploadError = (errorMsg: string) => {
+  const handleUploadError = useCallback((errorMsg: string) => {
     setError(errorMsg);
     setResult(null);
-  };
+  }, []);
 
+  const handleReset = useCallback(() => {
+    setError(null);
+    setResult(null);
+  }, []);
+
+  // Error state
   if (error) {
     return (
-      <div className="px-8 py-6">
-        <PageTitle>Ocean Freight Rates</PageTitle>
-        <div className="mb-6 mt-6">
-          <ErrorBox
-            message={error}
-            onRetry={() => {
-              setError(null);
-              setResult(null);
-            }}
-          />
-        </div>
-        <ExcelUpload
-          onUploadSuccess={handleUploadSuccess}
-          onUploadError={handleUploadError}
+      <PageContainer>
+        <PageHeader
+          title={t("ocean.pageTitle")}
+          description={t("ocean.uploadDescription")}
         />
-      </div>
+        <div className="space-y-6">
+          <Alert
+            variant="error"
+            title={t("errors.title")}
+            action={
+              <Button variant="ghost" size="sm" onClick={handleReset}>
+                {t("buttons.tryAgain")}
+              </Button>
+            }
+          >
+            {error}
+          </Alert>
+          <Card>
+            <CardHeader>
+              <CardTitle>Upload File</CardTitle>
+              <CardDescription>Select an Excel file to process</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ExcelUpload
+                onUploadSuccess={handleUploadSuccess}
+                onUploadError={handleUploadError}
+              />
+            </CardContent>
+          </Card>
+        </div>
+      </PageContainer>
     );
   }
 
+  // Empty state - no result yet
   if (!result) {
     return (
-      <div className="px-8 py-6">
-        <PageTitle>Ocean Freight Rates</PageTitle>
-        <p className="text-gray-600 mb-6 mt-6">
-          Upload an Excel file to extract and analyze Ocean Freight rate data.
-        </p>
-        <ExcelUpload
-          onUploadSuccess={handleUploadSuccess}
-          onUploadError={handleUploadError}
+      <PageContainer>
+        <PageHeader
+          title={t("ocean.pageTitle")}
+          description={t("ocean.uploadDescription")}
         />
-      </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Upload Rate Sheet</CardTitle>
+            <CardDescription>
+              Upload an Excel file containing ocean freight rates for AI-powered
+              extraction
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ExcelUpload
+              onUploadSuccess={handleUploadSuccess}
+              onUploadError={handleUploadError}
+            />
+          </CardContent>
+        </Card>
+      </PageContainer>
     );
   }
 
+  // Result state - show data
   return (
-    <>
-      <OceanHeader confidence={result.confidence} />
-      <OceanWarnings warnings={result.warnings} />
-      <OceanTable data={result.data} isLoading={isLoading} />
-      <div className="px-8 py-4 border-t border-gray-200">
-        <LinkButton
-          onClick={() => {
-            setResult(null);
-            setError(null);
-          }}
-        >
-          ← Upload Different File
-        </LinkButton>
+    <PageContainer maxWidth="full">
+      <PageHeader
+        title={t("ocean.pageTitle")}
+        actions={
+          <Button variant="secondary" onClick={handleReset}>
+            {t("buttons.uploadDifferentFile")}
+          </Button>
+        }
+      />
+
+      <div className="space-y-6">
+        {/* Confidence & Warnings Section */}
+        <OceanHeader confidence={result.confidence} />
+        <OceanWarnings warnings={result.warnings} />
+
+        {/* Data Table */}
+        <Card padding="none" shadow="md">
+          <OceanTable data={result.data} isLoading={isLoading} />
+        </Card>
       </div>
-    </>
+    </PageContainer>
   );
 }

@@ -1,4 +1,8 @@
+"use client";
+
 import React from "react";
+import { useTranslations } from "next-intl";
+import { StatusBadge } from "@/components/ui";
 
 export type JobStatusType =
   | "LOADING"
@@ -8,41 +12,58 @@ export type JobStatusType =
   | "COMPLETED"
   | "FAILED";
 
-const STATUS_CONFIG: Record<JobStatusType, { icon: string; label: string }> = {
-  LOADING: { icon: "🧠", label: "AI is analyzing your Excel…" },
-  WAITING: { icon: "⏸", label: "Waiting" },
-  PENDING: { icon: "⏳", label: "Queued" },
-  RUNNING: { icon: "⚙️", label: "Processing" },
-  COMPLETED: { icon: "✅", label: "Completed" },
-  FAILED: { icon: "❌", label: "Failed" },
+const STATUS_VARIANT: Record<
+  JobStatusType,
+  "loading" | "pending" | "success" | "error"
+> = {
+  LOADING: "loading",
+  WAITING: "pending",
+  PENDING: "pending",
+  RUNNING: "loading",
+  COMPLETED: "success",
+  FAILED: "error",
+};
+
+const STATUS_KEYS: Record<JobStatusType, string> = {
+  LOADING: "status.loading",
+  WAITING: "status.waiting",
+  PENDING: "status.pending",
+  RUNNING: "status.running",
+  COMPLETED: "status.completed",
+  FAILED: "status.failed",
 };
 
 export interface JobStatusProps {
-  status: JobStatusType;
+  status?: JobStatusType | string | null;
   variant?: "inline" | "block";
 }
 
 /**
  * Reusable job status component
- * Renders icon + label based on status
+ * Renders StatusBadge based on status
+ * Returns null if status is not provided or not recognized
  */
 export const JobStatus: React.FC<JobStatusProps> = ({
   status,
   variant = "inline",
 }) => {
-  const config = STATUS_CONFIG[status];
+  const t = useTranslations();
+
+  if (!status || !(status in STATUS_VARIANT)) {
+    return null;
+  }
+
+  const statusType = status as JobStatusType;
+  const badgeVariant = STATUS_VARIANT[statusType];
+  const label = t(STATUS_KEYS[statusType]);
 
   if (variant === "block") {
     return (
-      <p className="text-sm text-gray-600">
-        {config.icon} {config.label}
-      </p>
+      <div className="py-1">
+        <StatusBadge status={badgeVariant} label={label} />
+      </div>
     );
   }
 
-  return (
-    <span>
-      {config.icon} {config.label}
-    </span>
-  );
+  return <StatusBadge status={badgeVariant} label={label} />;
 };
