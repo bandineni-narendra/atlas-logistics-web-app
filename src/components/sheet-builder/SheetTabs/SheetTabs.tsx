@@ -8,7 +8,7 @@
 
 import { useState, useCallback } from "react";
 import { Sheet } from "@/core/sheet-builder";
-import { useFeedbackModal, WarningModal } from "@/core/feedback";
+import { useFeedbackModal } from "@/hooks";
 
 interface SheetTabsProps {
   sheets: Sheet[];
@@ -197,17 +197,6 @@ export function SheetTabs({
         </svg>
         <span>Add Sheet</span>
       </button>
-
-      {/* Warning Modal for Reset Confirmation */}
-      <WarningModal
-        isOpen={state.warning.isOpen}
-        onClose={closeWarningModal}
-        message={state.warning.message}
-        onContinue={state.warning.onContinue}
-        title={state.warning.title}
-        continueLabel="Reset"
-        cancelLabel="Cancel"
-      />
     </div>
   );
 }

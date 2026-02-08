@@ -12,19 +12,12 @@ import { SheetBuilder, Sheet } from "@/core/sheet-builder";
 import { airFreightColumns } from "../config";
 import { mapToAirRate, AirRate } from "../models";
 import { validateAirSheets } from "../validation";
-import {
-  useFeedbackModal,
-  ValidationModal,
-  SuccessModal,
-  ErrorModal,
-} from "@/core/feedback";
+import { useFeedbackModal } from "@/hooks";
 
 export default function CreateAirSheet() {
   const [sheets, setSheets] = useState<Sheet[]>([]);
   const {
     state,
-    openValidationModal,
-    closeValidationModal,
     openSuccessModal,
     closeSuccessModal,
     openErrorModal,
@@ -44,9 +37,14 @@ export default function CreateAirSheet() {
     // Show validation errors if any
     if (!validationResult.isValid) {
       if (validationResult.issues.length > 0) {
-        openValidationModal(validationResult);
+        // Validation error - show message
+        openErrorModal(
+          "Validation Error",
+          "Please fix the validation errors and try again."
+        );
       } else {
         openErrorModal(
+          "Error",
           "Please add at least one complete row with all required fields filled."
         );
       }
@@ -107,26 +105,6 @@ export default function CreateAirSheet() {
           Save
         </button>
       </div>
-
-      {/* Modals */}
-      <ValidationModal
-        isOpen={state.validation.isOpen}
-        onClose={closeValidationModal}
-        result={state.validation.result!}
-      />
-      <SuccessModal
-        isOpen={state.success.isOpen}
-        onClose={closeSuccessModal}
-        message={state.success.message}
-        title={state.success.title}
-      />
-      <ErrorModal
-        isOpen={state.error.isOpen}
-        onClose={closeErrorModal}
-        message={state.error.message}
-        title={state.error.title}
-        detail={state.error.detail}
-      />
     </div>
   );
 }
