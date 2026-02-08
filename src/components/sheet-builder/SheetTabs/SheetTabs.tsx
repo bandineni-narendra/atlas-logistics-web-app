@@ -31,13 +31,12 @@ export function SheetTabs({
 }: SheetTabsProps) {
   const [editingSheetId, setEditingSheetId] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState("");
-  const [resetTarget, setResetTarget] = useState<{ id: string; name: string } | null>(null);
-  
-  const {
-    state,
-    openWarningModal,
-    closeWarningModal,
-  } = useFeedbackModal();
+  const [resetTarget, setResetTarget] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+
+  const { state, openWarningModal, closeWarningModal } = useFeedbackModal();
 
   const startEditing = useCallback((sheet: Sheet, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -45,29 +44,35 @@ export function SheetTabs({
     setEditingValue(sheet.name);
   }, []);
 
-  const saveEdit = useCallback((sheetId: string) => {
-    if (editingValue.trim()) {
-      onUpdateSheetName(sheetId, editingValue.trim());
-    }
-    setEditingSheetId(null);
-    setEditingValue("");
-  }, [editingValue, onUpdateSheetName]);
+  const saveEdit = useCallback(
+    (sheetId: string) => {
+      if (editingValue.trim()) {
+        onUpdateSheetName(sheetId, editingValue.trim());
+      }
+      setEditingSheetId(null);
+      setEditingValue("");
+    },
+    [editingValue, onUpdateSheetName],
+  );
 
   const cancelEdit = useCallback(() => {
     setEditingSheetId(null);
     setEditingValue("");
   }, []);
 
-  const handleReset = useCallback((sheetId: string, sheetName: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    openWarningModal(
-      `Reset all data in "${sheetName}"? This cannot be undone.`,
-      () => {
-        onResetSheet(sheetId);
-      },
-      "Confirm Reset"
-    );
-  }, [openWarningModal, onResetSheet]);
+  const handleReset = useCallback(
+    (sheetId: string, sheetName: string, e: React.MouseEvent) => {
+      e.stopPropagation();
+      openWarningModal(
+        `Reset all data in "${sheetName}"? This cannot be undone.`,
+        () => {
+          onResetSheet(sheetId);
+        },
+        "Confirm Reset",
+      );
+    },
+    [openWarningModal, onResetSheet],
+  );
 
   return (
     <div className="flex items-center gap-0.5 border-b-2 border-neutral-200 bg-neutral-50 px-3 py-1.5">

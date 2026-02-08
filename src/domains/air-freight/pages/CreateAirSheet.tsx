@@ -40,12 +40,12 @@ export default function CreateAirSheet() {
         // Validation error - show message
         openErrorModal(
           "Validation Error",
-          "Please fix the validation errors and try again."
+          "Please fix the validation errors and try again.",
         );
       } else {
         openErrorModal(
           "Error",
-          "Please add at least one complete row with all required fields filled."
+          "Please add at least one complete row with all required fields filled.",
         );
       }
       return;
@@ -56,7 +56,7 @@ export default function CreateAirSheet() {
     sheets.forEach((sheet) => {
       sheet.rows.forEach((row) => {
         const hasData = Object.values(row.cells).some(
-          (value) => value !== null && value !== "" && value !== undefined
+          (value) => value !== null && value !== "" && value !== undefined,
         );
         if (!hasData) return;
 
@@ -70,7 +70,7 @@ export default function CreateAirSheet() {
     // All valid - save the data
     console.log("✅ Saving valid air rates:", rates);
     openSuccessModal(
-      `${rates.length} air freight rate${rates.length > 1 ? "s" : ""} saved successfully!`
+      `${rates.length} air freight rate${rates.length > 1 ? "s" : ""} saved successfully!`,
     );
     // Here you would typically send rates to your API
   };
