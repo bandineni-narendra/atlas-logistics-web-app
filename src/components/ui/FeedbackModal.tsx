@@ -133,12 +133,32 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
 
           {/* Footer */}
           <div className="flex gap-3 p-6 border-t-2 border-gray-300 justify-end bg-gray-50 rounded-b-[calc(0.5rem-2px)] sticky bottom-0">
-            <button
-              onClick={onClose}
-              className={`px-6 py-2 rounded-md font-semibold text-white ${styles.buttonBg} transition-colors duration-150`}
-            >
-              OK
-            </button>
+            {state.type === "warning" && state.onConfirm ? (
+              <>
+                <button
+                  onClick={onClose}
+                  className="px-6 py-2 rounded-md font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors duration-150"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    state.onConfirm?.();
+                    onClose();
+                  }}
+                  className={`px-6 py-2 rounded-md font-semibold text-white ${styles.buttonBg} transition-colors duration-150`}
+                >
+                  Confirm
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={onClose}
+                className={`px-6 py-2 rounded-md font-semibold text-white ${styles.buttonBg} transition-colors duration-150`}
+              >
+                OK
+              </button>
+            )}
           </div>
         </div>
       </div>

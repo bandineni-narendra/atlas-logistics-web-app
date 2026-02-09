@@ -43,6 +43,7 @@ export function SheetTable({
       id: newColumnId,
       label: `Column ${sheet.columns.length + 1}`,
       type: ColumnType.TEXT,
+      width: 150, // Default width for new columns
     });
     onAddColumn(newColumn);
   }, [sheet.columns.length, onAddColumn]);
@@ -50,7 +51,7 @@ export function SheetTable({
   return (
     <div className="flex flex-col gap-4">
       {/* Modern minimalistic spreadsheet container */}
-      <div className="overflow-auto rounded-2xl bg-white shadow-lg border border-gray-200 p-4">
+      <div className="overflow-x-auto rounded-2xl bg-white shadow-lg border border-gray-200 p-4">
         <table className="border-collapse w-full">
           <TableHeader
             columns={sheet.columns}
@@ -61,8 +62,13 @@ export function SheetTable({
           <tbody>
             {sheet.rows.length === 0 ? (
               <tr>
-                <td colSpan={sheet.columns.length + 1} className="text-center py-16">
-                  <p className="text-gray-400 text-sm">Click Add row to add data</p>
+                <td
+                  colSpan={sheet.columns.length + 1}
+                  className="text-center py-16"
+                >
+                  <p className="text-gray-400 text-sm">
+                    Click Add row to add data
+                  </p>
                 </td>
               </tr>
             ) : (

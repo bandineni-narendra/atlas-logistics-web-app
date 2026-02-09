@@ -9,7 +9,7 @@
 import { useState, useCallback } from "react";
 import { Sheet } from "@/core/sheet-builder";
 import { useFeedbackModal } from "@/hooks";
-
+import { FeedbackModal } from "@/components/ui";
 interface SheetTabsProps {
   sheets: Sheet[];
   activeSheetId: string;
@@ -202,6 +202,9 @@ export function SheetTabs({
         </svg>
         <span>Add Sheet</span>
       </button>
+
+      {/* Feedback Modal for confirmations */}
+      <FeedbackModal state={state} onClose={closeWarningModal} />
     </div>
   );
 }

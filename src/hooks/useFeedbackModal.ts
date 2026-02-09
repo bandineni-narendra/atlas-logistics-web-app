@@ -106,7 +106,7 @@ export function useFeedbackModal() {
         openModal("warning", title, onConfirmOrMessage);
       }
     },
-    [],
+    [openModal],
   );
 
   const openInfoModal = useCallback(

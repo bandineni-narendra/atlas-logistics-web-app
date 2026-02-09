@@ -16,23 +16,29 @@ interface TableCellProps {
   onChange: (value: CellValue) => void;
 }
 
-export const TableCell = memo(function TableCell({ column, value, onChange }: TableCellProps) {
-  const handleChange = useCallback((
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    const newValue = e.target.value;
+export const TableCell = memo(function TableCell({
+  column,
+  value,
+  onChange,
+}: TableCellProps) {
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const newValue = e.target.value;
 
-    if (column.type === ColumnType.NUMBER) {
-      onChange(newValue === "" ? null : parseFloat(newValue));
-    } else if (column.type === ColumnType.BOOLEAN) {
-      onChange((e.target as HTMLInputElement).checked);
-    } else {
-      onChange(newValue || null);
-    }
-  }, [column.type, onChange]);
+      if (column.type === ColumnType.NUMBER) {
+        onChange(newValue === "" ? null : parseFloat(newValue));
+      } else if (column.type === ColumnType.BOOLEAN) {
+        onChange((e.target as HTMLInputElement).checked);
+      } else {
+        onChange(newValue || null);
+      }
+    },
+    [column.type, onChange],
+  );
 
   // Modern minimalistic input styles
-  const baseInputClasses = useMemo(() => `
+  const baseInputClasses = useMemo(
+    () => `
     w-full h-full px-2 py-1.5
     text-xs font-normal text-black
     placeholder:text-gray-400
@@ -41,7 +47,9 @@ export const TableCell = memo(function TableCell({ column, value, onChange }: Ta
     focus:ring-0 focus:outline-none focus:border-0 focus:shadow-none
     cursor-text
     [color-scheme:light]
-  `, []);
+  `,
+    [],
+  );
 
   const columnWidth = useMemo(() => column.width || 150, [column.width]);
 
@@ -128,7 +136,7 @@ export const TableCell = memo(function TableCell({ column, value, onChange }: Ta
     <td
       className="relative border-r border-b border-gray-100 bg-white hover:bg-gray-50 outline-none focus-within:bg-white focus-within:shadow-md focus-within:border-gray-300 focus-within:z-10"
       style={{
-        minWidth: "100px",
+        width: `${columnWidth}px`,
         transition:
           "background-color 200ms, box-shadow 200ms, border-color 200ms",
       }}

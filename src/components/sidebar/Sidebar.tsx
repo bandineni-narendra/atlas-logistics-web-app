@@ -42,9 +42,9 @@ export function Sidebar({ currentPath }: SidebarProps) {
   );
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen">
+    <aside className="w-56 bg-white border-r border-gray-200 flex flex-col h-screen">
       {/* Logo Section */}
-      <div className="px-6 py-5 border-b border-gray-100">
+      <div className="px-5 py-4 border-b border-gray-100">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-sm">
             <span className="text-white font-bold text-lg">A</span>

@@ -1,13 +1,21 @@
 /**
  * Sheet Builder Context
- * 
+ *
  * Provides persistent state for sheet builders across navigation.
  * Data persists in memory until page refresh.
  */
 
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useMemo,
+  useRef,
+  useEffect,
+} from "react";
 import { Sheet } from "@/core/sheet-builder";
 
 interface SheetBuilderState {
@@ -24,23 +32,33 @@ interface SheetBuilderContextType {
 }
 
 const SheetBuilderContext = createContext<SheetBuilderContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export function SheetBuilderProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<SheetBuilderState>({});
+  const stateRef = useRef(state);
 
-  const getSheetState = (key: string) => state[key];
+  // Keep ref in sync with state
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
 
-  const setSheetState = (key: string, newState: SheetBuilderState[string]) => {
-    setState((prev) => ({
-      ...prev,
-      [key]: newState,
-    }));
-  };
+  const contextValue = useMemo(
+    () => ({
+      getSheetState: (key: string) => stateRef.current[key],
+      setSheetState: (key: string, newState: SheetBuilderState[string]) => {
+        setState((prev) => ({
+          ...prev,
+          [key]: newState,
+        }));
+      },
+    }),
+    [],
+  ); // Empty deps - functions are stable
 
   return (
-    <SheetBuilderContext.Provider value={{ getSheetState, setSheetState }}>
+    <SheetBuilderContext.Provider value={contextValue}>
       {children}
     </SheetBuilderContext.Provider>
   );
@@ -50,7 +68,7 @@ export function useSheetBuilderContext() {
   const context = useContext(SheetBuilderContext);
   if (!context) {
     throw new Error(
-      "useSheetBuilderContext must be used within SheetBuilderProvider"
+      "useSheetBuilderContext must be used within SheetBuilderProvider",
     );
   }
   return context;

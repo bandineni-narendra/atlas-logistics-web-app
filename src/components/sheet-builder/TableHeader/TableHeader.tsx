@@ -30,13 +30,16 @@ export function TableHeader({
     setEditingValue(column.label);
   }, []);
 
-  const saveEdit = useCallback((columnId: string) => {
-    if (editingValue.trim()) {
-      onUpdateColumnName(columnId, editingValue.trim());
-    }
-    setEditingColumnId(null);
-    setEditingValue("");
-  }, [editingValue, onUpdateColumnName]);
+  const saveEdit = useCallback(
+    (columnId: string) => {
+      if (editingValue.trim()) {
+        onUpdateColumnName(columnId, editingValue.trim());
+      }
+      setEditingColumnId(null);
+      setEditingValue("");
+    },
+    [editingValue, onUpdateColumnName],
+  );
 
   const cancelEdit = useCallback(() => {
     setEditingColumnId(null);
@@ -54,7 +57,7 @@ export function TableHeader({
               key={column.id}
               className="bg-gray-50 border-b border-gray-200 border-r border-gray-100 px-2 py-2 text-left group relative hover:bg-gray-100 transition-all duration-200"
               style={{
-                minWidth: `${Math.max(columnWidth * 0.7, 100)}px`,
+                width: `${columnWidth}px`,
               }}
             >
               <div className="pr-8 flex items-center gap-1">
@@ -125,9 +128,7 @@ export function TableHeader({
           className="bg-gray-50 border-b border-gray-200 px-2 py-2 text-center"
           style={{ width: "70px", minWidth: "70px" }}
         >
-          <span className="text-xs font-semibold text-gray-600">
-            Delete
-          </span>
+          <span className="text-xs font-semibold text-gray-600">Delete</span>
         </th>
 
         {/* Add Column button */}
