@@ -13,8 +13,8 @@
     "oceanFreight": "Ocean Freight",
     "airFreight": "Air Freight",
     "flow": "Flow",
-    "createAirSheet": "Create Air Rate Sheet",
-    "createOceanSheet": "Create Ocean Rate Sheet",
+    "createAirSheet": "Air Freight",
+    "createOceanSheet": "Ocean Freight",
     "profile": "Profile",
     "logout": "Logout"
   },
@@ -27,6 +27,7 @@
     "confirmPassword": "Confirm Password",
     "fullName": "Full Name",
     "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "Enter your password",
     "namePlaceholder": "John Doe",
     "welcomeBack": "Welcome back",
     "loginSubtitle": "Enter your credentials to access your account",

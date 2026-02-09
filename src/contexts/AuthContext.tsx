@@ -1,24 +1,32 @@
 /**
  * Authentication Context
- * 
+ *
  * Provides global authentication state and methods.
- * Handles session persistence and restoration.
+ * Uses Firebase Authentication with backend profile sync.
  */
 
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/config/firebase";
 import { User } from "@/types/auth";
-import { authClient } from "@/api/auth_client";
-import { useRouter } from "next/navigation";
+import * as authService from "@/services/auth";
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, name: string) => Promise<void>;
-  logout: () => void;
+  signInWithGoogle: () => Promise<void>;
+  logout: () => Promise<void>;
   updateProfile: (name?: string, avatar?: string) => Promise<void>;
   deleteAccount: () => Promise<void>;
 }
@@ -28,51 +36,58 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
 
-  // Restore session on mount
+  // Listen to Firebase auth state changes
   useEffect(() => {
-    const storedUser = localStorage.getItem("atlas_user");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error("Failed to parse stored user:", error);
-        localStorage.removeItem("atlas_user");
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          // Sync with backend to get full user profile
+          const userData = await authService.getCurrentUser();
+          setUser(userData);
+        } catch (error) {
+          console.error("Failed to sync user with backend:", error);
+          setUser(null);
+        }
+      } else {
+        setUser(null);
       }
-    }
-    setIsLoading(false);
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const signup = async (email: string, password: string, name: string) => {
-    const newUser = await authClient.signup(email, password, name);
+    const newUser = await authService.signup(email, password, name);
     setUser(newUser);
-    localStorage.setItem("atlas_user", JSON.stringify(newUser));
   };
 
-  const login = async (email: string) => {
-    const existingUser = await authClient.getUserByEmail(email);
+  const login = async (email: string, password: string) => {
+    const existingUser = await authService.login(email, password);
     setUser(existingUser);
-    localStorage.setItem("atlas_user", JSON.stringify(existingUser));
   };
 
-  const logout = () => {
+  const signInWithGoogle = async () => {
+    const googleUser = await authService.signInWithGoogle();
+    setUser(googleUser);
+  };
+
+  const logout = async () => {
+    await authService.logout();
     setUser(null);
-    localStorage.removeItem("atlas_user");
-    router.push("/login");
   };
 
   const updateProfile = async (name?: string, avatar?: string) => {
     if (!user) throw new Error("Not authenticated");
-    const updated = await authClient.updateProfile(user.email, name, avatar);
+    const updated = await authService.updateProfile(name, avatar);
     setUser(updated);
-    localStorage.setItem("atlas_user", JSON.stringify(updated));
   };
 
   const deleteAccount = async () => {
     if (!user) throw new Error("Not authenticated");
-    await authClient.deleteAccount(user.email);
-    logout();
+    await authService.deleteAccount();
+    setUser(null);
   };
 
   return (
@@ -83,6 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         login,
         signup,
+        signInWithGoogle,
         logout,
         updateProfile,
         deleteAccount,

@@ -13,6 +13,7 @@ import { airFreightColumns } from "../config";
 import { mapToAirRate, AirRate } from "../models";
 import { validateAirSheets } from "../validation";
 import { useFeedbackModal } from "@/hooks";
+import { FeedbackModal } from "@/components/ui";
 
 export default function CreateAirSheet() {
   const [sheets, setSheets] = useState<Sheet[]>([]);
@@ -37,14 +38,15 @@ export default function CreateAirSheet() {
     // Show validation errors if any
     if (!validationResult.isValid) {
       if (validationResult.issues.length > 0) {
-        // Validation error - show message
+        // Validation error - show message with detailed issues
         openErrorModal(
           "Validation Error",
-          "Please fix the validation errors and try again.",
+          "Please fix the following errors:",
+          validationResult.issues,
         );
       } else {
         openErrorModal(
-          "Error",
+          "No Data",
           "Please add at least one complete row with all required fields filled.",
         );
       }
@@ -70,6 +72,7 @@ export default function CreateAirSheet() {
     // All valid - save the data
     console.log("✅ Saving valid air rates:", rates);
     openSuccessModal(
+      "Success",
       `${rates.length} air freight rate${rates.length > 1 ? "s" : ""} saved successfully!`,
     );
     // Here you would typically send rates to your API
@@ -105,6 +108,9 @@ export default function CreateAirSheet() {
           Save
         </button>
       </div>
+
+      {/* Feedback Modal */}
+      <FeedbackModal state={state} onClose={closeErrorModal} />
     </div>
   );
 }

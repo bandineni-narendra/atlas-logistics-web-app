@@ -18,7 +18,7 @@ export interface OceanValidationOptions {
 
 export function validateOceanSheets(
   sheets: Sheet[],
-  options: OceanValidationOptions = { skipEmptyRows: true }
+  options: OceanValidationOptions = { skipEmptyRows: true },
 ): ValidationResult {
   const issues: ValidationIssue[] = [];
   let validCount = 0;
@@ -30,7 +30,7 @@ export function validateOceanSheets(
     sheet.rows.forEach((row: any, rowIndex: number) => {
       // Check if row has any data
       const hasData = Object.values(row.cells).some(
-        (value) => value !== null && value !== "" && value !== undefined
+        (value) => value !== null && value !== "" && value !== undefined,
       );
 
       if (!hasData && options.skipEmptyRows) {
@@ -39,29 +39,28 @@ export function validateOceanSheets(
 
       totalProcessed++;
 
+      // Always validate all rows with data, don't skip
       const oceanRate = mapToOceanRate(row.cells);
-      if (oceanRate) {
-        const errors = validateOceanRate(oceanRate);
+      const errors = validateOceanRate(oceanRate);
 
-        if (errors.length > 0) {
-          // Convert domain errors to ValidationIssues
-          errors.forEach((errorMessage) => {
-            // Extract column name from error message (format: "Field name is required")
-            const columnLabel = errorMessage.split(" is ")[0] || "Field";
+      if (errors.length > 0) {
+        // Convert domain errors to ValidationIssues
+        errors.forEach((errorMessage) => {
+          // Extract column name from error message (format: "Field name is required")
+          const columnLabel = errorMessage.split(" is ")[0] || "Field";
 
-            issues.push(
-              createValidationIssue(
-                sheetName,
-                rowIndex + 1, // 1-based for user display
-                columnLabel,
-                errorMessage,
-                "error"
-              )
-            );
-          });
-        } else {
-          validCount++;
-        }
+          issues.push(
+            createValidationIssue(
+              sheetName,
+              rowIndex + 1, // 1-based for user display
+              columnLabel,
+              errorMessage,
+              "error",
+            ),
+          );
+        });
+      } else {
+        validCount++;
       }
     });
   });

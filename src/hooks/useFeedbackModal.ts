@@ -1,10 +1,12 @@
 import { useState, useCallback } from "react";
+import { ValidationIssue } from "@/core/feedback";
 
 export interface FeedbackModalState {
   isOpen: boolean;
   type: "success" | "error" | "warning" | "info" | null;
   title: string;
   message: string;
+  issues?: ValidationIssue[];
   onConfirm?: () => void;
   onCancel?: () => void;
 }
@@ -23,7 +25,7 @@ export function useFeedbackModal() {
       title: string,
       message?: string | (() => void),
       onConfirm?: () => void,
-      confirmText?: string
+      confirmText?: string,
     ) => {
       // Handle overloaded parameters
       let finalMessage = "";
@@ -45,7 +47,7 @@ export function useFeedbackModal() {
         onConfirm: finalOnConfirm,
       });
     },
-    []
+    [],
   );
 
   const closeModal = useCallback(() => {
@@ -57,23 +59,38 @@ export function useFeedbackModal() {
 
   const openSuccessModal = useCallback(
     (title: string = "Success", message: string = "") => {
-      openModal("success", title, message);
+      setState({
+        isOpen: true,
+        type: "success",
+        title,
+        message,
+      });
     },
-    [openModal]
+    [],
   );
 
   const openErrorModal = useCallback(
-    (title: string = "Error", message: string = "") => {
-      openModal("error", title, message);
+    (
+      title: string = "Error",
+      message: string = "",
+      issues?: ValidationIssue[],
+    ) => {
+      setState({
+        isOpen: true,
+        type: "error",
+        title,
+        message,
+        issues,
+      });
     },
-    [openModal]
+    [],
   );
 
   const openWarningModal = useCallback(
     (
       title: string = "Warning",
       onConfirmOrMessage?: string | (() => void),
-      confirmText?: string
+      confirmText?: string,
     ) => {
       if (typeof onConfirmOrMessage === "function") {
         // Called as openWarningModal(message, callback, title)
@@ -89,14 +106,14 @@ export function useFeedbackModal() {
         openModal("warning", title, onConfirmOrMessage);
       }
     },
-    []
+    [],
   );
 
   const openInfoModal = useCallback(
     (title: string = "Information", message: string = "") => {
       openModal("info", title, message);
     },
-    [openModal]
+    [openModal],
   );
 
   return {

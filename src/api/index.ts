@@ -6,3 +6,6 @@ export { createExcelFlowJob, getExcelFlowJob } from "./flow_client";
 
 // Re-export auth client
 export { authClient } from "./auth_client";
+
+// Re-export sheet client
+export * from "./sheets_client";

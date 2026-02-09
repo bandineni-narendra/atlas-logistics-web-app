@@ -7,3 +7,4 @@ export * from "./Button";
 export * from "./Metrics";
 export * from "./Alert";
 export * from "./Input";
+export * from "./FeedbackModal";
