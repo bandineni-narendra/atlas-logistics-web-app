@@ -9,3 +9,6 @@ export { authClient } from "./auth_client";
 
 // Re-export sheet client
 export * from "./sheets_client";
+
+// Re-export file client
+export * from "./files_client";

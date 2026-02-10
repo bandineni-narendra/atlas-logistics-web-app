@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { SheetSummary } from "@/types/api/sheets";
-import { getSheets } from "@/api/sheets_client";
+import { FileSummary } from "@/types/file";
+import { getFiles } from "@/api/files_client";
 import { Card, CardContent } from "@/components/ui";
 import Link from "next/link";
 
@@ -32,27 +32,100 @@ const statusConfig = {
 };
 
 export function SheetsView({ filter = "all" }: SheetsViewProps) {
-  const [sheets, setSheets] = useState<SheetSummary[]>([]);
+  const [files, setFiles] = useState<FileSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  console.log(`[SheetsView] Rendering with filter="${filter}"`);
+
+  // Debug: Log whenever files state changes
   useEffect(() => {
-    const loadSheets = async () => {
+    console.log(
+      `[SheetsView State Update] files.length=${files.length}, loading=${loading}, error=${error}`,
+    );
+    if (files.length > 0) {
+      console.log(`[SheetsView State Update] Files in state:`, files);
+    }
+  }, [files, loading, error]);
+
+  useEffect(() => {
+    const loadFiles = async () => {
       try {
         setLoading(true);
-        const type = filter === "all" ? undefined : filter;
-        const response = await getSheets(1, 50, type);
-        setSheets(response.sheets);
+        console.log(`[SheetsView] Loading files for filter: ${filter}`);
+
+        const allFiles: FileSummary[] = [];
+
+        // Determine which types to fetch
+        const typesToFetch: ("AIR" | "OCEAN")[] =
+          filter === "all"
+            ? ["AIR", "OCEAN"]
+            : [filter.toUpperCase() as "AIR" | "OCEAN"];
+
+        console.log(`[SheetsView] Fetching types:`, typesToFetch);
+
+        // Fetch files for each type
+        for (const type of typesToFetch) {
+          try {
+            console.log(`[SheetsView] Fetching ${type} files...`);
+            const response = await getFiles({
+              type,
+              page: 1,
+              pageSize: 50,
+            });
+
+            console.log(`[SheetsView] ${type} response received:`, {
+              hasResponse: !!response,
+              responseType: typeof response,
+              hasItems: !!response?.items,
+              itemsType: typeof response?.items,
+              itemsIsArray: Array.isArray(response?.items),
+              itemsLength: response?.items?.length,
+              total: response?.total,
+              fullResponse: response, // Log entire response
+            });
+
+            // Safety check: ensure response has items array
+            if (response && response.items && Array.isArray(response.items)) {
+              console.log(
+                `[SheetsView] Adding ${response.items.length} ${type} files:`,
+                response.items,
+              );
+              allFiles.push(...response.items);
+            } else {
+              console.warn(
+                `[SheetsView] ${type} files response missing items:`,
+                response,
+              );
+            }
+          } catch (err) {
+            const errorMsg = err instanceof Error ? err.message : String(err);
+            console.error(
+              `[SheetsView] Failed to load ${type} files:`,
+              errorMsg,
+            );
+            setError(`Failed to load ${type} files: ${errorMsg}`);
+            // Continue loading other types even if one fails
+          }
+        }
+
+        console.log(`[SheetsView] Total files loaded: ${allFiles.length}`);
+        console.log(`[SheetsView] Files array:`, allFiles);
+        console.log(`[SheetsView] Setting state with ${allFiles.length} files`);
+        setFiles(allFiles);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load sheets");
-        setSheets([]);
+        const errorMsg =
+          err instanceof Error ? err.message : "Failed to load files";
+        console.error(`[SheetsView] Error:`, errorMsg);
+        setError(errorMsg);
+        setFiles([]);
       } finally {
         setLoading(false);
       }
     };
 
-    loadSheets();
+    loadFiles();
   }, [filter]);
 
   if (loading) {
@@ -60,7 +133,7 @@ export function SheetsView({ filter = "all" }: SheetsViewProps) {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-3"></div>
-          <p className="text-gray-600">Loading sheets...</p>
+          <p className="text-gray-600">Loading files...</p>
         </div>
       </div>
     );
@@ -76,12 +149,17 @@ export function SheetsView({ filter = "all" }: SheetsViewProps) {
     );
   }
 
-  if (sheets.length === 0) {
+  if (files.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">No sheets found</p>
-        <p className="text-sm text-gray-400 mt-1">
-          Create a new sheet to get started
+        <p className="text-gray-500 text-lg font-medium">No files found</p>
+        <p className="text-sm text-gray-400 mt-2">
+          {filter === "all"
+            ? "Create a new Air or Ocean freight file to get started"
+            : `Create a new ${filter} freight file to get started`}
+        </p>
+        <p className="text-xs text-gray-400 mt-4">
+          Check the console for API details if you expect files to appear
         </p>
       </div>
     );
@@ -89,12 +167,48 @@ export function SheetsView({ filter = "all" }: SheetsViewProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {sheets.map((sheet) => {
-        const typeInfo = typeConfig[sheet.type];
-        const statusInfo = statusConfig[sheet.status];
+      {files.map((file) => {
+        // Convert file type to lowercase for config lookup
+        const fileTypeKey = file.type.toLowerCase() as "ocean" | "air";
+        const typeInfo = typeConfig[fileTypeKey];
+
+        // Fallback if typeInfo not found
+        if (!typeInfo) {
+          console.warn(
+            `[SheetsView Render] Unknown file type: ${file.type}`,
+            file,
+          );
+          return (
+            <div
+              key={file.id}
+              className="p-4 bg-red-50 border border-red-200 rounded"
+            >
+              <p className="text-red-800">Unknown file type: {file.type}</p>
+              <p className="text-sm text-gray-600">{file.name}</p>
+            </div>
+          );
+        }
+
+        const statusInfo = statusConfig[file.status];
+
+        if (!statusInfo) {
+          console.warn(
+            `[SheetsView Render] Unknown status: ${file.status}`,
+            file,
+          );
+          return (
+            <div
+              key={file.id}
+              className="p-4 bg-yellow-50 border border-yellow-200 rounded"
+            >
+              <p className="text-yellow-800">Unknown status: {file.status}</p>
+              <p className="text-sm text-gray-600">{file.name}</p>
+            </div>
+          );
+        }
 
         return (
-          <Link key={sheet.id} href={`/sheets/${sheet.id}`}>
+          <Link key={file.id} href={`/files/${file.id}`}>
             <Card
               padding="lg"
               className="h-full hover:shadow-md hover:border-blue-200 transition-all duration-200 cursor-pointer group"
@@ -116,7 +230,7 @@ export function SheetsView({ filter = "all" }: SheetsViewProps) {
 
                 {/* Title */}
                 <h3 className="text-base font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
-                  {sheet.name}
+                  {file.name}
                 </h3>
 
                 {/* Type */}
@@ -127,16 +241,14 @@ export function SheetsView({ filter = "all" }: SheetsViewProps) {
                 {/* Stats */}
                 <div className="space-y-2 pt-3 border-t border-gray-200">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Rows:</span>
+                    <span className="text-gray-600">Sheets:</span>
                     <span className="font-semibold text-gray-900">
-                      {sheet.rowCount}
+                      {file.sheetCount}
                     </span>
                   </div>
                   <div className="flex justify-between text-xs text-gray-500">
                     <span>Updated:</span>
-                    <span>
-                      {new Date(sheet.updatedAt).toLocaleDateString()}
-                    </span>
+                    <span>{new Date(file.updatedAt).toLocaleDateString()}</span>
                   </div>
                 </div>
               </CardContent>

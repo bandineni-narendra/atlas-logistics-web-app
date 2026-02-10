@@ -8,6 +8,7 @@ export interface User {
   name: string;
   avatar?: string;
   provider?: "manual" | "google";
+  orgId?: string; // Organization ID (may be available from backend)
 }
 
 export interface LoginCredentials {

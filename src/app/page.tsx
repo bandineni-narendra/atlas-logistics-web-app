@@ -20,21 +20,29 @@ export default function Home() {
   const [statsLoading, setStatsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"all" | "ocean" | "air">("all");
 
-  // Load dashboard stats
+  // Load dashboard stats when authenticated
   useEffect(() => {
+    if (!isAuthenticated) {
+      console.log("Not yet authenticated, skipping stats fetch");
+      return;
+    }
+
     const loadStats = async () => {
       try {
+        console.log("Loading dashboard stats...");
         const response = await getDashboardStats();
+        console.log("Dashboard stats loaded:", response.stats);
         setStats(response.stats);
       } catch (error) {
         console.error("Failed to load stats:", error);
+        setStats(null);
       } finally {
         setStatsLoading(false);
       }
     };
 
     loadStats();
-  }, []);
+  }, [isAuthenticated]);
 
   // Show loading state
   if (isLoading) {

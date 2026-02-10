@@ -90,19 +90,96 @@ export async function getSheetDetail(
 
 /**
  * Get dashboard statistics
+ * Fetches stats from both Air and Ocean freight endpoints
  */
 export async function getDashboardStats(): Promise<GetDashboardStatsResponse> {
-  // TODO: Replace with actual Firebase API call
-  // const response = await fetch('/api/dashboard/stats');
+  try {
+    console.log("[getDashboardStats] Starting fetch...");
 
-  return new Promise((resolve) => {
-    // Simulate API delay
-    setTimeout(() => {
-      resolve({
-        stats: MOCK_DASHBOARD_STATS,
-      });
-    }, 300);
-  });
+    // Import files_client to fetch real data
+    const { getFileDashboardStats } = await import("./files_client");
+
+    // Fetch stats for both types
+    let airStats: any = null;
+    let oceanStats: any = null;
+
+    try {
+      console.log("[getDashboardStats] Fetching AIR stats...");
+      airStats = await getFileDashboardStats("AIR");
+      console.log("[getDashboardStats] AIR stats received:", airStats);
+    } catch (err) {
+      console.warn(
+        "[getDashboardStats] Failed to load Air freight stats:",
+        err,
+      );
+    }
+
+    try {
+      console.log("[getDashboardStats] Fetching OCEAN stats...");
+      oceanStats = await getFileDashboardStats("OCEAN");
+      console.log("[getDashboardStats] OCEAN stats received:", oceanStats);
+    } catch (err) {
+      console.warn(
+        "[getDashboardStats] Failed to load Ocean freight stats:",
+        err,
+      );
+    }
+
+    // If both failed, note it
+    if (!airStats && !oceanStats) {
+      console.warn(
+        "[getDashboardStats] Both API calls failed! Will use mock data.",
+      );
+    }
+
+    // Combine stats
+    const totalAirSheets = airStats?.stats?.totalSheets ?? 0;
+    const totalOceanSheets = oceanStats?.stats?.totalSheets ?? 0;
+    const totalSheets = totalAirSheets + totalOceanSheets;
+
+    const totalAirRows = airStats?.stats?.totalRows ?? 0;
+    const totalOceanRows = oceanStats?.stats?.totalRows ?? 0;
+    const totalRows = totalAirRows + totalOceanRows;
+
+    const airLastModified = airStats?.stats?.lastModified;
+    const oceanLastModified = oceanStats?.stats?.lastModified;
+
+    // Get the most recent modified date
+    let lastModified = new Date().toISOString();
+    if (airLastModified || oceanLastModified) {
+      const dates = [airLastModified, oceanLastModified].filter(Boolean);
+      if (dates.length > 0) {
+        lastModified = new Date(
+          Math.max(...dates.map((d) => new Date(d).getTime())),
+        ).toISOString();
+      }
+    }
+
+    const result = {
+      stats: {
+        totalSheets,
+        oceanSheets: totalOceanSheets,
+        airSheets: totalAirSheets,
+        totalRows,
+        lastModified,
+      },
+    };
+
+    console.log("[getDashboardStats] Final combined stats:", result);
+    return result;
+  } catch (error) {
+    console.error("[getDashboardStats] Fatal error:", error);
+
+    // Fallback to mock data if API fails
+    console.warn("[getDashboardStats] Using fallback mock data");
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          stats: MOCK_DASHBOARD_STATS,
+        });
+      }, 300);
+    });
+  }
 }
 
 /**

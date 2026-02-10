@@ -12,7 +12,7 @@ import { SheetBuilder, Sheet } from "@/core/sheet-builder";
 import { airFreightColumns } from "../config";
 import { mapToAirRate, AirRate } from "../models";
 import { validateAirSheets } from "../validation";
-import { useFeedbackModal } from "@/hooks";
+import { useFeedbackModal, useFileSave } from "@/hooks";
 import { FeedbackModal } from "@/components/ui";
 
 export default function CreateAirSheet() {
@@ -25,57 +25,46 @@ export default function CreateAirSheet() {
     closeErrorModal,
   } = useFeedbackModal();
 
+  // File save flow with modal
+  const { handleSaveFile, isSaving, FileNameModalComponent } = useFileSave({
+    fileType: "AIR",
+    effectiveDate: new Date().toISOString().split("T")[0],
+    validateSheets: (sheets) =>
+      validateAirSheets(sheets, { skipEmptyRows: true }),
+    onSuccess: (fileId, sheetIds) => {
+      // Collect valid rates for logging
+      const rates: AirRate[] = [];
+      sheets.forEach((sheet) => {
+        sheet.rows.forEach((row) => {
+          const hasData = Object.values(row.cells).some(
+            (value) => value !== null && value !== "" && value !== undefined,
+          );
+          if (!hasData) return;
+
+          const airRate = mapToAirRate(row.cells);
+          if (airRate) {
+            rates.push(airRate);
+          }
+        });
+      });
+
+      console.log("✅ File saved:", { fileId, sheetIds, rates });
+      openSuccessModal(
+        "Success",
+        `File saved successfully with ${sheetIds.length} sheet${sheetIds.length > 1 ? "s" : ""} and ${rates.length} air freight rate${rates.length > 1 ? "s" : ""}!`,
+      );
+    },
+    onError: (error) => {
+      openErrorModal("Validation Error", error);
+    },
+  });
+
   const handleSheetChange = (updatedSheets: Sheet[]) => {
     setSheets(updatedSheets);
   };
 
   const handleSave = () => {
-    // Run validation using domain adapter
-    const validationResult = validateAirSheets(sheets, {
-      skipEmptyRows: true,
-    });
-
-    // Show validation errors if any
-    if (!validationResult.isValid) {
-      if (validationResult.issues.length > 0) {
-        // Validation error - show message with detailed issues
-        openErrorModal(
-          "Validation Error",
-          "Please fix the following errors:",
-          validationResult.issues,
-        );
-      } else {
-        openErrorModal(
-          "No Data",
-          "Please add at least one complete row with all required fields filled.",
-        );
-      }
-      return;
-    }
-
-    // Collect valid rates for saving
-    const rates: AirRate[] = [];
-    sheets.forEach((sheet) => {
-      sheet.rows.forEach((row) => {
-        const hasData = Object.values(row.cells).some(
-          (value) => value !== null && value !== "" && value !== undefined,
-        );
-        if (!hasData) return;
-
-        const airRate = mapToAirRate(row.cells);
-        if (airRate) {
-          rates.push(airRate);
-        }
-      });
-    });
-
-    // All valid - save the data
-    console.log("✅ Saving valid air rates:", rates);
-    openSuccessModal(
-      "Success",
-      `${rates.length} air freight rate${rates.length > 1 ? "s" : ""} saved successfully!`,
-    );
-    // Here you would typically send rates to your API
+    handleSaveFile(sheets);
   };
 
   return (
@@ -110,7 +99,10 @@ export default function CreateAirSheet() {
       </div>
 
       {/* Feedback Modal */}
-      <FeedbackModal state={state} onClose={closeErrorModal} />
+      <FeedbackModal state={state} onClose={closeSuccessModal} />
+
+      {/* File Name Modal */}
+      {FileNameModalComponent}
     </div>
   );
 }

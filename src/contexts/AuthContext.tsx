@@ -42,9 +42,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
+          // Force refresh token to ensure we have latest custom claims (orgId)
+          const token = await firebaseUser.getIdToken(true);
+
+          // Debug: Verify orgId is in token
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          console.log("AuthContext - Token claims on load:", {
+            orgId: payload.orgId || payload.org_id,
+            userId: payload.user_id || payload.userId,
+            email: payload.email,
+            hasOrgId: !!(payload.orgId || payload.org_id),
+            allClaims: Object.keys(payload),
+          });
+
           // Sync with backend to get full user profile
-          const userData = await authService.getCurrentUser();
-          setUser(userData);
+          try {
+            const userData = await authService.getCurrentUser();
+            console.log("AuthContext - User data:", userData);
+
+            // WORKAROUND: Store orgId if present
+            if (userData.orgId) {
+              localStorage.setItem("user_orgId", userData.orgId);
+            }
+
+            setUser(userData);
+          } catch (error) {
+            console.error("Failed to sync user with backend:", error);
+            // Still set user as authenticated based on Firebase state
+            setUser({
+              id: firebaseUser.uid,
+              email: firebaseUser.email || "",
+              name: firebaseUser.displayName || firebaseUser.email || "",
+              avatar: firebaseUser.photoURL || undefined,
+            });
+          }
         } catch (error) {
           console.error("Failed to sync user with backend:", error);
           setUser(null);

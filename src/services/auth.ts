@@ -46,6 +46,23 @@ export async function signup(
 
     // 4. Sync with backend (creates user profile in database)
     const { data } = await apiClient.post("/auth/verify", { idToken });
+    console.log("Signup - Backend response:", data);
+
+    // 5. Force refresh token to get custom claims (orgId) set by backend
+    const refreshedToken = await credential.user.getIdToken(true);
+    const payload = JSON.parse(atob(refreshedToken.split(".")[1]));
+    console.log("Signup - Token claims after refresh:", {
+      orgId: payload.orgId || payload.org_id,
+      userId: payload.user_id || payload.userId,
+      allClaims: Object.keys(payload),
+    });
+
+    // WORKAROUND: Store orgId from backend response in localStorage
+    // This is temporary until backend sets custom claims properly
+    if (data.orgId) {
+      localStorage.setItem("user_orgId", data.orgId);
+      console.log("✅ Stored orgId from backend response:", data.orgId);
+    }
 
     return data;
   } catch (error: any) {
@@ -82,6 +99,22 @@ export async function login(email: string, password: string): Promise<User> {
 
     // 3. Sync profile with backend
     const { data } = await apiClient.post("/auth/verify", { idToken });
+    console.log("Login - Backend response:", data);
+
+    // 4. Force refresh token to get custom claims (orgId) set by backend
+    const refreshedToken = await credential.user.getIdToken(true);
+    const payload = JSON.parse(atob(refreshedToken.split(".")[1]));
+    console.log("Login - Token claims after refresh:", {
+      orgId: payload.orgId || payload.org_id,
+      userId: payload.user_id || payload.userId,
+      allClaims: Object.keys(payload),
+    });
+
+    // WORKAROUND: Store orgId from backend response in localStorage
+    if (data.orgId) {
+      localStorage.setItem("user_orgId", data.orgId);
+      console.log("✅ Stored orgId from backend response:", data.orgId);
+    }
 
     return data;
   } catch (error: any) {
@@ -120,6 +153,22 @@ export async function signInWithGoogle(): Promise<User> {
 
     // 3. Sync with backend
     const { data } = await apiClient.post("/auth/google", { idToken });
+    console.log("Google Sign-in - Backend response:", data);
+
+    // 4. Force refresh token to get custom claims (orgId) set by backend
+    const refreshedToken = await credential.user.getIdToken(true);
+    const payload = JSON.parse(atob(refreshedToken.split(".")[1]));
+    console.log("Google Sign-in - Token claims after refresh:", {
+      orgId: payload.orgId || payload.org_id,
+      userId: payload.user_id || payload.userId,
+      allClaims: Object.keys(payload),
+    });
+
+    // WORKAROUND: Store orgId from backend response in localStorage
+    if (data.orgId) {
+      localStorage.setItem("user_orgId", data.orgId);
+      console.log("✅ Stored orgId from backend response:", data.orgId);
+    }
 
     return data;
   } catch (error: any) {
@@ -138,11 +187,47 @@ export async function signInWithGoogle(): Promise<User> {
  * Get the current user's profile from backend
  * Requires authentication
  *
+ * Falls back to Firebase user data if backend endpoint not available
  * @returns User profile
  */
 export async function getCurrentUser(): Promise<User> {
-  const { data } = await apiClient.get("/auth/me");
-  return data;
+  const firebaseUser = auth.currentUser;
+  if (!firebaseUser) {
+    throw new Error("No authenticated user found");
+  }
+
+  try {
+    const { data } = await apiClient.get("/auth/me");
+    return data;
+  } catch (error: any) {
+    // WORKAROUND: If backend /auth/me endpoint not available (404 or network error)
+    // Return minimal user data from Firebase
+    const statusCode = error?.response?.status;
+    const isNetworkError = !error?.response;
+
+    if (statusCode === 404 || isNetworkError) {
+      console.warn(
+        `⚠️ GET /auth/me not available (${isNetworkError ? "network error" : "404"}). Using Firebase user data.`,
+      );
+
+      // Return minimal user object from Firebase
+      const orgId =
+        typeof window !== "undefined"
+          ? localStorage.getItem("user_orgId")
+          : null;
+
+      return {
+        id: firebaseUser.uid,
+        email: firebaseUser.email || "",
+        name: firebaseUser.displayName || firebaseUser.email || "",
+        avatar: firebaseUser.photoURL || undefined,
+        orgId: orgId || undefined,
+      };
+    }
+
+    // If it's a different error, throw it
+    throw error;
+  }
 }
 
 /**
@@ -180,7 +265,9 @@ export async function deleteAccount(): Promise<void> {
  */
 export async function logout(): Promise<void> {
   await signOut(auth);
+  // Clear stored orgId
   if (typeof window !== "undefined") {
+    localStorage.removeItem("user_orgId");
     window.location.href = "/login";
   }
 }
