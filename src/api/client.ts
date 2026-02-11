@@ -1,9 +1,20 @@
 import axios from "axios";
 import { RawExcelPayload } from "@/types/excel/excel";
-import { auth } from "@/config/firebase";
+import { TokenProvider } from "@/services/auth/TokenProvider";
+import { firebaseTokenProvider } from "@/infrastructure/firebase";
 
 // Use relative path - Next.js will rewrite to backend API
 const API_URL = "/api";
+
+// Use dependency injection for token provider
+let tokenProvider: TokenProvider = firebaseTokenProvider;
+
+/**
+ * Set custom token provider (for testing)
+ */
+export function setTokenProvider(provider: TokenProvider) {
+  tokenProvider = provider;
+}
 
 // Create API client
 const api = axios.create({
@@ -15,13 +26,11 @@ const api = axios.create({
   },
 });
 
-// Add Firebase token to all requests
+// Add authentication token to all requests
 api.interceptors.request.use(
   async (config) => {
-    const user = auth.currentUser;
-    if (user) {
-      // Get fresh token (Firebase auto-refreshes if expired)
-      const token = await user.getIdToken();
+    const token = await tokenProvider.getToken();
+    if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -39,21 +48,20 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      const user = auth.currentUser;
-      if (user) {
-        try {
-          // Force refresh token
-          const token = await user.getIdToken(true);
+      try {
+        // Force refresh token via provider
+        const token = await tokenProvider.getToken(true);
+        if (token) {
           originalRequest.headers.Authorization = `Bearer ${token}`;
           return api.request(originalRequest);
-        } catch (refreshError) {
-          // Token refresh failed - redirect to login
+        } else {
+          // No token - redirect to login
           if (typeof window !== "undefined") {
             window.location.href = "/login";
           }
         }
-      } else {
-        // No user - redirect to login
+      } catch (refreshError) {
+        // Token refresh failed - redirect to login
         if (typeof window !== "undefined") {
           window.location.href = "/login";
         }

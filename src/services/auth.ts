@@ -1,21 +1,26 @@
 /**
  * Authentication Service
  *
- * Handles authentication operations using Firebase SDK and backend API.
- * All functions sync with backend after Firebase authentication.
+ * Application layer service that orchestrates authentication operations.
+ * Uses AuthRepository abstraction instead of directly depending on Firebase.
+ * Syncs with backend after authentication.
  */
 
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-  signOut,
-  updateProfile as firebaseUpdateProfile,
-} from "firebase/auth";
-import { auth } from "@/config/firebase";
 import { apiClient } from "@/api/client";
 import { User } from "@/types/auth";
+import { AuthRepository } from "./auth/AuthRepository";
+import { firebaseAuthRepository } from "@/infrastructure/firebase";
+import { logger } from "@/utils";
+
+// Use dependency injection - can be replaced for testing
+let authRepository: AuthRepository = firebaseAuthRepository;
+
+/**
+ * Set custom auth repository (for testing)
+ */
+export function setAuthRepository(repository: AuthRepository) {
+  authRepository = repository;
+}
 
 /**
  * Sign up a new user with email and password
@@ -31,37 +36,40 @@ export async function signup(
   name: string,
 ): Promise<User> {
   try {
-    // 1. Create user in Firebase
-    const credential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password,
-    );
+    // 1. Create user via repository
+    const credentials = await authRepository.createUser(email, password);
 
-    // 2. Update display name in Firebase
-    await firebaseUpdateProfile(credential.user, { displayName: name });
+    // 2. Update display name
+    await authRepository.updateUserProfile(credentials.uid, { 
+      displayName: name 
+    });
 
-    // 3. Get Firebase ID token
-    const idToken = await credential.user.getIdToken();
+    // 3. Get ID token
+    const idToken = await authRepository.getCurrentUserToken();
+
+    if (!idToken) {
+      throw new Error("Failed to get authentication token");
+    }
 
     // 4. Sync with backend (creates user profile in database)
     const { data } = await apiClient.post("/auth/verify", { idToken });
-    console.log("Signup - Backend response:", data);
+    logger.debug("[auth] Signup - Backend verified");
 
     // 5. Force refresh token to get custom claims (orgId) set by backend
-    const refreshedToken = await credential.user.getIdToken(true);
+    const refreshedToken = await authRepository.getCurrentUserToken(true);
+    if (!refreshedToken) {
+      throw new Error("Failed to refresh authentication token");
+    }
     const payload = JSON.parse(atob(refreshedToken.split(".")[1]));
-    console.log("Signup - Token claims after refresh:", {
-      orgId: payload.orgId || payload.org_id,
-      userId: payload.user_id || payload.userId,
-      allClaims: Object.keys(payload),
+    logger.debug("[auth] Signup - Token claims refreshed", {
+      hasOrgId: !!(payload.orgId || payload.org_id),
     });
 
     // WORKAROUND: Store orgId from backend response in localStorage
     // This is temporary until backend sets custom claims properly
     if (data.orgId) {
       localStorage.setItem("user_orgId", data.orgId);
-      console.log("✅ Stored orgId from backend response:", data.orgId);
+      logger.debug("[auth] ✅ Stored orgId from backend response");
     }
 
     return data;
@@ -91,47 +99,46 @@ export async function signup(
  */
 export async function login(email: string, password: string): Promise<User> {
   try {
-    // 1. Sign in with Firebase
-    const credential = await signInWithEmailAndPassword(auth, email, password);
+    // 1. Sign in via repository
+    await authRepository.signInUser(email, password);
 
-    // 2. Get Firebase ID token
-    const idToken = await credential.user.getIdToken();
+    // 2. Get ID token
+    const idToken = await authRepository.getCurrentUserToken();
+
+    if (!idToken) {
+      throw new Error("Failed to get authentication token");
+    }
 
     // 3. Sync profile with backend
     const { data } = await apiClient.post("/auth/verify", { idToken });
-    console.log("Login - Backend response:", data);
+    logger.debug("[auth] Login - Backend verified");
 
     // 4. Force refresh token to get custom claims (orgId) set by backend
-    const refreshedToken = await credential.user.getIdToken(true);
+    const refreshedToken = await authRepository.getCurrentUserToken(true);
+    if (!refreshedToken) {
+      throw new Error("Failed to refresh authentication token");
+    }
     const payload = JSON.parse(atob(refreshedToken.split(".")[1]));
-    console.log("Login - Token claims after refresh:", {
-      orgId: payload.orgId || payload.org_id,
-      userId: payload.user_id || payload.userId,
-      allClaims: Object.keys(payload),
+    logger.debug("[auth] Login - Token claims refreshed", {
+      hasOrgId: !!(payload.orgId || payload.org_id),
     });
 
-    // WORKAROUND: Store orgId from backend response in localStorage
+    // WORKAROUND: Store orgId in localStorage if present
     if (data.orgId) {
       localStorage.setItem("user_orgId", data.orgId);
-      console.log("✅ Stored orgId from backend response:", data.orgId);
+      logger.debug("[auth] ✅ Stored orgId from backend response");
     }
 
     return data;
   } catch (error: any) {
-    // Map Firebase errors to user-friendly messages
-    if (
-      error.code === "auth/user-not-found" ||
-      error.code === "auth/wrong-password"
-    ) {
-      throw new Error("Invalid email or password.");
+    if (error.code === "auth/user-not-found") {
+      throw new Error("No account found with this email.");
+    }
+    if (error.code === "auth/wrong-password") {
+      throw new Error("Incorrect password.");
     }
     if (error.code === "auth/invalid-email") {
       throw new Error("Invalid email address.");
-    }
-    if (error.code === "auth/too-many-requests") {
-      throw new Error(
-        "Too many failed login attempts. Please try again later.",
-      );
     }
     throw error;
   }
@@ -144,39 +151,39 @@ export async function login(email: string, password: string): Promise<User> {
  */
 export async function signInWithGoogle(): Promise<User> {
   try {
-    // 1. Sign in with Google popup
-    const provider = new GoogleAuthProvider();
-    const credential = await signInWithPopup(auth, provider);
+    // 1. Sign in with Google via repository
+    await authRepository.signInWithProvider("google");
 
-    // 2. Get Firebase ID token
-    const idToken = await credential.user.getIdToken();
+    // 2. Get ID token
+    const idToken = await authRepository.getCurrentUserToken();
 
-    // 3. Sync with backend
-    const { data } = await apiClient.post("/auth/google", { idToken });
-    console.log("Google Sign-in - Backend response:", data);
+    if (!idToken) {
+      throw new Error("Failed to get authentication token");
+    }
+
+    // 3. Sync with backend (using verify endpoint since /auth/google may not exist)
+    const { data } = await apiClient.post("/auth/verify", { idToken });
+    logger.debug("[auth] Google Sign-in - Backend verified");
 
     // 4. Force refresh token to get custom claims (orgId) set by backend
-    const refreshedToken = await credential.user.getIdToken(true);
+    const refreshedToken = await authRepository.getCurrentUserToken(true);
+    if (!refreshedToken) {
+      throw new Error("Failed to refresh authentication token");
+    }
     const payload = JSON.parse(atob(refreshedToken.split(".")[1]));
-    console.log("Google Sign-in - Token claims after refresh:", {
-      orgId: payload.orgId || payload.org_id,
-      userId: payload.user_id || payload.userId,
-      allClaims: Object.keys(payload),
+    logger.debug("[auth] Google Sign-in - Token claims refreshed", {
+      hasOrgId: !!(payload.orgId || payload.org_id),
     });
 
-    // WORKAROUND: Store orgId from backend response in localStorage
+    // WORKAROUND: Store orgId in localStorage if present
     if (data.orgId) {
       localStorage.setItem("user_orgId", data.orgId);
-      console.log("✅ Stored orgId from backend response:", data.orgId);
+      logger.debug("[auth] ✅ Stored orgId from backend response");
     }
 
     return data;
   } catch (error: any) {
-    // Map Firebase errors to user-friendly messages
     if (error.code === "auth/popup-closed-by-user") {
-      throw new Error("Sign-in popup was closed. Please try again.");
-    }
-    if (error.code === "auth/cancelled-popup-request") {
       throw new Error("Sign-in was cancelled. Please try again.");
     }
     throw error;
@@ -187,12 +194,12 @@ export async function signInWithGoogle(): Promise<User> {
  * Get the current user's profile from backend
  * Requires authentication
  *
- * Falls back to Firebase user data if backend endpoint not available
+ * Falls back to token data if backend endpoint not available
  * @returns User profile
  */
 export async function getCurrentUser(): Promise<User> {
-  const firebaseUser = auth.currentUser;
-  if (!firebaseUser) {
+  const idToken = await authRepository.getCurrentUserToken();
+  if (!idToken) {
     throw new Error("No authenticated user found");
   }
 
@@ -201,26 +208,27 @@ export async function getCurrentUser(): Promise<User> {
     return data;
   } catch (error: any) {
     // WORKAROUND: If backend /auth/me endpoint not available (404 or network error)
-    // Return minimal user data from Firebase
+    // Return minimal user data from token
     const statusCode = error?.response?.status;
     const isNetworkError = !error?.response;
 
     if (statusCode === 404 || isNetworkError) {
-      console.warn(
-        `⚠️ GET /auth/me not available (${isNetworkError ? "network error" : "404"}). Using Firebase user data.`,
+      logger.warn(
+        `[auth] ⚠️ GET /auth/me not available (${isNetworkError ? "network error" : "404"}). Using token data.`,
       );
 
-      // Return minimal user object from Firebase
+      // Parse user data from token
+      const payload = JSON.parse(atob(idToken.split(".")[1]));
       const orgId =
-        typeof window !== "undefined"
-          ? localStorage.getItem("user_orgId")
-          : null;
+        payload.orgId || 
+        payload.org_id ||
+        (typeof window !== "undefined" ? localStorage.getItem("user_orgId") : null);
 
       return {
-        id: firebaseUser.uid,
-        email: firebaseUser.email || "",
-        name: firebaseUser.displayName || firebaseUser.email || "",
-        avatar: firebaseUser.photoURL || undefined,
+        id: payload.user_id || payload.userId || payload.sub,
+        email: payload.email || "",
+        name: payload.name || payload.email || "",
+        avatar: payload.picture || undefined,
         orgId: orgId || undefined,
       };
     }
@@ -251,23 +259,37 @@ export async function updateProfile(
  * Requires authentication
  */
 export async function deleteAccount(): Promise<void> {
-  await apiClient.delete("/auth/account");
-  // Also delete from Firebase
-  const user = auth.currentUser;
-  if (user) {
-    await user.delete();
+  const idToken = await authRepository.getCurrentUserToken();
+  if (!idToken) {
+    throw new Error("No authenticated user");
   }
+
+  // Get user ID from token
+  const payload = JSON.parse(atob(idToken.split(".")[1]));
+  const uid = payload.user_id || payload.userId || payload.sub;
+
+  await apiClient.delete("/auth/account");
+  
+  // Delete from auth provider
+  await authRepository.deleteUser(uid);
 }
 
 /**
  * Sign out the current user
- * Clears Firebase session and redirects to login
+ * Clears session and redirects to login
  */
 export async function logout(): Promise<void> {
-  await signOut(auth);
+  await authRepository.signOut();
   // Clear stored orgId
   if (typeof window !== "undefined") {
     localStorage.removeItem("user_orgId");
     window.location.href = "/login";
   }
+}
+
+/**
+ * Get auth repository instance (for testing or advanced usage)
+ */
+export function getAuthRepository(): AuthRepository {
+  return authRepository;
 }

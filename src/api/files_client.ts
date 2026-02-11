@@ -21,7 +21,6 @@
  * - GET /api/ocean/dashboard/stats - Get ocean freight dashboard statistics
  */
 
-import { auth } from "@/config/firebase";
 import { FileType } from "@/types/file";
 import {
   CreateFileRequest,
@@ -34,9 +33,22 @@ import {
   DeleteFileResponse,
   GetFileDashboardStatsResponse,
 } from "@/types/api/files";
+import { TokenProvider } from "@/services/auth/TokenProvider";
+import { firebaseTokenProvider } from "@/infrastructure/firebase";
+import { logger } from "@/utils";
 
 // Use relative path - Next.js will rewrite to backend API
 const API_URL = "/api";
+
+// Use dependency injection for token provider
+let tokenProvider: TokenProvider = firebaseTokenProvider;
+
+/**
+ * Set custom token provider (for testing)
+ */
+export function setTokenProvider(provider: TokenProvider) {
+  tokenProvider = provider;
+}
 
 /**
  * Get base API path for a given file type
@@ -125,33 +137,29 @@ function transformCreateFileRequest(request: CreateFileRequest): any {
 }
 
 /**
- * Get authentication token from Firebase
+ * Get authentication token via provider
  * Forces token refresh to ensure custom claims (orgId) are included
  */
 async function getAuthToken(): Promise<string> {
-  const user = auth.currentUser;
-  if (!user) {
+  // Force refresh to get latest custom claims from backend
+  const token = await tokenProvider.getToken(true);
+  
+  if (!token) {
     throw new Error("User not authenticated");
   }
-
-  // Force refresh to get latest custom claims from backend
-  const token = await user.getIdToken(true);
 
   // Debug: Log token payload to verify orgId is present
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
-    console.log("Token claims:", {
+    logger.debug("[files_client] Token claims:", {
       userId: payload.user_id || payload.userId,
       email: payload.email,
-      orgId: payload.orgId || payload.org_id || payload.organizationId,
       hasOrgId: !!(payload.orgId || payload.org_id || payload.organizationId),
-      allClaims: Object.keys(payload),
     });
 
     if (!payload.orgId && !payload.org_id && !payload.organizationId) {
-      console.error("⚠️ orgId missing from token!");
-      console.error("Available claims:", Object.keys(payload));
-      console.error("Full payload:", payload);
+      logger.error("[files_client] ⚠️ orgId missing from token!");
+      logger.error("[files_client] Available claims:", Object.keys(payload));
 
       throw new Error(
         "Organization ID not found in authentication token. " +
@@ -162,7 +170,7 @@ async function getAuthToken(): Promise<string> {
     if (e instanceof Error && e.message.includes("Organization ID")) {
       throw e; // Re-throw our custom error
     }
-    console.error("Failed to parse token:", e);
+    logger.error("[files_client] Failed to parse token:", e);
   }
 
   return token;
@@ -196,7 +204,7 @@ async function apiRequest<T>(
   const storedOrgId =
     typeof window !== "undefined" ? localStorage.getItem("user_orgId") : null;
 
-  console.log(`[apiRequest] Fetching ${API_URL}${endpoint}`);
+  logger.debug(`[apiRequest] Fetching ${API_URL}${endpoint}`);
 
   const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
@@ -221,10 +229,7 @@ async function apiRequest<T>(
   }
 
   const jsonResponse = await response.json();
-  console.log(
-    `[apiRequest] ${endpoint} - Status: ${response.status}, Response:`,
-    jsonResponse,
-  );
+  logger.debug(`[apiRequest] ${endpoint} - Status: ${response.status}`);
 
   return jsonResponse;
 }
@@ -282,41 +287,25 @@ export async function getFiles(
     : `${basePath}/files`;
 
   try {
-    console.log(`[getFiles] Requesting: ${API_URL}${endpoint}`);
+    logger.debug(`[getFiles] Requesting: ${API_URL}${endpoint}`);
 
     const response = await apiRequest<GetFilesResponse>(endpoint);
 
-    // Log FULL RESPONSE including the entire response object
-    console.log(`[getFiles(${params.type})] FULL Response Object:`, response);
-    console.log(
-      `[getFiles(${params.type})] Response JSON:`,
-      JSON.stringify(response, null, 2),
-    );
-
-    // Log response structure for debugging
-    console.log(`[getFiles(${params.type})] Response:`, {
+    logger.debug(`[getFiles(${params.type})] Response structure:`, {
       hasItems: !!response?.items,
-      itemsIsArray: Array.isArray(response?.items),
       itemsLength: response?.items?.length,
       total: response?.total,
       page: response?.page,
-      pageSize: response?.pageSize,
-      responseKeys: response ? Object.keys(response) : "null",
     });
 
     // Ensure response has expected structure
     if (!response || !response.items) {
-      console.warn(
-        `[getFiles(${params.type})] Response missing items, returning empty`,
-      );
-      console.warn(`[getFiles(${params.type})] Response was:`, response);
+      logger.warn(`[getFiles(${params.type})] Response missing items, returning empty`);
 
       // DEVELOPMENT ONLY: If response is empty, return mock data for testing
       // This should be removed once backend has actual data
       if (!response?.items || response.items.length === 0) {
-        console.warn(
-          `[getFiles(${params.type})] API returned empty items - using mock data for testing`,
-        );
+        logger.warn(`[getFiles(${params.type})] API returned empty items - using mock data for testing`);
         return {
           items: [
             {
@@ -360,10 +349,9 @@ export async function getFiles(
 
     return response;
   } catch (error) {
-    console.error(`[getFiles(${params.type})] Error:`, {
+    logger.error(`[getFiles(${params.type})] Error:`, {
       message: error instanceof Error ? error.message : String(error),
       endpoint,
-      stack: error instanceof Error ? error.stack : undefined,
     });
     throw error;
   }

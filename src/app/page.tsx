@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageContainer, PageHeader } from "@/components/ui";
@@ -12,6 +12,7 @@ import {
 } from "@/components/home";
 import { getDashboardStats } from "@/api/sheets_client";
 import { DashboardStats } from "@/types/api/sheets";
+import { logger } from "@/utils";
 
 export default function Home() {
   const t = useTranslations();
@@ -20,29 +21,30 @@ export default function Home() {
   const [statsLoading, setStatsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"all" | "ocean" | "air">("all");
 
+  // Memoize the stats loading function
+  const loadStats = useCallback(async () => {
+    try {
+      logger.debug("[HomePage] Loading dashboard stats...");
+      const response = await getDashboardStats();
+      logger.debug("[HomePage] Dashboard stats loaded", response.stats);
+      setStats(response.stats);
+    } catch (error) {
+      logger.error("[HomePage] Failed to load stats:", error);
+      setStats(null);
+    } finally {
+      setStatsLoading(false);
+    }
+  }, []);
+
   // Load dashboard stats when authenticated
   useEffect(() => {
     if (!isAuthenticated) {
-      console.log("Not yet authenticated, skipping stats fetch");
+      logger.debug("[HomePage] Not yet authenticated, skipping stats fetch");
       return;
     }
 
-    const loadStats = async () => {
-      try {
-        console.log("Loading dashboard stats...");
-        const response = await getDashboardStats();
-        console.log("Dashboard stats loaded:", response.stats);
-        setStats(response.stats);
-      } catch (error) {
-        console.error("Failed to load stats:", error);
-        setStats(null);
-      } finally {
-        setStatsLoading(false);
-      }
-    };
-
     loadStats();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, loadStats]);
 
   // Show loading state
   if (isLoading) {
