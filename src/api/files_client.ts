@@ -35,7 +35,8 @@ import {
   GetFileDashboardStatsResponse,
 } from "@/types/api/files";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+// Use relative path - Next.js will rewrite to backend API
+const API_URL = "/api";
 
 /**
  * Get base API path for a given file type
@@ -199,6 +200,7 @@ async function apiRequest<T>(
 
   const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,

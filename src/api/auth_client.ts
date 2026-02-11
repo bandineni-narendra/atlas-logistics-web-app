@@ -1,11 +1,12 @@
 /**
  * Authentication API Client
- * Integrates with backend API at http://localhost:3000
+ * Integrates with backend API via Next.js rewrites
  */
 
 import { User } from "@/types/auth";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+// Use relative path - Next.js will rewrite to backend API
+const API_URL = "/api";
 
 /**
  * Get stored auth token from localStorage
@@ -34,7 +35,7 @@ function mapErrorMessage(error: any): string {
   // Map common backend errors to user-friendly messages
   const errorMap: Record<string, string> = {
     "No authorization header provided": "errors.auth.notAuthenticated",
-    "Unauthorized": "errors.auth.unauthorized",
+    Unauthorized: "errors.auth.unauthorized",
     "User not found": "errors.auth.userNotFound",
     "Invalid credentials": "errors.auth.invalidCredentials",
     "Email already exists": "errors.auth.emailExists",
@@ -70,9 +71,12 @@ function mapErrorMessage(error: any): string {
   return "errors.general.requestFailed";
 }
 
-async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
+async function apiRequest<T>(
+  endpoint: string,
+  options?: RequestInit,
+): Promise<T> {
   const token = getAuthToken();
-  
+
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
@@ -96,7 +100,7 @@ async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T
         message: "Request failed",
         statusCode: response.status,
       }));
-      
+
       // Throw error with localization key
       const errorKey = mapErrorMessage(error);
       const err = new Error(errorKey) as any;
@@ -137,7 +141,11 @@ export const authClient = {
   /**
    * Update user profile
    */
-  updateProfile: (email: string, name?: string, avatar?: string): Promise<User> =>
+  updateProfile: (
+    email: string,
+    name?: string,
+    avatar?: string,
+  ): Promise<User> =>
     apiRequest<User>("/auth/profile", {
       method: "PUT",
       body: JSON.stringify({ email, name, avatar }),

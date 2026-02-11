@@ -2,9 +2,11 @@ import axios from "axios";
 import { RawExcelPayload } from "@/types/excel/excel";
 import { RawExcelSheetFlowPayload } from "@/types/excel/excel-flow";
 
+// Use relative path - Next.js will rewrite to backend API
 const api = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "/api",
   timeout: 120_000,
+  withCredentials: true,
 });
 
 /**
@@ -14,26 +16,26 @@ const api = axios.create({
  */
 
 /**
- * Single job for ALL sheets (legacy)
+ * Single sheet processing - ACTUAL backend endpoint
  */
 export async function createExcelJob(payload: RawExcelPayload) {
-  const res = await api.post("/excel/jobs", payload);
+  const res = await api.post("/excel-flow/jobs", payload);
   return res.data as { jobId: string };
 }
 
 /**
- * Explicit multi-sheet backend job (legacy)
+ * Multi-sheet with AI processing - ACTUAL backend endpoint
  */
 export async function createMutliSheetExcelJob(payload: RawExcelPayload) {
-  const res = await api.post("/excel/jobs/multi-sheet", payload);
+  const res = await api.post("/excel-flow/multi-sheet", payload);
   return res.data as { jobId: string };
 }
 
 /**
- * Get job status/result (legacy)
+ * Get job status/result - ACTUAL backend endpoint
  */
 export async function getExcelJob(jobId: string) {
-  const res = await api.get(`/excel/jobs/${jobId}`);
+  const res = await api.get(`/excel-flow/jobs/${jobId}`);
   return res.data;
 }
 
@@ -44,7 +46,7 @@ export async function getExcelJob(jobId: string) {
  */
 
 /**
- * ✅ Create job for ONE sheet (Flow-based)
+ * ✅ Create job for ONE sheet (Flow-based) - ACTUAL backend endpoint
  */
 export async function createExcelFlowJob(payload: RawExcelSheetFlowPayload) {
   const res = await api.post("/excel-flow/jobs", payload);
@@ -52,7 +54,7 @@ export async function createExcelFlowJob(payload: RawExcelSheetFlowPayload) {
 }
 
 /**
- * ✅ Get Flow job status/result
+ * ✅ Get Flow job status/result - ACTUAL backend endpoint
  */
 export async function getExcelFlowJob(jobId: string) {
   const res = await api.get(`/excel-flow/jobs/${jobId}`);
@@ -66,19 +68,19 @@ export async function getExcelFlowJob(jobId: string) {
  */
 
 /**
- * ✅ Create job for ONE sheet (Air Freight Flow-based)
+ * ✅ Create job for ONE sheet (Air Freight) - ACTUAL backend endpoint
  */
 export async function createAirFreightFlowJob(
   payload: RawExcelSheetFlowPayload,
 ) {
-  const res = await api.post("/excel/jobs/air-freight/single", payload);
+  const res = await api.post("/excel-flow/air-freight", payload);
   return res.data as { jobId: string };
 }
 
 /**
- * ✅ Get Air Freight job status/result
+ * ✅ Get Air Freight job status/result - ACTUAL backend endpoint
  */
 export async function getAirFreightJob(jobId: string) {
-  const res = await api.get(`/excel/jobs/${jobId}`);
+  const res = await api.get(`/excel-flow/jobs/${jobId}`);
   return res.data;
 }
