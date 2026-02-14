@@ -15,7 +15,7 @@ import {
   useCallback,
   ReactNode,
 } from "react";
-import { User } from "@/types/auth";
+import { User } from "@/types/api";
 import * as authService from "@/services/auth";
 import { firebaseAuthRepository } from "@/infrastructure/firebase";
 import { logger } from "@/utils";
@@ -79,6 +79,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               email: credentials.email || "",
               name: credentials.displayName || credentials.email || "",
               avatar: credentials.photoURL || undefined,
+              orgId: "",
+              provider: "manual",
             });
           }
         } catch (error) {

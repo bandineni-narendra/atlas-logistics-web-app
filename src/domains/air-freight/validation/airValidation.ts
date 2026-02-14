@@ -41,6 +41,18 @@ export function validateAirSheets(
 
       // Always validate all rows with data, don't skip
       const airRate = mapToAirRate(row.cells);
+      if (!airRate) {
+        issues.push(
+          createValidationIssue(
+            sheetName,
+            rowIndex + 1,
+            "Row",
+            "Failed to parse air freight rate data",
+            "error",
+          ),
+        );
+        return;
+      }
       const errors = validateAirRate(airRate);
 
       if (errors.length > 0) {

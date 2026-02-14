@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { SidebarLayout } from "@/components";
 import { SheetBuilderProvider } from "@/contexts/SheetBuilderContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { QueryProvider } from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,11 +33,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextIntlClientProvider>
-          <AuthProvider>
-            <SheetBuilderProvider>
-              <SidebarLayout>{children}</SidebarLayout>
-            </SheetBuilderProvider>
-          </AuthProvider>
+          <QueryProvider>
+            <AuthProvider>
+              <SheetBuilderProvider>
+                <SidebarLayout>{children}</SidebarLayout>
+              </SheetBuilderProvider>
+            </AuthProvider>
+          </QueryProvider>
         </NextIntlClientProvider>
       </body>
     </html>

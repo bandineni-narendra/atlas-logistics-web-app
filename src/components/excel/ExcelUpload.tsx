@@ -29,11 +29,11 @@ export default function ExcelUpload({
 
   // Listen for job completion and notify parent
   useEffect(() => {
-    if (job?.status === "COMPLETED" && job.result) {
+    if (job?.status === "completed" && job.result) {
       if (onUploadSuccess) {
         onUploadSuccess(job.result as OceanFreightResult);
       }
-    } else if (job?.status === "FAILED") {
+    } else if (job?.status === "failed") {
       const errorMsg = job.error || t("errors.failedToProcessExcel");
       setParseError(errorMsg);
       if (onUploadError) {
@@ -80,7 +80,7 @@ export default function ExcelUpload({
         }
       }
     },
-    [submit, onUploadError],
+    [submit, onUploadError, t],
   );
 
   return (

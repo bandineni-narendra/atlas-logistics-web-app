@@ -1,19 +1,26 @@
-import { createMutliSheetExcelJob, getExcelJob } from "@/api/client";
+/**
+ * useMultiSheetExcelJob Hook
+ *
+ * Multi-sheet job submission with polling.
+ * Uses the new excelService.
+ */
+
+import { excelService } from "@/services/excelService";
 import { useEffect, useState } from "react";
-import { RawExcelPayload, MultiSheetResult } from "@/types/excel/excel";
+import type { MultiSheetRequest } from "@/types/api";
 
 export function useMultiSheetExcelJob() {
   const [jobId, setJobId] = useState<string | null>(null);
-  const [job, setJob] = useState<MultiSheetResult | null>(null);
+  const [job, setJob] = useState<unknown>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const submit = async (payload: RawExcelPayload) => {
+  const submit = async (payload: MultiSheetRequest) => {
     setLoading(true);
     setError(null);
     try {
-      const { jobId } = await createMutliSheetExcelJob(payload);
-      setJobId(jobId);
+      const response = await excelService.processMultiSheet(payload);
+      setJobId(response.jobId);
     } catch (err) {
       const errorMsg =
         err instanceof Error ? err.message : "Failed to create job";
@@ -27,10 +34,10 @@ export function useMultiSheetExcelJob() {
 
     const interval = setInterval(async () => {
       try {
-        const data = await getExcelJob(jobId);
+        const data = await excelService.getJobStatus(jobId);
         setJob(data);
 
-        if (data.status === "COMPLETED" || data.status === "FAILED") {
+        if (data.status === "completed" || data.status === "failed") {
           setLoading(false);
           clearInterval(interval);
         }

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Validation Feedback System - Usage Examples
  *

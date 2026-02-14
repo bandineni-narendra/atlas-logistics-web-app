@@ -41,6 +41,18 @@ export function validateOceanSheets(
 
       // Always validate all rows with data, don't skip
       const oceanRate = mapToOceanRate(row.cells);
+      if (!oceanRate) {
+        issues.push(
+          createValidationIssue(
+            sheetName,
+            rowIndex + 1,
+            "Row",
+            "Failed to parse ocean freight rate data",
+            "error",
+          ),
+        );
+        return;
+      }
       const errors = validateOceanRate(oceanRate);
 
       if (errors.length > 0) {
