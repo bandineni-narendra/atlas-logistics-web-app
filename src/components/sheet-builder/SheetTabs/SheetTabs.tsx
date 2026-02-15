@@ -103,7 +103,7 @@ export function SheetTabs({
               }}
               onClick={(e) => e.stopPropagation()}
               autoFocus
-              className="text-sm bg-white border border-blue-500 rounded px-2 py-0.5 outline-none focus:ring-2 focus:ring-blue-500 min-w-[80px]"
+              className="text-sm bg-[var(--surface-container-lowest)] border border-[var(--primary)] text-[var(--on-surface)] rounded px-2 py-0.5 outline-none focus:ring-2 focus:ring-[var(--primary)] min-w-[80px]"
             />
           ) : (
             <span
@@ -120,7 +120,7 @@ export function SheetTabs({
               onClick={(e) => handleReset(sheet.id, sheet.name, e)}
               className={`
                 opacity-0 group-hover:opacity-100
-                text-neutral-400 hover:text-orange-600 hover:bg-orange-50 
+                text-[var(--on-surface-variant)] hover:text-[var(--warning)] hover:bg-[var(--warning-container)] 
                 rounded p-0.5 transition-all duration-150
               `}
               title="Reset sheet data"
@@ -150,7 +150,7 @@ export function SheetTabs({
                 }}
                 className={`
                   opacity-0 group-hover:opacity-100
-                  text-neutral-400 hover:text-red-600 hover:bg-red-50 
+                  text-[var(--on-surface-variant)] hover:text-[var(--error)] hover:bg-[var(--error-container)] 
                   rounded p-0.5 transition-all duration-150
                 `}
                 title="Delete sheet"
@@ -180,7 +180,7 @@ export function SheetTabs({
       {/* Add sheet button */}
       <button
         onClick={onAddSheet}
-        className="inline-flex items-center gap-1.5 px-3 py-2 ml-2 text-sm font-medium text-neutral-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors duration-150 group"
+        className="inline-flex items-center gap-1.5 px-3 py-2 ml-2 text-sm font-medium text-[var(--on-surface-variant)] hover:text-[var(--primary)] hover:bg-[var(--primary-container)] rounded-md transition-colors duration-150 group"
         title="Add sheet"
         type="button"
       >
@@ -190,7 +190,7 @@ export function SheetTabs({
           viewBox="0 0 24 24"
           strokeWidth={2.5}
           stroke="currentColor"
-          className="w-4 h-4 text-neutral-500 group-hover:text-blue-600 transition-colors"
+          className="w-4 h-4 text-[var(--on-surface-variant)] group-hover:text-[var(--primary)] transition-colors"
         >
           <path
             strokeLinecap="round"

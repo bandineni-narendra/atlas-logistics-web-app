@@ -61,7 +61,7 @@ export function Sidebar({ currentPath }: SidebarProps) {
       <div className="px-4 py-4 border-b border-[var(--outline-variant)]">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-[var(--primary)] rounded-lg flex items-center justify-center">
-            <span className="text-white font-medium text-sm">A</span>
+            <span className="text-[var(--on-primary)] font-medium text-sm">A</span>
           </div>
           <div>
             <h1 className="text-sm font-medium text-[var(--on-surface)]">
@@ -96,7 +96,7 @@ export function Sidebar({ currentPath }: SidebarProps) {
               className="w-full flex items-center gap-3 px-3 py-2 rounded-full hover:bg-[var(--surface-container-low)] transition-colors duration-100"
             >
               <div className="w-8 h-8 bg-[var(--primary)] rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-white text-sm font-medium">
+                <span className="text-[var(--on-primary)] text-sm font-medium">
                   {user.name.charAt(0).toUpperCase()}
                 </span>
               </div>
@@ -157,7 +157,7 @@ export function Sidebar({ currentPath }: SidebarProps) {
                         )}
                         <span>{mode === "dark" ? "Dark Mode" : "Light Mode"}</span>
                       </div>
-                      <Switch checked={mode === "dark"} size="small" />
+                      <Switch checked={mode === "dark"} size="small" color="default" />
                     </>
                   ) : (
                     <>

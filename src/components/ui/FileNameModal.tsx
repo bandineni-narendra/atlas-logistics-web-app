@@ -141,19 +141,19 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
       {/* Modal */}
       <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
         <div
-          className="bg-white border-2 border-gray-300 rounded-lg shadow-2xl max-w-md w-full animate-in fade-in zoom-in duration-200"
+          className="bg-[var(--surface)] border-2 border-[var(--outline-variant)] rounded-xl shadow-[var(--elevation-2)] max-w-md w-full animate-in fade-in zoom-in duration-200"
           role="dialog"
           aria-modal="true"
           aria-labelledby="file-name-modal-title"
         >
           {/* Header */}
-          <div className="flex items-center gap-3 p-6 border-b-2 border-gray-200">
-            <div className="bg-blue-100 rounded-full p-3 flex-shrink-0">
-              <span className="text-blue-600 text-2xl">📁</span>
+          <div className="flex items-center gap-3 p-6 border-b border-[var(--outline-variant)]">
+            <div className="bg-[var(--primary-container)] rounded-full p-3 flex-shrink-0">
+              <span className="text-[var(--on-primary-container)] text-2xl">📁</span>
             </div>
             <h2
               id="file-name-modal-title"
-              className="text-gray-900 font-bold text-xl flex-1"
+              className="text-[var(--on-surface)] font-bold text-xl flex-1"
             >
               Save {fileType} Freight File
             </h2>
@@ -162,23 +162,23 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
           {/* Body */}
           <div className="p-6 space-y-4">
             {/* Info text */}
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[var(--on-surface-variant)]">
               Enter a name for this file. All sheets in the current session will
               be saved together.
             </p>
 
             {/* File metadata display */}
             {effectiveDate && (
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm">
+              <div className="bg-[var(--surface-container-low)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Type:</span>
-                  <span className="font-semibold text-gray-900">
+                  <span className="text-[var(--on-surface-variant)]">Type:</span>
+                  <span className="font-semibold text-[var(--on-surface)]">
                     {fileType}
                   </span>
                 </div>
                 <div className="flex justify-between mt-1">
-                  <span className="text-gray-600">Effective Date:</span>
-                  <span className="font-semibold text-gray-900">
+                  <span className="text-[var(--on-surface-variant)]">Effective Date:</span>
+                  <span className="font-semibold text-[var(--on-surface)]">
                     {effectiveDate}
                   </span>
                 </div>
@@ -186,44 +186,60 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
             )}
 
             {/* File name input */}
-            <Input
-              label="File Name"
-              type="text"
-              placeholder="e.g., Atlantic Routes Q1 2024"
-              value={fileName}
-              onChange={(e) => {
-                setFileName(e.target.value);
-                if (touched) {
-                  setError(validateFileName(e.target.value));
-                }
-              }}
-              onBlur={handleBlur}
-              onKeyDown={handleKeyDown}
-              error={touched ? error || undefined : undefined}
-              disabled={isSaving}
-              required
-              fullWidth
-              autoFocus
-            />
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-[var(--on-surface-variant)]">
+                File Name
+              </label>
+              <input
+                type="text"
+                placeholder="e.g., Atlantic Routes Q1 2024"
+                value={fileName}
+                onChange={(e) => {
+                  setFileName(e.target.value);
+                  if (touched) {
+                    setError(validateFileName(e.target.value));
+                  }
+                }}
+                onBlur={handleBlur}
+                onKeyDown={handleKeyDown}
+                disabled={isSaving}
+                autoFocus
+                className={`
+                        w-full px-3 py-2 
+                        bg-[var(--surface-container-lowest)] 
+                        border rounded-md 
+                        text-[var(--on-surface)] 
+                        placeholder-[var(--on-surface-variant)]
+                        focus:outline-none focus:ring-2 focus:ring-[var(--primary)]
+                        disabled:opacity-50
+                        ${touched && error ? 'border-[var(--error)] focus:ring-[var(--error)]' : 'border-[var(--outline)]'}
+                    `}
+              />
+
+              {touched && error && (
+                <p className="text-xs text-[var(--error)] mt-1">{error}</p>
+              )}
+            </div>
+
           </div>
 
           {/* Footer */}
-          <div className="flex gap-3 p-6 border-t-2 border-gray-200 justify-end bg-gray-50 rounded-b-lg">
+          <div className="flex gap-3 p-6 border-t border-[var(--outline-variant)] justify-end bg-[var(--surface-container-low)] rounded-b-xl">
             <button
               onClick={onCancel}
               disabled={isSaving}
-              className="px-6 py-2 rounded-md font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2 rounded-full font-medium text-[var(--on-surface)] bg-[var(--surface-container-high)] hover:bg-[var(--surface-container-highest)] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
               disabled={isSaving || !!error}
-              className="px-6 py-2 rounded-md font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-2 rounded-full font-medium text-[var(--on-primary)] bg-[var(--primary)] hover:bg-[var(--primary-hover)] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {isSaving ? (
                 <>
-                  <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span className="inline-block w-4 h-4 border-2 border-[var(--on-primary)] border-t-transparent rounded-full animate-spin" />
                   Saving...
                 </>
               ) : (

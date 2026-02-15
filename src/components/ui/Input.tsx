@@ -34,7 +34,7 @@ export const Input: React.FC<InputProps> = ({
       <input
         className={`
           w-full px-3 py-2 text-sm text-[var(--on-surface)]
-          bg-[var(--surface)] border rounded-lg
+          bg-[var(--surface-container-lowest)] border rounded-lg
           transition-all duration-100 ease-out
           ${hasError
             ? "border-[var(--error)] focus:border-[var(--error)] focus:ring-[var(--error)]"

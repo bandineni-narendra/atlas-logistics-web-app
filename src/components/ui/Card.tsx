@@ -24,7 +24,7 @@ export const Card: React.FC<CardProps> = ({
   padding = "md",
 }) => (
   <div
-    className={`bg-[var(--surface)] border border-[var(--outline-variant)] rounded-xl ${paddingStyles[padding]} ${className}`}
+    className={`bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-xl ${paddingStyles[padding]} ${className}`}
   >
     {children}
   </div>

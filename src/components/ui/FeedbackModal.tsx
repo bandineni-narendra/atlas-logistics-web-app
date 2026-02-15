@@ -10,43 +10,43 @@ export interface FeedbackModalProps {
 
 const modalStyles = {
   success: {
-    bgColor: "bg-emerald-50",
-    borderColor: "border-emerald-300",
-    iconBg: "bg-emerald-100",
-    iconColor: "text-emerald-600",
-    titleColor: "text-emerald-900",
-    textColor: "text-emerald-800",
-    buttonBg: "bg-emerald-600 hover:bg-emerald-700",
+    bgColor: "bg-[var(--success-container)]",
+    borderColor: "border-[var(--success)]",
+    iconBg: "bg-[var(--success)]",
+    iconColor: "text-[var(--on-success)]",
+    titleColor: "text-[var(--on-success-container)]",
+    textColor: "text-[var(--on-success-container)]",
+    buttonBg: "bg-[var(--success)] hover:brightness-110 text-[var(--on-success)]",
     icon: "✓",
   },
   error: {
-    bgColor: "bg-red-50",
-    borderColor: "border-red-300",
-    iconBg: "bg-red-100",
-    iconColor: "text-red-600",
-    titleColor: "text-red-900",
-    textColor: "text-red-800",
-    buttonBg: "bg-red-600 hover:bg-red-700",
+    bgColor: "bg-[var(--error-container)]",
+    borderColor: "border-[var(--error)]",
+    iconBg: "bg-[var(--error)]",
+    iconColor: "text-[var(--on-error)]",
+    titleColor: "text-[var(--on-error-container)]",
+    textColor: "text-[var(--on-error-container)]",
+    buttonBg: "bg-[var(--error)] hover:brightness-110 text-[var(--on-error)]",
     icon: "✕",
   },
   warning: {
-    bgColor: "bg-amber-50",
-    borderColor: "border-amber-300",
-    iconBg: "bg-amber-100",
-    iconColor: "text-amber-600",
-    titleColor: "text-amber-900",
-    textColor: "text-amber-800",
-    buttonBg: "bg-amber-600 hover:bg-amber-700",
+    bgColor: "bg-[var(--warning-container)]",
+    borderColor: "border-[var(--warning)]",
+    iconBg: "bg-[var(--warning)]",
+    iconColor: "text-[var(--on-warning)]",
+    titleColor: "text-[var(--on-warning-container)]",
+    textColor: "text-[var(--on-warning-container)]",
+    buttonBg: "bg-[var(--warning)] hover:brightness-110 text-black", // Warning usually needs dark text
     icon: "⚠",
   },
   info: {
-    bgColor: "bg-blue-50",
-    borderColor: "border-blue-300",
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-600",
-    titleColor: "text-blue-900",
-    textColor: "text-blue-800",
-    buttonBg: "bg-blue-600 hover:bg-blue-700",
+    bgColor: "bg-[var(--surface-container)]",
+    borderColor: "border-[var(--primary)]",
+    iconBg: "bg-[var(--primary-container)]",
+    iconColor: "text-[var(--on-primary-container)]",
+    titleColor: "text-[var(--on-surface)]",
+    textColor: "text-[var(--on-surface-variant)]",
+    buttonBg: "bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-[var(--on-primary)]",
     icon: "ℹ",
   },
 };
@@ -73,14 +73,14 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
       {/* Modal */}
       <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
         <div
-          className={`${styles.bgColor} border-2 ${styles.borderColor} rounded-lg shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto animate-in fade-in zoom-in duration-200`}
+          className={`${styles.bgColor} border-2 ${styles.borderColor} rounded-xl shadow-[var(--elevation-3)] max-w-2xl w-full max-h-[80vh] overflow-y-auto animate-in fade-in zoom-in duration-200`}
           role="alertdialog"
           aria-modal="true"
         >
           {/* Header with Icon */}
-          <div className="flex items-center gap-3 p-6 border-b-2 border-gray-300 sticky top-0 bg-inherit rounded-t-[calc(0.5rem-2px)]">
-            <div className={`${styles.iconBg} rounded-full p-3 flex-shrink-0`}>
-              <span className={`${styles.iconColor} text-2xl font-bold`}>
+          <div className="flex items-center gap-3 p-6 border-b border-[var(--outline-variant)] sticky top-0 bg-inherit rounded-t-[calc(0.75rem-2px)]">
+            <div className={`${styles.iconBg} rounded-full p-2 flex-shrink-0`}>
+              <span className={`${styles.iconColor} text-lg font-bold flex items-center justify-center w-6 h-6`}>
                 {styles.icon}
               </span>
             </div>
@@ -111,9 +111,9 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
                   {state.issues.map((issue, idx) => (
                     <div
                       key={idx}
-                      className={`text-sm p-3 rounded border-l-4 ${styles.borderColor} bg-white`}
+                      className={`text-sm p-3 rounded border-l-4 ${styles.borderColor} bg-[var(--surface-container-lowest)]`}
                     >
-                      <div className={`font-medium ${styles.textColor}`}>
+                      <div className={`font-medium ${styles.titleColor}`}>
                         {issue.sheetName} • Row {issue.rowIndex}
                       </div>
                       <div
@@ -132,12 +132,12 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="flex gap-3 p-6 border-t-2 border-gray-300 justify-end bg-gray-50 rounded-b-[calc(0.5rem-2px)] sticky bottom-0">
+          <div className="flex gap-3 p-6 border-t border-[var(--outline-variant)] justify-end bg-inherit rounded-b-[calc(0.75rem-2px)] sticky bottom-0">
             {state.type === "warning" && state.onConfirm ? (
               <>
                 <button
                   onClick={onClose}
-                  className="px-6 py-2 rounded-md font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors duration-150"
+                  className="px-6 py-2 rounded-full font-medium text-[var(--on-surface)] bg-[var(--surface-container-high)] hover:bg-[var(--surface-container-highest)] transition-colors duration-150"
                 >
                   Cancel
                 </button>
@@ -146,7 +146,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
                     state.onConfirm?.();
                     onClose();
                   }}
-                  className={`px-6 py-2 rounded-md font-semibold text-white ${styles.buttonBg} transition-colors duration-150`}
+                  className={`px-6 py-2 rounded-full font-medium ${styles.buttonBg} transition-colors duration-150`}
                 >
                   Confirm
                 </button>
@@ -154,7 +154,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
             ) : (
               <button
                 onClick={onClose}
-                className={`px-6 py-2 rounded-md font-semibold text-white ${styles.buttonBg} transition-colors duration-150`}
+                className={`px-6 py-2 rounded-full font-medium ${styles.buttonBg} transition-colors duration-150`}
               >
                 OK
               </button>
