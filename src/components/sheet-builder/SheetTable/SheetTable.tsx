@@ -51,7 +51,7 @@ export function SheetTable({
   return (
     <div className="flex flex-col gap-4">
       {/* Modern minimalistic spreadsheet container */}
-      <div className="overflow-x-auto rounded-2xl bg-white shadow-lg border border-gray-200 p-4">
+      <div className="overflow-x-auto rounded-2xl bg-[var(--surface)] shadow-[var(--elevation-2)] border border-[var(--outline-variant)] p-4">
         <table className="border-collapse w-full">
           <TableHeader
             columns={sheet.columns}
@@ -66,7 +66,7 @@ export function SheetTable({
                   colSpan={sheet.columns.length + 1}
                   className="text-center py-16"
                 >
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-[var(--on-surface-variant)] text-sm">
                     Click Add row to add data
                   </p>
                 </td>

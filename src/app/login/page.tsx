@@ -83,24 +83,24 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--surface-dim)] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl shadow-lg mb-4">
-            <span className="text-white font-bold text-2xl">A</span>
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-[var(--primary)] rounded-2xl shadow-lg mb-4">
+            <span className="text-[var(--on-primary)] font-bold text-2xl">A</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-[var(--on-surface)] mb-2">
             {t("auth.welcomeBack")}
           </h1>
-          <p className="text-gray-600">{t("auth.loginSubtitle")}</p>
+          <p className="text-[var(--on-surface-variant)]">{t("auth.loginSubtitle")}</p>
         </div>
 
         <Card padding="lg">
           <form onSubmit={handleSubmit} className="space-y-5">
             {errors.general && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-sm text-red-600">{errors.general}</p>
+              <div className="p-3 bg-[var(--error-container)] border border-[var(--error)] rounded-lg">
+                <p className="text-sm text-[var(--on-error-container)]">{errors.general}</p>
               </div>
             )}
 
@@ -142,9 +142,9 @@ export default function LoginPage() {
 
           {/* Divider */}
           <div className="my-6 flex items-center">
-            <div className="flex-1 border-t border-gray-300"></div>
-            <span className="px-4 text-sm text-gray-500">OR</span>
-            <div className="flex-1 border-t border-gray-300"></div>
+            <div className="flex-1 border-t border-[var(--outline-variant)]"></div>
+            <span className="px-4 text-sm text-[var(--on-surface-variant)]">OR</span>
+            <div className="flex-1 border-t border-[var(--outline-variant)]"></div>
           </div>
 
           {/* Google Sign-In */}
@@ -178,11 +178,11 @@ export default function LoginPage() {
           </Button>
 
           {/* Sign Up Link */}
-          <p className="mt-6 text-center text-sm text-gray-600">
+          <p className="mt-6 text-center text-sm text-[var(--on-surface-variant)]">
             {t("auth.noAccount")}{" "}
             <Link
               href="/signup"
-              className="font-semibold text-blue-600 hover:text-blue-700"
+              className="font-semibold text-[var(--primary)] hover:text-[var(--primary-hover)]"
             >
               {t("auth.signup")}
             </Link>

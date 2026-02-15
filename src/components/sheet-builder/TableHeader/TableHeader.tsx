@@ -55,7 +55,7 @@ export function TableHeader({
           return (
             <th
               key={column.id}
-              className="bg-gray-50 border-b border-gray-200 border-r border-gray-100 px-2 py-2 text-left group relative hover:bg-gray-100 transition-all duration-200"
+              className="bg-[var(--surface-container-low)] border-b border-[var(--outline-variant)] border-r border-[var(--outline-variant)] px-2 py-2 text-left group relative hover:bg-[var(--surface-container-high)] transition-all duration-200"
               style={{
                 width: `${columnWidth}px`,
               }}
@@ -81,7 +81,7 @@ export function TableHeader({
                   <>
                     <span
                       onClick={() => startEditing(column)}
-                      className="text-xs font-semibold text-gray-800 cursor-pointer hover:text-gray-900 transition-all duration-200 block flex-1 whitespace-nowrap"
+                      className="text-xs font-semibold text-[var(--on-surface)] cursor-pointer hover:text-[var(--primary)] transition-all duration-200 block flex-1 whitespace-nowrap"
                       title={column.label}
                     >
                       {column.label}

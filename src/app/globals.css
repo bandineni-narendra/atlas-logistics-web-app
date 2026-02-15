@@ -97,6 +97,53 @@
   --transition-normal: 200ms ease-out;
 }
 
+[data-theme='dark'] {
+  /* Primary (Dark) */
+  --primary: #8ab4f8;
+  --primary-hover: #aecbfa;
+  --primary-container: #174ea6;
+  --on-primary: #041e49;
+  --on-primary-container: #d3e3fd;
+
+  /* Secondary (Dark) */
+  --secondary-container: #3c4043;
+  --on-secondary-container: #8ab4f8;
+
+  /* Surface system (Dark) */
+  --surface: #2d2e30;
+  /* Material Dark Surface */
+  --surface-dim: #1f1f1f;
+  --surface-container-lowest: #1f1f1f;
+  --surface-container-low: #2d2e30;
+  --surface-container: #3c4043;
+  --surface-container-high: #46484b;
+  --surface-variant: #46484b;
+
+  /* On surface (Dark) */
+  --on-surface: #e8eaed;
+  --on-surface-variant: #9aa0a6;
+
+  /* Outline (Dark) */
+  --outline: #5f6368;
+  --outline-variant: #46484b;
+
+  /* Error (Dark) */
+  --error: #f28b82;
+  --error-container: #8e1410;
+  --on-error: #600200;
+  --on-error-container: #fce8e6;
+
+  /* Success (Dark) */
+  --success: #81c995;
+  --success-container: #0d652d;
+  --on-success-container: #aff5c6;
+
+  /* Warning (Dark) */
+  --warning: #fdd663;
+  --warning-container: #e37400;
+  --on-warning-container: #ffeac1;
+}
+
 @theme inline {
   --color-background: var(--surface-dim);
   --color-foreground: var(--on-surface);
@@ -111,7 +158,7 @@
 }
 
 html {
-  color-scheme: light;
+  color-scheme: light dark;
 }
 
 body {
@@ -141,12 +188,7 @@ textarea {
 }
 
 /* ── Input Styling ────────────────────────────────────────────── */
-input[type="text"],
-input[type="number"],
-input[type="date"],
-textarea {
-  color-scheme: light !important;
-}
+
 
 input,
 textarea {

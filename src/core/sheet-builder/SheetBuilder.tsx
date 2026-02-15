@@ -85,11 +85,11 @@ export function SheetBuilder({
   }, [sheets, onChange]);
 
   if (!activeSheet) {
-    return <div className="p-8 text-center text-gray-500">No active sheet</div>;
+    return <div className="p-8 text-center text-[var(--on-surface-variant)]">No active sheet</div>;
   }
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-lg shadow-sm border border-gray-200">
+    <div className="flex flex-col h-full bg-[var(--surface)] rounded-lg shadow-[var(--elevation-1)] border border-[var(--outline-variant)]">
       {/* Sheet tabs */}
       {multiSheet && (
         <SheetTabs

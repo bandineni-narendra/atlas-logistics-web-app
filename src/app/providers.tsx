@@ -8,6 +8,8 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode, useState } from "react";
+import { ThemeProviderWrapper } from "@/contexts/ThemeContext";
+import ThemeRegistry from "@/theme/ThemeRegistry";
 
 function makeQueryClient(): QueryClient {
     return new QueryClient({
@@ -44,7 +46,11 @@ export function QueryProvider({ children }: { children: ReactNode }) {
 
     return (
         <QueryClientProvider client={queryClient}>
-            {children}
+            <ThemeRegistry>
+                <ThemeProviderWrapper>
+                    {children}
+                </ThemeProviderWrapper>
+            </ThemeRegistry>
         </QueryClientProvider>
     );
 }

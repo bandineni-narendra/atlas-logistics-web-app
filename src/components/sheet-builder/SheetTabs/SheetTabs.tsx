@@ -75,17 +75,15 @@ export function SheetTabs({
   );
 
   return (
-    <div className="flex items-center gap-0.5 border-b-2 border-neutral-200 bg-neutral-50 px-3 py-1.5">
+    <div className="flex items-center gap-0.5 border-b-2 border-[var(--outline-variant)] bg-[var(--surface-container-low)] px-3 py-1.5">
       {sheets.map((sheet) => (
         <div
           key={sheet.id}
           className={`
             group flex items-center gap-2 px-4 py-2 rounded-t-lg cursor-pointer
-            transition-all duration-200 ease-out
-            ${
-              sheet.id === activeSheetId
-                ? "bg-white shadow-sm border-t-2 border-l border-r border-blue-600 border-b-0 text-neutral-900 font-semibold -mb-0.5"
-                : "bg-transparent hover:bg-neutral-100 text-neutral-600 hover:text-neutral-900 border-b-2 border-transparent"
+            transition-all duration-200            ${sheet.id === activeSheetId
+              ? "bg-[var(--surface)] shadow-sm border-t-2 border-l border-r border-[var(--primary)] border-b-0 text-[var(--on-surface)] font-semibold -mb-0.5"
+              : "bg-transparent hover:bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] border-b-2 border-transparent"
             }
           `}
         >

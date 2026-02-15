@@ -41,8 +41,8 @@ export default function FileDetailPage() {
         return (
             <div className="min-h-[400px] flex items-center justify-center">
                 <div className="flex flex-col items-center gap-3">
-                    <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                    <p className="text-gray-500 text-sm">Loading file…</p>
+                    <div className="w-8 h-8 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin" />
+                    <p className="text-[var(--on-surface-variant)] text-sm">Loading file…</p>
                 </div>
             </div>
         );
@@ -53,12 +53,12 @@ export default function FileDetailPage() {
         return (
             <div className="min-h-[400px] flex items-center justify-center">
                 <div className="text-center">
-                    <p className="text-red-600 font-medium mb-2">
+                    <p className="text-[var(--error)] font-medium mb-2">
                         Failed to load file details
                     </p>
                     <button
                         onClick={() => router.back()}
-                        className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                        className="text-sm text-[var(--primary)] hover:text-[var(--primary-hover)] font-medium"
                     >
                         ← Go back
                     </button>
@@ -73,31 +73,31 @@ export default function FileDetailPage() {
             <div className="mb-6">
                 <button
                     onClick={() => router.back()}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium mb-3 inline-flex items-center gap-1"
+                    className="text-sm text-[var(--primary)] hover:text-[var(--primary-hover)] font-medium mb-3 inline-flex items-center gap-1"
                 >
                     ← Back
                 </button>
 
                 <div className="flex items-start justify-between">
                     <div>
-                        <h1 className="text-xl font-semibold text-gray-900">
+                        <h1 className="text-xl font-semibold text-[var(--on-surface)]">
                             {file.name}
                         </h1>
-                        <div className="mt-1 flex items-center gap-3 text-sm text-gray-500">
+                        <div className="mt-1 flex items-center gap-3 text-sm text-[var(--on-surface-variant)]">
                             <span
                                 className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${file.type === "OCEAN"
-                                        ? "bg-blue-100 text-blue-700"
-                                        : "bg-purple-100 text-purple-700"
+                                    ? "bg-[var(--primary-container)] text-[var(--on-primary-container)]"
+                                    : "bg-[var(--tertiary-container)] text-[var(--on-tertiary-container)]"
                                     }`}
                             >
                                 {file.type}
                             </span>
                             <span
                                 className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${file.status === "saved"
-                                        ? "bg-green-100 text-green-700"
-                                        : file.status === "draft"
-                                            ? "bg-yellow-100 text-yellow-700"
-                                            : "bg-gray-100 text-gray-600"
+                                    ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                                    : file.status === "draft"
+                                        ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
+                                        : "bg-[var(--surface-container-high)] text-[var(--on-surface-variant)]"
                                     }`}
                             >
                                 {file.status}
@@ -111,7 +111,7 @@ export default function FileDetailPage() {
 
             {/* Sheet Tabs */}
             {sheets.length > 0 ? (
-                <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div className="bg-[var(--surface)] rounded-xl border border-[var(--outline-variant)] shadow-[var(--elevation-1)] overflow-hidden">
                     <SheetTabs
                         sheets={sheets.map((s) => ({ id: s.id, name: s.name }))}
                         activeSheetId={activeSheetId}
@@ -123,15 +123,15 @@ export default function FileDetailPage() {
                         {activeSheet ? (
                             <SheetDataTable data={activeSheet.data} />
                         ) : (
-                            <p className="text-gray-500 text-sm text-center py-6">
+                            <p className="text-[var(--on-surface-variant)] text-sm text-center py-6">
                                 Select a sheet tab above.
                             </p>
                         )}
                     </div>
                 </div>
             ) : (
-                <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-                    <p className="text-gray-500">
+                <div className="bg-[var(--surface)] rounded-xl border border-[var(--outline-variant)] p-8 text-center">
+                    <p className="text-[var(--on-surface-variant)]">
                         This file has no sheets.
                     </p>
                 </div>
