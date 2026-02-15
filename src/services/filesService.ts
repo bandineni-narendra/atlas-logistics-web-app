@@ -15,6 +15,7 @@ import type {
     UpdateFileRequest,
     UpdateFileResponse,
     DeleteFileResponse,
+    SheetWithData,
 } from "@/types/api";
 
 export class FilesService {
@@ -48,6 +49,13 @@ export class FilesService {
      */
     async getFileDetail(fileId: string): Promise<{ file: FileDetail }> {
         return apiClient.get<{ file: FileDetail }>(`/files/${fileId}`);
+    }
+
+    /**
+     * Get all sheets with full data for a file
+     */
+    async getFileSheets(fileId: string): Promise<{ sheets: SheetWithData[] }> {
+        return apiClient.get<{ sheets: SheetWithData[] }>(`/files/${fileId}/sheets`);
     }
 
     /**

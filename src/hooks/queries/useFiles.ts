@@ -36,6 +36,17 @@ export function useFileDetail(fileId: string) {
 }
 
 /**
+ * Fetch all sheets with full data for a file
+ */
+export function useFileSheets(fileId: string) {
+  return useQuery({
+    queryKey: ["files", fileId, "sheets"],
+    queryFn: () => filesService.getFileSheets(fileId),
+    enabled: !!fileId,
+  });
+}
+
+/**
  * Create a new file with sheets
  */
 export function useCreateFile() {

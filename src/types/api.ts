@@ -130,6 +130,12 @@ export interface FileDetail {
     sheets: SheetSummary[];
 }
 
+export interface SheetWithData {
+    id: string;
+    name: string;
+    data: SheetData;
+}
+
 export interface UpdateFileRequest {
     name?: string;
     effectiveDate?: string;
