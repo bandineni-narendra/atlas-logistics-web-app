@@ -26,7 +26,7 @@ export const TableRow = memo(function TableRow({
   onDelete,
 }: TableRowProps) {
   return (
-    <tr className="group hover:bg-gray-50 transition-all duration-200">
+    <tr className="group hover:bg-[var(--surface-container-low)] transition-all duration-200">
       {/* Data cells */}
       {columns.map((column) => (
         <MemoizedTableCell
@@ -40,7 +40,7 @@ export const TableRow = memo(function TableRow({
 
       {/* Delete row button */}
       <td
-        className="border-b border-gray-100 bg-white hover:bg-gray-50 text-center px-2 py-0 transition-all duration-200"
+        className="border-b border-[var(--outline-variant)] bg-[var(--surface)] hover:bg-[var(--surface-container-low)] text-center px-2 py-0 transition-all duration-200"
         style={{ width: "70px", minWidth: "70px" }}
       >
         <div className="flex items-center justify-center h-8">
@@ -72,7 +72,7 @@ export const TableRow = memo(function TableRow({
 
       {/* Empty cell for Add Column header alignment */}
       <td
-        className="border-b border-gray-100 bg-white"
+        className="border-b border-[var(--outline-variant)] bg-[var(--surface)]"
         style={{ minWidth: "100px" }}
       ></td>
     </tr>

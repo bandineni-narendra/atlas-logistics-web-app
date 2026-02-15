@@ -1,7 +1,6 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Card, CardContent } from "@/components/ui";
 import { DashboardStats } from "@/types/api/sheets";
 import { DASHBOARD_LABELS, STAT_CARD_COLORS, StatCardColor } from "@/constants";
 
@@ -13,8 +12,7 @@ export interface StatCardProps {
 }
 
 /**
- * Single Statistics Card Component
- * Memoized to prevent unnecessary re-renders
+ * Single stat metric — M3 flat inline style
  */
 const StatCard = memo<StatCardProps>(function StatCard({
   label,
@@ -34,15 +32,13 @@ const StatCard = memo<StatCardProps>(function StatCard({
   }, [color]);
 
   return (
-    <Card padding="md">
-      <CardContent>
-        <p className="text-sm font-medium text-gray-500">{label}</p>
-        <p className={`mt-1 text-3xl font-semibold ${colorClass}`}>
-          {value}
-        </p>
-        <p className="mt-1 text-xs text-gray-400">{sublabel}</p>
-      </CardContent>
-    </Card>
+    <div className="flex-1 min-w-0 px-4 py-3">
+      <p className="text-xs font-medium text-[var(--on-surface-variant)] uppercase tracking-wide">{label}</p>
+      <p className={`mt-0.5 text-2xl font-medium ${colorClass}`}>
+        {value}
+      </p>
+      <p className="mt-0.5 text-xs text-[var(--on-surface-variant)]">{sublabel}</p>
+    </div>
   );
 });
 
@@ -52,24 +48,21 @@ export interface DashboardStatsProps {
 }
 
 /**
- * Dashboard Stats Section Component
- * Displays overview metrics in a responsive grid
- * Memoized to prevent unnecessary re-renders when parent re-renders
+ * Dashboard Stats — M3 flat horizontal metrics strip with dividers
  */
 export const DashboardStatsSection = memo<DashboardStatsProps>(
   function DashboardStatsSection({ stats, loading }) {
-    // Memoize the value formatter
     const formatValue = useMemo(
       () => (stat: number | undefined) => (loading ? DASHBOARD_LABELS.LOADING_PLACEHOLDER : stat || 0),
       [loading]
     );
 
     return (
-      <div className="mt-8">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">
+      <div className="mt-6">
+        <h2 className="text-sm font-medium text-[var(--on-surface-variant)] mb-3 uppercase tracking-wide">
           {DASHBOARD_LABELS.OVERVIEW_TITLE}
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-xl flex divide-x divide-[var(--outline-variant)]">
           <StatCard
             label={DASHBOARD_LABELS.TOTAL_SHEETS}
             value={formatValue(stats?.totalSheets)}

@@ -1,20 +1,20 @@
 /**
  * File Status Configuration
- * Centralized configuration for file statuses
+ * Centralized configuration for file statuses — M3 tonal surfaces
  */
 
 export const FILE_STATUS_CONFIG = {
-  draft: { 
-    label: "Draft", 
-    color: "bg-amber-100 text-amber-800" 
+  draft: {
+    label: "Draft",
+    color: "bg-[#fef7e0] text-[#b06000]",
   },
-  saved: { 
-    label: "Saved", 
-    color: "bg-emerald-100 text-emerald-800" 
+  saved: {
+    label: "Saved",
+    color: "bg-[#e6f4ea] text-[#137333]",
   },
-  archived: { 
-    label: "Archived", 
-    color: "bg-gray-100 text-gray-800" 
+  archived: {
+    label: "Archived",
+    color: "bg-[#f1f3f4] text-[#5f6368]",
   },
 } as const;
 

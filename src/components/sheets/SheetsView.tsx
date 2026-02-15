@@ -1,28 +1,53 @@
 "use client";
 
 import { useMemo } from "react";
-import { Card, CardContent } from "@/components/ui";
 import Link from "next/link";
-import { useFiles } from "@/hooks/useFiles";
-import { FileType } from "@/types/file";
+import { useFilesQuery } from "@/hooks/queries/useFiles";
+import { Pagination } from "@/components/table/Pagination";
 import { FILE_TYPE_CONFIG, FILE_STATUS_CONFIG, ROUTES } from "@/constants";
 import { logger } from "@/utils";
+import type { FileType } from "@/types/api";
+
+const PAGE_SIZE = 10;
 
 export interface SheetsViewProps {
   filter?: "ocean" | "air" | "all";
+  page: number;
+  onPageChange: (page: number) => void;
+  startDate?: string;
+  endDate?: string;
 }
 
+/**
+ * Sheets List View — Gmail-style dense list rows
+ */
+export function SheetsView({
+  filter = "all",
+  page,
+  onPageChange,
+  startDate,
+  endDate,
+}: SheetsViewProps) {
+  // Build query params — omit type when "all", include date range if provided
+  const queryParams = useMemo(
+    () => ({
+      ...(filter !== "all" && {
+        type: filter.toUpperCase() as FileType,
+      }),
+      page,
+      pageSize: PAGE_SIZE,
+      ...(startDate && { startDate }),
+      ...(endDate && { endDate }),
+    }),
+    [filter, page, startDate, endDate]
+  );
 
+  const { data, isLoading, isError, error } = useFilesQuery(queryParams);
 
-export function SheetsView({ filter = "all" }: SheetsViewProps) {
-  // Use the useFiles hook instead of manual API calls
-  const { files, loading, error } = useFiles({ 
-    type: filter as FileType | "all",
-    page: 1,
-    pageSize: 50,
-  });
+  const files = data?.files ?? [];
+  const total = data?.total ?? 0;
 
-  // Memoize empty state message (must be before any early returns)
+  // Empty-state message
   const emptyStateMessage = useMemo(() => {
     if (filter === "all") {
       return "Create a new Air or Ocean freight file to get started";
@@ -30,121 +55,147 @@ export function SheetsView({ filter = "all" }: SheetsViewProps) {
     return `Create a new ${filter} freight file to get started`;
   }, [filter]);
 
-  logger.debug(`[SheetsView] Rendering with filter="${filter}", files=${files.length}, loading=${loading}`);
+  logger.debug(
+    `[SheetsView] filter="${filter}", page=${page}, total=${total}, files=${files.length}, loading=${isLoading}`
+  );
 
-  if (loading) {
+  // ── Loading ────────────────────────────────────────────
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center py-10">
         <div className="text-center">
-          <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-3"></div>
-          <p className="text-gray-600">Loading files...</p>
+          <div className="relative inline-block w-8 h-8 mb-2">
+            <div className="w-8 h-8 border-[3px] border-[var(--surface-container-high)] rounded-full" />
+            <div className="absolute top-0 left-0 w-8 h-8 border-[3px] border-[var(--primary)] rounded-full border-t-transparent animate-spin" />
+          </div>
+          <p className="text-sm text-[var(--on-surface-variant)]">Loading files...</p>
         </div>
       </div>
     );
   }
 
-  if (error) {
+  // ── Error ──────────────────────────────────────────────
+  if (isError) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-800">
-          <span className="font-semibold">Error:</span> {error}
+      <div className="bg-[var(--error-container)] rounded-xl p-4">
+        <p className="text-sm text-[var(--on-error-container)]">
+          <span className="font-medium">Error:</span>{" "}
+          {error instanceof Error ? error.message : "Failed to load files"}
         </p>
       </div>
     );
   }
 
+  // ── Empty ──────────────────────────────────────────────
   if (files.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500 text-lg font-medium">No files found</p>
-        <p className="text-sm text-gray-400 mt-2">{emptyStateMessage}</p>
+      <div className="text-center py-10">
+        <p className="text-[var(--on-surface)] text-base font-medium">No files found</p>
+        <p className="text-sm text-[var(--on-surface-variant)] mt-1">{emptyStateMessage}</p>
       </div>
     );
   }
 
+  // ── List View ──────────────────────────────────────────
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {files.map((file) => {
-        const fileTypeKey = file.type.toLowerCase() as keyof typeof FILE_TYPE_CONFIG;
-        const typeInfo = FILE_TYPE_CONFIG[fileTypeKey];
+    <div className="border border-[var(--outline-variant)] rounded-xl overflow-hidden bg-[var(--surface)]">
+      {/* Table header */}
+      <div className="hidden sm:grid sm:grid-cols-12 gap-4 px-4 py-2 text-xs font-medium text-[var(--on-surface-variant)] border-b border-[var(--outline-variant)] bg-[var(--surface-container-low)]">
+        <span className="col-span-5">Name</span>
+        <span className="col-span-2">Type</span>
+        <span className="col-span-2">Status</span>
+        <span className="col-span-1 text-center">Sheets</span>
+        <span className="col-span-2 text-right">Updated</span>
+      </div>
 
-        if (!typeInfo) {
-          logger.warn(`[SheetsView] Unknown file type: ${file.type}`);
+      {/* Rows */}
+      <ul className="divide-y divide-[var(--outline-variant)]">
+        {files.map((file) => {
+          const fileTypeKey =
+            file.type.toLowerCase() as keyof typeof FILE_TYPE_CONFIG;
+          const typeInfo = FILE_TYPE_CONFIG[fileTypeKey];
+          const statusInfo = FILE_STATUS_CONFIG[file.status];
+
+          if (!typeInfo || !statusInfo) {
+            logger.warn(
+              `[SheetsView] Unknown type/status: ${file.type}/${file.status}`
+            );
+            return null;
+          }
+
           return (
-            <div
-              key={file.id}
-              className="p-4 bg-red-50 border border-red-200 rounded"
-            >
-              <p className="text-red-800">Unknown file type: {file.type}</p>
-              <p className="text-sm text-gray-600">{file.name}</p>
-            </div>
-          );
-        }
-
-        const statusInfo = FILE_STATUS_CONFIG[file.status];
-
-        if (!statusInfo) {
-          logger.warn(`[SheetsView] Unknown status: ${file.status}`);
-          return (
-            <div
-              key={file.id}
-              className="p-4 bg-yellow-50 border border-yellow-200 rounded"
-            >
-              <p className="text-yellow-800">Unknown status: {file.status}</p>
-              <p className="text-sm text-gray-600">{file.name}</p>
-            </div>
-          );
-        }
-
-        return (
-          <Link key={file.id} href={ROUTES.FILE_DETAIL(file.id)}>
-            <Card
-              padding="lg"
-              className="h-full hover:shadow-md hover:border-blue-200 transition-all duration-200 cursor-pointer group"
-            >
-              <CardContent>
-                {/* Header */}
-                <div className="flex items-start justify-between mb-3">
-                  <div
-                    className={`w-10 h-10 rounded-lg ${typeInfo.color} flex items-center justify-center text-lg`}
+            <li key={file.id}>
+              <Link
+                href={ROUTES.FILE_DETAIL(file.id)}
+                className="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 items-center px-4 py-2.5 hover:bg-[var(--surface-container-low)] transition-colors duration-100 group"
+              >
+                {/* Name + icon */}
+                <div className="sm:col-span-5 flex items-center gap-3 min-w-0">
+                  <span
+                    className={`flex-shrink-0 w-8 h-8 rounded-lg ${typeInfo.color} flex items-center justify-center text-sm`}
                   >
                     {typeInfo.icon}
-                  </div>
+                  </span>
+                  <span className="truncate font-medium text-[var(--on-surface)] text-sm group-hover:text-[var(--primary)] transition-colors duration-100">
+                    {file.name}
+                  </span>
+                </div>
+
+                {/* Type */}
+                <div className="sm:col-span-2">
                   <span
-                    className={`text-xs px-2 py-1 rounded-full font-medium ${statusInfo.color}`}
+                    className={`text-sm font-medium ${typeInfo.textColor}`}
+                  >
+                    {typeInfo.label}
+                  </span>
+                </div>
+
+                {/* Status badge */}
+                <div className="sm:col-span-2">
+                  <span
+                    className={`inline-flex text-xs px-2 py-0.5 rounded-full font-medium ${statusInfo.color}`}
                   >
                     {statusInfo.label}
                   </span>
                 </div>
 
-                {/* Title */}
-                <h3 className="text-base font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
-                  {file.name}
-                </h3>
-
-                {/* Type */}
-                <p className={`text-sm font-medium ${typeInfo.textColor} mb-3`}>
-                  {typeInfo.label}
-                </p>
-
-                {/* Stats */}
-                <div className="space-y-2 pt-3 border-t border-gray-200">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Sheets:</span>
-                    <span className="font-semibold text-gray-900">
-                      {file.sheetCount}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-xs text-gray-500">
-                    <span>Updated:</span>
-                    <span>{new Date(file.updatedAt).toLocaleDateString()}</span>
-                  </div>
+                {/* Sheet count */}
+                <div className="sm:col-span-1 text-center text-sm text-[var(--on-surface)] font-medium">
+                  {file.sheetCount}
                 </div>
-              </CardContent>
-            </Card>
-          </Link>
-        );
-      })}
+
+                {/* Updated date */}
+                <div className="sm:col-span-2 text-right text-xs text-[var(--on-surface-variant)]">
+                  {new Date(file.updatedAt).toLocaleDateString()}
+                </div>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+
+      {/* Pagination */}
+      <div>
+        <div className="flex items-center justify-between px-4 py-2 border-t border-[var(--outline-variant)]">
+          <p className="text-sm text-[var(--on-surface-variant)]">
+            Showing{" "}
+            <span className="font-medium text-[var(--on-surface)]">
+              {(page - 1) * PAGE_SIZE + 1}
+            </span>
+            –
+            <span className="font-medium text-[var(--on-surface)]">
+              {Math.min(page * PAGE_SIZE, total)}
+            </span>{" "}
+            of{" "}
+            <span className="font-medium text-[var(--on-surface)]">{total}</span>
+          </p>
+        </div>
+        <Pagination
+          currentPage={page}
+          totalPages={Math.max(1, Math.ceil(total / PAGE_SIZE))}
+          onPageChange={onPageChange}
+        />
+      </div>
     </div>
   );
 }

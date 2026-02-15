@@ -10,14 +10,19 @@ import {
   DashboardStatsSection,
   SheetsSection,
 } from "@/components/home";
-import { getDashboardStats } from "@/api/sheets_client";
-import { DashboardStats } from "@/types/api/sheets";
+import { filesService } from "@/services/filesService";
 import { logger } from "@/utils";
 
 export default function Home() {
   const t = useTranslations();
   const { isAuthenticated, isLoading } = useAuth();
-  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [stats, setStats] = useState<{
+    totalSheets: number;
+    oceanSheets: number;
+    airSheets: number;
+    totalRows: number;
+    lastModified: string;
+  } | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"all" | "ocean" | "air">("all");
 
@@ -25,9 +30,23 @@ export default function Home() {
   const loadStats = useCallback(async () => {
     try {
       logger.debug("[HomePage] Loading dashboard stats...");
-      const response = await getDashboardStats();
-      logger.debug("[HomePage] Dashboard stats loaded", response.stats);
-      setStats(response.stats);
+
+      // Fetch files for both types to compute stats
+      const [airResponse, oceanResponse] = await Promise.all([
+        filesService.getFiles({ type: "AIR", page: 1, pageSize: 1 }),
+        filesService.getFiles({ type: "OCEAN", page: 1, pageSize: 1 }),
+      ]);
+
+      const dashboardStats = {
+        totalSheets: (airResponse.total || 0) + (oceanResponse.total || 0),
+        airSheets: airResponse.total || 0,
+        oceanSheets: oceanResponse.total || 0,
+        totalRows: 0,
+        lastModified: new Date().toISOString(),
+      };
+
+      logger.debug("[HomePage] Dashboard stats loaded", dashboardStats);
+      setStats(dashboardStats);
     } catch (error) {
       logger.error("[HomePage] Failed to load stats:", error);
       setStats(null);

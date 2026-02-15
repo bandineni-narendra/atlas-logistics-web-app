@@ -5,17 +5,16 @@ export type TableHeaderProps<T> = {
 };
 
 /**
- * Generic table header
- * Renders column headers
+ * Table header — M3 flat, normal case, medium weight
  */
 export function TableHeader<T>({ columns }: TableHeaderProps<T>) {
   return (
-    <thead className="bg-gray-50 border-b border-gray-200">
+    <thead className="bg-[var(--surface-container-low)] border-b border-[var(--outline-variant)]">
       <tr>
         {columns.map((column) => (
           <th
             key={String(column.key)}
-            className="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap"
+            className="px-3 py-2.5 text-left text-xs font-medium text-[var(--on-surface-variant)] whitespace-nowrap"
             style={column.width ? { minWidth: column.width } : undefined}
           >
             {column.label}

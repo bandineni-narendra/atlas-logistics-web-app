@@ -4,20 +4,22 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { SideBarMenu } from "@/components/sidebar/SideBarMenu";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import Link from "next/link";
+import Switch from "@mui/material/Switch";
 
 export type SidebarProps = {
   currentPath: string;
 };
 
 /**
- * Main sidebar navigation
- * Renders all menu items
- * Uses SideBarMenu for each item
+ * Gmail-style sidebar navigation
+ * Clean, flat design with SVG icons and pill active states
  */
 export function Sidebar({ currentPath }: SidebarProps) {
   const t = useTranslations();
   const { user, isAuthenticated, logout } = useAuth();
+  const { mode, toggleTheme, mounted } = useTheme();
   const [showDropdown, setShowDropdown] = useState(false);
 
   const menuItems = useMemo(
@@ -25,42 +27,54 @@ export function Sidebar({ currentPath }: SidebarProps) {
       {
         label: t("navigation.home"),
         href: "/",
-        icon: "🏠",
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+          </svg>
+        ),
       },
       {
         label: t("navigation.createAirSheet"),
         href: "/air-freight-sheet",
-        icon: "📋",
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+          </svg>
+        ),
       },
       {
         label: t("navigation.createOceanSheet"),
         href: "/ocean-freight-sheet",
-        icon: "📄",
+        icon: (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+          </svg>
+        ),
       },
     ],
     [t],
   );
 
   return (
-    <aside className="w-56 bg-white border-r border-gray-200 flex flex-col h-screen">
+    <aside className="w-60 bg-[var(--surface)] border-r border-[var(--outline-variant)] flex flex-col h-screen">
       {/* Logo Section */}
-      <div className="px-5 py-4 border-b border-gray-100">
+      <div className="px-4 py-4 border-b border-[var(--outline-variant)]">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-sm">
-            <span className="text-white font-bold text-lg">A</span>
+          <div className="w-8 h-8 bg-[var(--primary)] rounded-lg flex items-center justify-center">
+            <span className="text-[var(--on-primary)] font-medium text-sm">A</span>
           </div>
           <div>
-            <h1 className="text-base font-semibold text-gray-900">
+            <h1 className="text-sm font-medium text-[var(--on-surface)]">
               {t("common.appName")}
             </h1>
-            <p className="text-xs text-gray-500">{t("common.appTagline")}</p>
+            <p className="text-xs text-[var(--on-surface-variant)]">{t("common.appTagline")}</p>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 overflow-y-auto">
-        <div className="space-y-1">
+      <nav className="flex-1 px-3 py-3 overflow-y-auto">
+        <div className="space-y-0.5">
           {menuItems.map((item) => (
             <SideBarMenu
               key={item.href}
@@ -73,29 +87,28 @@ export function Sidebar({ currentPath }: SidebarProps) {
         </div>
       </nav>
 
-      {/* Footer */}
-      <div className="px-4 py-4 border-t border-gray-100">
+      {/* Footer — User Section */}
+      <div className="px-3 py-3 border-t border-[var(--outline-variant)]">
         {isAuthenticated && user ? (
           <div className="relative">
             <button
               onClick={() => setShowDropdown(!showDropdown)}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-full hover:bg-[var(--surface-container-low)] transition-colors duration-100"
             >
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-medium">
+              <div className="w-8 h-8 bg-[var(--primary)] rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-[var(--on-primary)] text-sm font-medium">
                   {user.name.charAt(0).toUpperCase()}
                 </span>
               </div>
               <div className="flex-1 min-w-0 text-left">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-[var(--on-surface)] truncate">
                   {user.name}
                 </p>
-                <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                <p className="text-xs text-[var(--on-surface-variant)] truncate">{user.email}</p>
               </div>
               <svg
-                className={`w-4 h-4 text-gray-400 transition-transform ${
-                  showDropdown ? "rotate-180" : ""
-                }`}
+                className={`w-4 h-4 text-[var(--on-surface-variant)] transition-transform duration-100 ${showDropdown ? "rotate-180" : ""
+                  }`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -111,28 +124,62 @@ export function Sidebar({ currentPath }: SidebarProps) {
 
             {/* Dropdown Menu */}
             {showDropdown && (
-              <div className="absolute bottom-full left-0 right-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+              <div className="absolute bottom-full left-0 right-0 mb-1 bg-[var(--surface)] border border-[var(--outline-variant)] rounded-xl shadow-[var(--elevation-2)] overflow-hidden">
                 <Link
                   href="/profile"
-                  className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--on-surface)] hover:bg-[var(--surface-container-low)] transition-colors duration-100"
                   onClick={() => setShowDropdown(false)}
                 >
-                  <div className="flex items-center gap-2">
-                    <span>👤</span>
-                    <span>{t("navigation.profile")}</span>
-                  </div>
+                  <svg className="w-4 h-4 text-[var(--on-surface-variant)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                  </svg>
+                  <span>{t("navigation.profile")}</span>
                 </Link>
+                {/* Theme Toggle */}
+                <div
+                  className="flex items-center justify-between px-4 py-2.5 text-sm text-[var(--on-surface)] hover:bg-[var(--surface-container-low)] transition-colors duration-100 cursor-pointer border-t border-[var(--outline-variant)]"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleTheme();
+                  }}
+                >
+                  {mounted ? (
+                    <>
+                      <div className="flex items-center gap-3">
+                        {mode === "dark" ? (
+                          <svg className="w-4 h-4 text-[var(--on-surface-variant)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+                          </svg>
+                        ) : (
+                          <svg className="w-4 h-4 text-[var(--on-surface-variant)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                          </svg>
+                        )}
+                        <span>{mode === "dark" ? "Dark Mode" : "Light Mode"}</span>
+                      </div>
+                      <Switch checked={mode === "dark"} size="small" color="default" />
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-3">
+                        <div className="w-4 h-4" /> {/* Spacer */}
+                        <span>Light Mode</span>
+                      </div>
+                      <div className="w-8 h-5" /> {/* Spacer for Switch */}
+                    </>
+                  )}
+                </div>
                 <button
                   onClick={() => {
                     setShowDropdown(false);
                     logout();
                   }}
-                  className="w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--error)] hover:bg-[var(--error-container)] transition-colors duration-100 text-left border-t border-[var(--outline-variant)]"
                 >
-                  <div className="flex items-center gap-2">
-                    <span>🚪</span>
-                    <span>{t("navigation.logout")}</span>
-                  </div>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                  </svg>
+                  <span>{t("navigation.logout")}</span>
                 </button>
               </div>
             )}
@@ -140,13 +187,15 @@ export function Sidebar({ currentPath }: SidebarProps) {
         ) : (
           <Link
             href="/login"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-3 px-3 py-2 rounded-full hover:bg-[var(--surface-container-low)] transition-colors duration-100"
           >
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-              <span className="text-gray-600 text-sm">👤</span>
+            <div className="w-8 h-8 bg-[var(--surface-container-high)] rounded-full flex items-center justify-center">
+              <svg className="w-4 h-4 text-[var(--on-surface-variant)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-medium text-[var(--on-surface)]">
                 {t("auth.login")}
               </p>
             </div>

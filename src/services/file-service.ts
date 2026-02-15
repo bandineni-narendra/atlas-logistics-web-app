@@ -1,33 +1,27 @@
 /**
  * File Service
- * 
+ *
  * Application layer service for file operations.
  * Components should use this instead of calling API clients directly.
+ * Now delegates to the unified filesService.
  */
 
-import { FileType, FileSummary, FileDetail } from "@/types/file";
-import { 
-  getFiles as getFilesAPI,
-  getFileDetail as getFileDetailAPI,
-  deleteFile as deleteFileAPI,
-  createFile as createFileAPI,
-  updateFile as updateFileAPI,
-  getFileDashboardStats as getDashboardStatsAPI,
-} from "@/api/files_client";
-import {
+import { FileSummary as ApiFileSummary, FileDetail as ApiFileDetail } from "@/types/api";
+import { filesService } from "@/services/filesService";
+import type {
   CreateFileRequest,
   UpdateFileRequest,
-  GetFilesRequest,
-} from "@/types/api/files";
+  GetFilesParams,
+} from "@/types/api";
 
 export class FileService {
   /**
    * Get files with pagination and filters
    */
-  async getFiles(params: GetFilesRequest): Promise<{ items: FileSummary[]; total: number }> {
-    const response = await getFilesAPI(params);
+  async getFiles(params: GetFilesParams): Promise<{ files: ApiFileSummary[]; total: number }> {
+    const response = await filesService.getFiles(params);
     return {
-      items: response.items || [],
+      files: response.files || [],
       total: response.total || 0,
     };
   }
@@ -36,19 +30,19 @@ export class FileService {
    * Get files by type (helper method)
    */
   async getFilesByType(
-    type: FileType,
+    type: "AIR" | "OCEAN",
     page: number = 1,
-    pageSize: number = 50
-  ): Promise<FileSummary[]> {
+    pageSize: number = 50,
+  ): Promise<ApiFileSummary[]> {
     const response = await this.getFiles({ type, page, pageSize });
-    return response.items;
+    return response.files;
   }
 
   /**
    * Get detailed file information
    */
-  async getFileDetail(id: string, type: FileType): Promise<FileDetail> {
-    const response = await getFileDetailAPI(id, type);
+  async getFileDetail(id: string): Promise<ApiFileDetail> {
+    const response = await filesService.getFileDetail(id);
     return response.file;
   }
 
@@ -56,7 +50,7 @@ export class FileService {
    * Create a new file
    */
   async createFile(data: CreateFileRequest): Promise<{ fileId: string; sheetIds: string[] }> {
-    const response = await createFileAPI(data);
+    const response = await filesService.createFile(data);
     return {
       fileId: response.fileId,
       sheetIds: response.sheetIds,
@@ -66,28 +60,15 @@ export class FileService {
   /**
    * Update file metadata
    */
-  async updateFile(id: string, type: FileType, data: UpdateFileRequest): Promise<void> {
-    await updateFileAPI(id, type, data);
+  async updateFile(id: string, data: UpdateFileRequest): Promise<void> {
+    await filesService.updateFile(id, data);
   }
 
   /**
    * Delete a file
    */
-  async deleteFile(id: string, type: FileType): Promise<void> {
-    await deleteFileAPI(id, type);
-  }
-
-  /**
-   * Get dashboard statistics
-   */
-  async getDashboardStats(type: FileType): Promise<{
-    totalFiles: number;
-    totalSheets: number;
-    totalRows: number;
-    lastModified: string;
-  }> {
-    const response = await getDashboardStatsAPI(type);
-    return response.stats;
+  async deleteFile(id: string): Promise<void> {
+    await filesService.deleteFile(id);
   }
 }
 

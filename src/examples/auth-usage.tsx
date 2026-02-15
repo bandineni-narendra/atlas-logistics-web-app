@@ -9,7 +9,7 @@ import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth";
 import * as authService from "@/services/auth";
-import { apiClient } from "@/api/client";
+import { apiClient } from "@/services/apiClient";
 
 // ============================================================================
 // Example 1: Using Auth in a Component
@@ -223,9 +223,9 @@ function ProfileEditor() {
 async function fetchUserData() {
   try {
     // Token is automatically added by the interceptor
-    const response = await apiClient.get("/auth/me");
-    console.log("User data:", response.data);
-    return response.data;
+    const response = await apiClient.get<unknown>("/auth/me");
+    console.log("User data:", response);
+    return response;
   } catch (error) {
     console.error("Failed to fetch user data:", error);
     // 401 errors automatically redirect to login via interceptor
@@ -235,7 +235,7 @@ async function fetchUserData() {
 async function createExcelJob() {
   try {
     // Token is automatically added
-    const response = await apiClient.post("/excel-flow/jobs", {
+    const response = await apiClient.post<any>("/excel-flow/jobs", {
       fileName: "data.xlsx",
       sheet: {
         sheetName: "Sheet1",
@@ -245,8 +245,8 @@ async function createExcelJob() {
         ],
       },
     });
-    console.log("Job created:", response.data.jobId);
-    return response.data;
+    console.log("Job created:", (response as any).jobId);
+    return response;
   } catch (error: any) {
     console.error("Failed to create job:", error.message);
   }

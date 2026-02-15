@@ -1,14 +1,18 @@
-// Re-export from client (main API)
-export * from "./client";
+/**
+ * API Layer Index
+ *
+ * Re-exports from the new service layer.
+ * Legacy API client files are preserved but no longer actively imported.
+ *
+ * NEW ARCHITECTURE:
+ * - services/apiClient.ts → unified HTTP client
+ * - services/authService.ts → auth endpoints
+ * - services/filesService.ts → file endpoints
+ * - services/excelService.ts → excel processing endpoints
+ */
 
-// Re-export flow-specific functions with explicit names to avoid conflicts
-export { createExcelFlowJob, getExcelFlowJob } from "./flow_client";
-
-// Re-export auth client
-export { authClient } from "./auth_client";
-
-// Re-export sheet client
-export * from "./sheets_client";
-
-// Re-export file client
-export * from "./files_client";
+// New unified services (preferred)
+export { apiClient, ApiClientError } from "@/services/apiClient";
+export { authService } from "@/services/authService";
+export { filesService } from "@/services/filesService";
+export { excelService } from "@/services/excelService";

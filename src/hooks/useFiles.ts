@@ -1,16 +1,17 @@
 /**
  * useFiles Hook
- * 
+ *
  * React hook for file operations.
  * Components should use this instead of calling API directly.
+ * Delegates to the unified filesService.
  */
 
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { FileSummary, FileType } from "@/types/file";
 import { fileService } from "@/services/file-service";
 import { logger } from "@/utils";
+import type { FileSummary, FileType } from "@/types/api";
 
 export interface UseFilesOptions {
   type: FileType | "all";
@@ -44,10 +45,10 @@ export function useFiles(options: UseFilesOptions): UseFilesReturn {
       let totalCount = 0;
 
       // Determine which types to fetch
-      const typesToFetch: FileType[] = 
-        type === "all" 
-          ? ["AIR", "OCEAN"] 
-          : [type];
+      const typesToFetch: FileType[] =
+        type === "all"
+          ? ["AIR", "OCEAN"]
+          : [type.toUpperCase() as FileType];
 
       // Fetch files for each type
       for (const fileType of typesToFetch) {
@@ -57,17 +58,17 @@ export function useFiles(options: UseFilesOptions): UseFilesReturn {
           pageSize,
         });
 
-        if (response.items && Array.isArray(response.items)) {
-          allFiles.push(...response.items);
+        if (response.files && Array.isArray(response.files)) {
+          allFiles.push(...response.files);
           totalCount += response.total || 0;
         }
       }
 
       setFiles(allFiles);
       setTotal(totalCount);
-    } catch (err: any) {
+    } catch (err: unknown) {
       logger.error("[useFiles] Failed to load files:", err);
-      setError(err.message || "Failed to load files");
+      setError(err instanceof Error ? err.message : "Failed to load files");
       setFiles([]);
       setTotal(0);
     } finally {

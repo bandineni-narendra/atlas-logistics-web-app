@@ -147,17 +147,16 @@ export default function AirPage() {
 
       {/* Tab UI for sheets */}
       {results.length > 0 && (
-        <Card padding="none" shadow="md">
+        <Card padding="none">
           <div className="border-b border-gray-200 bg-gray-50 px-4">
             <div className="flex gap-1 overflow-x-auto">
               {results.map(({ sheetName }, idx) => (
                 <button
                   key={sheetName}
-                  className={`px-4 py-3 text-sm font-medium transition-colors duration-150 border-b-2 -mb-px whitespace-nowrap ${
-                    activeTab === idx
+                  className={`px-4 py-3 text-sm font-medium transition-colors duration-150 border-b-2 -mb-px whitespace-nowrap ${activeTab === idx
                       ? "border-blue-600 text-blue-700 bg-white"
                       : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100"
-                  }`}
+                    }`}
                   onClick={() => setActiveTab(idx)}
                   type="button"
                 >

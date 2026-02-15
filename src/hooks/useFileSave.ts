@@ -6,30 +6,16 @@
  * - Validating sheets before save
  * - Creating file with all sheets via API
  * - Showing feedback to user
- *
- * Usage:
- * ```tsx
- * const { handleSaveFile, FileNameModalComponent } = useFileSave({
- *   fileType: "AIR",
- *   effectiveDate: "2024-01-01",
- *   validateSheets: (sheets) => validateAirSheets(sheets),
- *   onSuccess: () => console.log("File saved!"),
- * });
- *
- * // In component:
- * <button onClick={() => handleSaveFile(sheets)}>Save</button>
- * {FileNameModalComponent}
- * ```
  */
 
 "use client";
 
 import React, { useState, useCallback } from "react";
 import { Sheet } from "@/core/sheet-builder";
-import { FileType } from "@/types/file";
-import { createFile } from "@/api/files_client";
+import { filesService } from "@/services/filesService";
 import { FileNameModal } from "@/components/ui";
 import { ValidationResult } from "@/core/feedback";
+import type { FileType, SheetColumn, CreateFileRequest } from "@/types/api";
 
 export interface UseFileSaveOptions {
   /** File type (AIR or OCEAN) */
@@ -37,9 +23,6 @@ export interface UseFileSaveOptions {
 
   /** Effective date for this freight data */
   effectiveDate?: string;
-
-  /** Organization ID (defaults to user's org or "default") */
-  orgId?: string;
 
   /** Default file name suggestion */
   defaultFileName?: string;
@@ -65,11 +48,53 @@ interface UseFileSaveReturn {
   FileNameModalComponent: React.ReactNode;
 }
 
+/**
+ * Backend column type mapping
+ */
+type BackendColumnType = "text" | "number" | "select";
+
+/**
+ * Transform frontend column to backend-compatible format
+ */
+function transformColumn(column: Sheet["columns"][number]): SheetColumn {
+  let backendType: BackendColumnType = "text";
+
+  switch (column.type) {
+    case "text":
+    case "date":
+    case "boolean":
+      backendType = "text";
+      break;
+    case "number":
+      backendType = "number";
+      break;
+    case "select":
+      backendType = "select";
+      break;
+    default:
+      backendType = "text";
+  }
+
+  const result: SheetColumn = {
+    id: column.id,
+    label: column.label,
+    type: backendType,
+  };
+
+  // Transform options from { label, value } objects to string array
+  if ("options" in column && Array.isArray(column.options)) {
+    result.options = column.options.map((opt: unknown) =>
+      typeof opt === "string" ? opt : (opt as { value?: string; label: string }).value?.toString() || (opt as { label: string }).label,
+    );
+  }
+
+  return result;
+}
+
 export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
   const {
     fileType,
     effectiveDate = new Date().toISOString().split("T")[0],
-    orgId = "default",
     defaultFileName = "",
     validateSheets,
     onSuccess,
@@ -127,27 +152,33 @@ export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
       setIsSaving(true);
 
       try {
-        // Prepare sheets data
+        // Prepare sheets data — transform columns to backend format
         const sheetsData = pendingSheets.map((sheet) => ({
           name: sheet.name,
-          data: sheet,
+          data: {
+            id: sheet.id,
+            name: sheet.name,
+            columns: sheet.columns.map(transformColumn),
+            rows: sheet.rows,
+          },
         }));
 
-        // Call API to create file with sheets
-        const response = await createFile({
+        // Build the request matching the new CreateFileRequest type
+        const request: CreateFileRequest = {
           name: fileName,
           type: fileType,
           effectiveDate,
-          orgId,
           sheets: sheetsData,
-        });
+        };
+
+        // Call the unified files service
+        const response = await filesService.createFile(request);
 
         // Success
         setIsModalOpen(false);
         setPendingSheets([]);
         onSuccess?.(response.fileId, response.sheetIds);
       } catch (error) {
-        // Error
         const errorMsg =
           error instanceof Error
             ? error.message
@@ -157,7 +188,7 @@ export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
         setIsSaving(false);
       }
     },
-    [pendingSheets, fileType, effectiveDate, orgId, onSuccess, onError],
+    [pendingSheets, fileType, effectiveDate, onSuccess, onError],
   );
 
   /**

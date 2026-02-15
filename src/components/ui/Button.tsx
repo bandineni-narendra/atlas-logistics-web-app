@@ -2,7 +2,7 @@
 
 import React from "react";
 
-export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
+export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
 export type ButtonSize = "sm" | "md" | "lg";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -16,23 +16,25 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 border-transparent",
+    "bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-hover)] border-transparent shadow-none",
   secondary:
-    "bg-white text-gray-700 hover:bg-gray-50 focus:ring-gray-500 border-gray-300",
+    "bg-[var(--secondary-container)] text-[var(--on-secondary-container)] hover:brightness-95 border-transparent shadow-none",
+  outline:
+    "bg-transparent text-[var(--primary)] hover:bg-[var(--surface-container-low)] border-[var(--outline)] shadow-none",
   ghost:
-    "bg-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:ring-gray-500 border-transparent",
+    "bg-transparent text-[var(--on-surface-variant)] hover:bg-[var(--surface-container)] border-transparent shadow-none",
   danger:
-    "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 border-transparent",
+    "bg-[var(--error)] text-[var(--on-error)] hover:brightness-90 border-transparent shadow-none",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: "px-3 py-1.5 text-sm",
-  md: "px-4 py-2 text-sm",
-  lg: "px-5 py-2.5 text-base",
+  sm: "px-3 py-1.5 text-xs gap-1.5",
+  md: "px-4 py-2 text-sm gap-2",
+  lg: "px-6 py-2.5 text-sm gap-2",
 };
 
 /**
- * Button component with multiple variants and sizes
+ * Button — M3 style with pill shape and tonal variants
  */
 export const Button: React.FC<ButtonProps> = ({
   children,
@@ -53,10 +55,10 @@ export const Button: React.FC<ButtonProps> = ({
       type="button"
       disabled={isDisabled}
       className={`
-        inline-flex items-center justify-center gap-2 font-medium rounded-lg border
-        transition-colors duration-150 ease-in-out
-        focus:outline-none focus:ring-2 focus:ring-offset-2
-        disabled:opacity-50 disabled:cursor-not-allowed
+        inline-flex items-center justify-center font-medium rounded-full border
+        transition-all duration-100 ease-out
+        focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-1
+        disabled:opacity-40 disabled:cursor-not-allowed
         ${variantStyles[variant]}
         ${sizeStyles[size]}
         ${fullWidth ? "w-full" : ""}
@@ -101,7 +103,7 @@ export interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
 }
 
 /**
- * Icon-only button with accessible label
+ * Icon-only button — M3 circular with accessible label
  */
 export const IconButton: React.FC<IconButtonProps> = ({
   icon,
@@ -123,10 +125,10 @@ export const IconButton: React.FC<IconButtonProps> = ({
       aria-label={label}
       title={label}
       className={`
-        inline-flex items-center justify-center rounded-lg border
-        transition-colors duration-150 ease-in-out
-        focus:outline-none focus:ring-2 focus:ring-offset-2
-        disabled:opacity-50 disabled:cursor-not-allowed
+        inline-flex items-center justify-center rounded-full border
+        transition-all duration-100 ease-out
+        focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-1
+        disabled:opacity-40 disabled:cursor-not-allowed
         ${variantStyles[variant]}
         ${sizeStylesIcon[size]}
         ${className}

@@ -1,11 +1,18 @@
-import { createAirFreightFlowJob, getAirFreightJob } from "@/api/flow_client";
-import { RawExcelSheetFlowPayload } from "@/types/excel/excel-flow";
+/**
+ * useAirFreightFlowJob Hook
+ *
+ * Flow-based: submit ONE sheet for air freight processing.
+ * Uses the new excelService.
+ */
+
+import { excelService } from "@/services/excelService";
+import type { ProcessSheetRequest } from "@/types/api";
 
 export type AirFreightJobStatus =
-  | "PENDING"
-  | "RUNNING"
-  | "COMPLETED"
-  | "FAILED";
+  | "pending"
+  | "processing"
+  | "completed"
+  | "failed";
 
 export type AirFreightJob<T = unknown> = {
   id: string;
@@ -19,15 +26,21 @@ export function useAirFreightFlowJob() {
    * Flow-based: submit ONE sheet for air freight processing
    */
   const submit = async (
-    payload: RawExcelSheetFlowPayload,
+    payload: ProcessSheetRequest,
   ): Promise<{ jobId: string }> => {
-    return await createAirFreightFlowJob(payload);
+    return await excelService.createProcessingJob(payload);
   };
 
   const getJob = async <T = unknown>(
     jobId: string,
   ): Promise<AirFreightJob<T>> => {
-    return await getAirFreightJob(jobId);
+    const status = await excelService.getJobStatus(jobId);
+    return {
+      id: status.jobId,
+      status: status.status,
+      result: status.result as T,
+      error: status.error,
+    };
   };
 
   return { submit, getJob };

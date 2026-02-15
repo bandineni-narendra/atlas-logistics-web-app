@@ -40,13 +40,13 @@ export const TableCell = memo(function TableCell({
   const baseInputClasses = useMemo(
     () => `
     w-full h-full px-2 py-1.5
-    text-xs font-normal text-black
-    placeholder:text-gray-400
-    bg-white
+    text-xs font-normal text-[var(--on-surface)]
+    placeholder:text-[var(--on-surface-variant)]
+    bg-transparent
     border-0 outline-none
     focus:ring-0 focus:outline-none focus:border-0 focus:shadow-none
     cursor-text
-    [color-scheme:light]
+    [color-scheme:light] dark:[color-scheme:dark]
   `,
     [],
   );
@@ -63,7 +63,6 @@ export const TableCell = memo(function TableCell({
             onChange={handleChange}
             placeholder={column.placeholder}
             className={baseInputClasses}
-            style={{ caretColor: "#000000" }}
           />
         );
 
@@ -73,8 +72,7 @@ export const TableCell = memo(function TableCell({
             type="date"
             value={value !== null ? String(value) : ""}
             onChange={handleChange}
-            className={`${baseInputClasses} [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
-            style={{ caretColor: "#000000" }}
+            className={`${baseInputClasses} [&::-webkit-calendar-picker-indicator]:cursor-pointer dark:[&::-webkit-calendar-picker-indicator]:invert`}
           />
         );
 
@@ -90,14 +88,14 @@ export const TableCell = memo(function TableCell({
               backgroundSize: "1.25rem 1.25rem",
             }}
           >
-            <option value="" className="text-neutral-500">
+            <option value="" className="text-[var(--on-surface-variant)]">
               Select...
             </option>
             {column.options?.map((opt) => (
               <option
                 key={opt.value}
                 value={opt.value}
-                className="text-neutral-900"
+                className="text-[var(--on-surface)] bg-[var(--surface)]"
               >
                 {opt.label}
               </option>
@@ -112,7 +110,7 @@ export const TableCell = memo(function TableCell({
               type="checkbox"
               checked={!!value}
               onChange={handleChange}
-              className="w-5 h-5 text-gray-800 bg-white border-gray-300 rounded cursor-pointer focus:ring-2 focus:ring-gray-400 focus:ring-offset-0 transition-all duration-200 hover:scale-110"
+              className="w-5 h-5 text-[var(--primary)] bg-[var(--surface)] border-[var(--outline)] rounded cursor-pointer focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-0 transition-all duration-200 hover:scale-110"
             />
           </div>
         );
@@ -126,7 +124,6 @@ export const TableCell = memo(function TableCell({
             onChange={handleChange}
             placeholder={column.placeholder}
             className={baseInputClasses}
-            style={{ caretColor: "#000000" }}
           />
         );
     }
@@ -134,7 +131,7 @@ export const TableCell = memo(function TableCell({
 
   return (
     <td
-      className="relative border-r border-b border-gray-100 bg-white hover:bg-gray-50 outline-none focus-within:bg-white focus-within:shadow-md focus-within:border-gray-300 focus-within:z-10"
+      className="relative border-r border-b border-[var(--outline-variant)] bg-[var(--surface)] hover:bg-[var(--surface-container-low)] outline-none focus-within:bg-[var(--surface-container-low)] focus-within:shadow-md focus-within:border-[var(--primary)] focus-within:z-10"
       style={{
         width: `${columnWidth}px`,
         transition:

@@ -55,7 +55,7 @@ export function TableHeader({
           return (
             <th
               key={column.id}
-              className="bg-gray-50 border-b border-gray-200 border-r border-gray-100 px-2 py-2 text-left group relative hover:bg-gray-100 transition-all duration-200"
+              className="bg-[var(--surface-container-low)] border-b border-[var(--outline-variant)] border-r border-[var(--outline-variant)] px-2 py-2 text-left group relative hover:bg-[var(--surface-container-high)] transition-all duration-200"
               style={{
                 width: `${columnWidth}px`,
               }}
@@ -75,20 +75,20 @@ export function TableHeader({
                       }
                     }}
                     autoFocus
-                    className="text-xs font-semibold text-gray-800 bg-white border border-gray-300 rounded-md px-2 py-1 outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 shadow-sm w-full"
+                    className="text-xs font-semibold text-[var(--on-surface)] bg-[var(--surface-container-lowest)] border border-[var(--outline)] rounded-md px-2 py-1 outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] shadow-sm w-full"
                   />
                 ) : (
                   <>
                     <span
                       onClick={() => startEditing(column)}
-                      className="text-xs font-semibold text-gray-800 cursor-pointer hover:text-gray-900 transition-all duration-200 block flex-1 whitespace-nowrap"
+                      className="text-xs font-semibold text-[var(--on-surface)] cursor-pointer hover:text-[var(--primary)] transition-all duration-200 block flex-1 whitespace-nowrap"
                       title={column.label}
                     >
                       {column.label}
                     </span>
                     {column.required && (
                       <span
-                        className="text-red-500 text-xs font-bold flex-shrink-0"
+                        className="text-[var(--error)] text-xs font-bold flex-shrink-0"
                         title="Required"
                       >
                         *
@@ -99,7 +99,7 @@ export function TableHeader({
               </div>
               <button
                 onClick={() => onDeleteColumn(column.id)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md p-1.5 transition-all duration-200 hover:scale-110"
+                className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-[var(--on-surface-variant)] hover:text-[var(--error)] hover:bg-[var(--error-container)] rounded-md p-1.5 transition-all duration-200 hover:scale-110"
                 title="Delete column"
                 type="button"
                 aria-label={`Delete ${column.label} column`}
@@ -125,20 +125,20 @@ export function TableHeader({
 
         {/* Delete row column header */}
         <th
-          className="bg-gray-50 border-b border-gray-200 px-2 py-2 text-center"
+          className="bg-[var(--surface-container-low)] border-b border-[var(--outline-variant)] px-2 py-2 text-center"
           style={{ width: "70px", minWidth: "70px" }}
         >
-          <span className="text-xs font-semibold text-gray-600">Delete</span>
+          <span className="text-xs font-semibold text-[var(--on-surface-variant)]">Delete</span>
         </th>
 
         {/* Add Column button */}
         <th
-          className="bg-gray-50 border-b border-gray-200 px-2 py-2"
+          className="bg-[var(--surface-container-low)] border-b border-[var(--outline-variant)] px-2 py-2"
           style={{ minWidth: "100px" }}
         >
           <button
             onClick={onAddColumn}
-            className="inline-flex items-center gap-1.5 px-2 py-1.5 text-xs font-semibold text-white hover:text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-all duration-200 group w-full justify-center border border-blue-700 hover:border-blue-800"
+            className="inline-flex items-center gap-1.5 px-2 py-1.5 text-xs font-semibold text-[var(--on-primary)] hover:text-[var(--on-primary)] bg-[var(--primary)] hover:bg-[var(--primary-hover)] rounded-md transition-all duration-200 group w-full justify-center border border-transparent"
             title="Add column"
             type="button"
           >
@@ -148,7 +148,7 @@ export function TableHeader({
               viewBox="0 0 24 24"
               strokeWidth={2.5}
               stroke="currentColor"
-              className="w-3.5 h-3.5 text-white transition-all duration-200 group-hover:rotate-90"
+              className="w-3.5 h-3.5 text-[var(--on-primary)] transition-all duration-200 group-hover:rotate-90"
             >
               <path
                 strokeLinecap="round"

@@ -17,8 +17,7 @@ export interface TabsProps {
 }
 
 /**
- * Tabs container component
- * Manages tab state and provides context
+ * Tabs container — M3 style
  */
 export const Tabs: React.FC<TabsProps> = ({
   children,
@@ -49,13 +48,13 @@ export interface TabListProps {
 }
 
 /**
- * Tab list container for tab buttons
+ * Tab list — M3 bottom border indicator
  */
 export const TabList: React.FC<TabListProps> = ({
   children,
   className = "",
 }) => (
-  <div className={`flex border-b border-gray-200 ${className}`} role="tablist">
+  <div className={`flex border-b border-[var(--outline-variant)] ${className}`} role="tablist">
     {children}
   </div>
 );
@@ -68,7 +67,7 @@ export interface TabProps {
 }
 
 /**
- * Individual tab button
+ * Individual tab — M3 active indicator (3px primary bottom border)
  */
 export const Tab: React.FC<TabProps> = ({
   id,
@@ -91,14 +90,13 @@ export const Tab: React.FC<TabProps> = ({
       disabled={disabled}
       onClick={() => !disabled && setActiveTab(id)}
       className={`
-        px-4 py-2.5 text-sm font-medium -mb-px border-b-2 transition-colors
-        focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2
-        ${
-          isActive
-            ? "text-blue-600 border-blue-600"
-            : "text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300"
+        px-4 py-2.5 text-sm font-medium -mb-px border-b-[3px] transition-colors duration-100
+        focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-1
+        ${isActive
+          ? "text-[var(--primary)] border-[var(--primary)]"
+          : "text-[var(--on-surface-variant)] border-transparent hover:text-[var(--on-surface)] hover:bg-[var(--surface-container-low)]"
         }
-        ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+        ${disabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}
         ${className}
       `}
     >

@@ -28,7 +28,7 @@ export function validateOceanSheets(
     const sheetName = sheet.name || `Sheet ${sheetIndex + 1}`;
 
     sheet.rows.forEach((row: any, rowIndex: number) => {
-      // Check if row has any data
+      // Check if row has any dataP
       const hasData = Object.values(row.cells).some(
         (value) => value !== null && value !== "" && value !== undefined,
       );
@@ -41,6 +41,18 @@ export function validateOceanSheets(
 
       // Always validate all rows with data, don't skip
       const oceanRate = mapToOceanRate(row.cells);
+      if (!oceanRate) {
+        issues.push(
+          createValidationIssue(
+            sheetName,
+            rowIndex + 1,
+            "Row",
+            "Failed to parse ocean freight rate data",
+            "error",
+          ),
+        );
+        return;
+      }
       const errors = validateOceanRate(oceanRate);
 
       if (errors.length > 0) {

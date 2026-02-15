@@ -10,8 +10,7 @@ export type SideBarMenuProps = {
 };
 
 /**
- * Reusable sidebar menu item
- * Wraps navigation links with active state styling
+ * Sidebar menu item — M3 pill shape with tonal active state
  */
 export function SideBarMenu({
   label,
@@ -23,19 +22,16 @@ export function SideBarMenu({
     <Link href={href}>
       <div
         className={`
-          flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
-          transition-all duration-150 ease-in-out
-          ${
-            isActive
-              ? "bg-blue-50 text-blue-700 shadow-sm"
-              : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+          flex items-center gap-3 px-3 py-2 rounded-full text-sm font-medium
+          transition-all duration-100 ease-out
+          ${isActive
+            ? "bg-[var(--secondary-container)] text-[var(--on-secondary-container)]"
+            : "text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-low)] hover:text-[var(--on-surface)]"
           }
         `}
       >
         {icon && (
-          <span className={`text-base ${isActive ? "" : "opacity-70"}`}>
-            {icon}
-          </span>
+          <span className="flex-shrink-0">{icon}</span>
         )}
         <span>{label}</span>
       </div>

@@ -14,7 +14,7 @@ export function AddColumnButton({ onAdd }: AddColumnButtonProps) {
   return (
     <button
       onClick={onAdd}
-      className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-neutral-700 hover:text-blue-700 hover:bg-blue-50 rounded-md border border-neutral-300 hover:border-blue-300 transition-all duration-150 group"
+      className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--on-surface)] hover:text-[var(--primary)] hover:bg-[var(--surface-container-high)] rounded-md border border-[var(--outline)] hover:border-[var(--primary)] transition-all duration-150 group"
       title="Add column"
       type="button"
     >
@@ -24,7 +24,7 @@ export function AddColumnButton({ onAdd }: AddColumnButtonProps) {
         viewBox="0 0 24 24"
         strokeWidth={2.5}
         stroke="currentColor"
-        className="w-4 h-4 text-neutral-500 group-hover:text-blue-600 transition-colors"
+        className="w-4 h-4 text-[var(--on-surface-variant)] group-hover:text-[var(--primary)] transition-colors"
       >
         <path
           strokeLinecap="round"

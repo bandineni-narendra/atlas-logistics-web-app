@@ -70,10 +70,10 @@ export default function CreateAirSheet() {
   return (
     <div className="container mx-auto p-6 max-w-7xl">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-3xl font-bold text-[var(--on-surface)] mb-2">
           Air Freight Rate Sheet
         </h1>
-        <p className="text-gray-600">
+        <p className="text-[var(--on-surface-variant)]">
           Create and manage air freight rates using the generic sheet builder.
         </p>
       </div>
@@ -92,7 +92,7 @@ export default function CreateAirSheet() {
       <div className="flex justify-center">
         <button
           onClick={handleSave}
-          className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
+          className="px-8 py-3 bg-[var(--primary)] text-[var(--on-primary)] font-semibold rounded-md hover:bg-[var(--primary-hover)] transition-colors shadow-md hover:shadow-lg"
         >
           Save
         </button>

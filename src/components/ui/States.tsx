@@ -12,8 +12,7 @@ export interface EmptyStateProps {
 }
 
 /**
- * Empty state placeholder for when no data is available
- * Used in tables, lists, and content areas
+ * Empty state — M3 minimal, muted colors
  */
 export const EmptyState: React.FC<EmptyStateProps> = ({
   icon,
@@ -22,14 +21,14 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   action,
   className = "",
 }) => (
-  <div className={`text-center py-12 px-4 ${className}`}>
+  <div className={`text-center py-10 px-4 ${className}`}>
     {icon && (
-      <div className="mx-auto w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-        <span className="text-xl text-gray-400">{icon}</span>
+      <div className="mx-auto w-10 h-10 rounded-full bg-[var(--surface-container)] flex items-center justify-center mb-3">
+        <span className="text-lg text-[var(--on-surface-variant)]">{icon}</span>
       </div>
     )}
-    <h3 className="text-sm font-medium text-gray-900">{title}</h3>
-    {description && <p className="mt-1 text-sm text-gray-500">{description}</p>}
+    <h3 className="text-sm font-medium text-[var(--on-surface)]">{title}</h3>
+    {description && <p className="mt-1 text-sm text-[var(--on-surface-variant)]">{description}</p>}
     {action && <div className="mt-4">{action}</div>}
   </div>
 );
@@ -40,7 +39,7 @@ export interface LoadingStateProps {
 }
 
 /**
- * Loading state with spinner
+ * Loading state — M3 circular progress
  */
 export const LoadingState: React.FC<LoadingStateProps> = ({
   message,
@@ -51,13 +50,13 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
 
   return (
     <div
-      className={`flex flex-col items-center justify-center py-12 ${className}`}
+      className={`flex flex-col items-center justify-center py-10 ${className}`}
     >
       <div className="relative">
-        <div className="w-10 h-10 border-4 border-gray-200 rounded-full" />
-        <div className="absolute top-0 left-0 w-10 h-10 border-4 border-blue-600 rounded-full border-t-transparent animate-spin" />
+        <div className="w-9 h-9 border-[3px] border-[var(--surface-container-high)] rounded-full" />
+        <div className="absolute top-0 left-0 w-9 h-9 border-[3px] border-[var(--primary)] rounded-full border-t-transparent animate-spin" />
       </div>
-      <p className="mt-4 text-sm text-gray-500">{displayMessage}</p>
+      <p className="mt-3 text-sm text-[var(--on-surface-variant)]">{displayMessage}</p>
     </div>
   );
 };
@@ -70,7 +69,7 @@ export interface SkeletonProps {
 }
 
 /**
- * Skeleton loading placeholder
+ * Skeleton loading placeholder — M3 surface variant pulse
  */
 export const Skeleton: React.FC<SkeletonProps> = ({
   className = "",
@@ -81,12 +80,12 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   const variantStyles = {
     text: "h-4 rounded",
     circular: "rounded-full",
-    rectangular: "rounded-md",
+    rectangular: "rounded-lg",
   };
 
   return (
     <div
-      className={`bg-gray-200 animate-pulse ${variantStyles[variant]} ${className}`}
+      className={`bg-[var(--surface-container)] animate-pulse ${variantStyles[variant]} ${className}`}
       style={{ width, height }}
     />
   );

@@ -9,9 +9,7 @@ import { TableProps } from "@/types/table";
 import { EmptyState, LoadingState } from "@/components/ui";
 
 /**
- * Generic, reusable data table component
- * Handles pagination, rendering, and layout
- * Configured per feature (e.g., ocean freight)
+ * Generic data table — M3 flat container
  */
 export function DataTable<T extends Record<string, unknown>>({
   columns,
@@ -37,12 +35,12 @@ export function DataTable<T extends Record<string, unknown>>({
   }, [data, currentPage, pageSize, totalItems]);
 
   return (
-    <div className="overflow-hidden">
+    <div className="border border-[var(--outline-variant)] rounded-xl overflow-hidden bg-[var(--surface)]">
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full" style={{ minWidth: "1200px" }}>
           <TableHeader columns={columns} />
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-[var(--outline-variant)]">
             {isLoading ? (
               <tr>
                 <td colSpan={columns.length}>
@@ -53,7 +51,6 @@ export function DataTable<T extends Record<string, unknown>>({
               <tr>
                 <td colSpan={columns.length}>
                   <EmptyState
-                    icon="📋"
                     title={displayEmptyMessage}
                     description="Upload a file to see data here"
                   />

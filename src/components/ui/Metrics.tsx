@@ -14,9 +14,9 @@ export interface MetricCardProps {
 }
 
 const trendColors = {
-  up: "text-emerald-600",
-  down: "text-red-600",
-  neutral: "text-gray-500",
+  up: "text-[var(--success)]",
+  down: "text-[var(--error)]",
+  neutral: "text-[var(--on-surface-variant)]",
 };
 
 const trendIcons = {
@@ -26,7 +26,7 @@ const trendIcons = {
 };
 
 /**
- * Metric card for displaying KPIs and statistics
+ * Metric card — M3 flat surface, no elevation
  */
 export const MetricCard: React.FC<MetricCardProps> = ({
   label,
@@ -36,12 +36,12 @@ export const MetricCard: React.FC<MetricCardProps> = ({
   className = "",
 }) => (
   <div
-    className={`bg-white border border-gray-200 rounded-xl p-5 ${className}`}
+    className={`bg-[var(--surface)] border border-[var(--outline-variant)] rounded-xl p-4 ${className}`}
   >
     <div className="flex items-start justify-between">
       <div>
-        <p className="text-sm font-medium text-gray-500">{label}</p>
-        <p className="mt-1 text-2xl font-semibold text-gray-900">{value}</p>
+        <p className="text-sm text-[var(--on-surface-variant)]">{label}</p>
+        <p className="mt-1 text-2xl font-medium text-[var(--on-surface)]">{value}</p>
         {trend && (
           <p className={`mt-1 text-sm ${trendColors[trend.direction]}`}>
             {trendIcons[trend.direction]} {trend.value}
@@ -49,8 +49,8 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         )}
       </div>
       {icon && (
-        <div className="p-2 bg-blue-50 rounded-lg">
-          <span className="text-blue-600">{icon}</span>
+        <div className="p-2 bg-[var(--primary-container)] rounded-lg">
+          <span className="text-[var(--primary)]">{icon}</span>
         </div>
       )}
     </div>
@@ -68,19 +68,19 @@ export interface ProgressBarProps {
 
 const progressSizes = {
   sm: "h-1",
-  md: "h-2",
-  lg: "h-3",
+  md: "h-1.5",
+  lg: "h-2",
 };
 
 const progressColors = {
-  blue: "bg-blue-600",
-  green: "bg-emerald-600",
-  yellow: "bg-amber-500",
-  red: "bg-red-600",
+  blue: "bg-[var(--primary)]",
+  green: "bg-[var(--success)]",
+  yellow: "bg-[var(--warning)]",
+  red: "bg-[var(--error)]",
 };
 
 /**
- * Progress bar component
+ * Progress bar — M3 style
  */
 export const ProgressBar: React.FC<ProgressBarProps> = ({
   value,
@@ -96,15 +96,15 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     <div className={className}>
       {showLabel && (
         <div className="flex justify-between text-sm mb-1">
-          <span className="text-gray-600">{value}</span>
-          <span className="text-gray-400">{max}</span>
+          <span className="text-[var(--on-surface-variant)]">{value}</span>
+          <span className="text-[var(--on-surface-variant)] opacity-60">{max}</span>
         </div>
       )}
       <div
-        className={`w-full bg-gray-200 rounded-full overflow-hidden ${progressSizes[size]}`}
+        className={`w-full bg-[var(--surface-container)] rounded-full overflow-hidden ${progressSizes[size]}`}
       >
         <div
-          className={`${progressSizes[size]} ${progressColors[color]} transition-all duration-300`}
+          className={`${progressSizes[size]} ${progressColors[color]} transition-all duration-200 rounded-full`}
           style={{ width: `${percentage}%` }}
         />
       </div>
@@ -119,7 +119,7 @@ export interface ConfidenceIndicatorProps {
 }
 
 /**
- * Confidence indicator with color coding
+ * Confidence indicator — M3 color coding
  */
 export const ConfidenceIndicator: React.FC<ConfidenceIndicatorProps> = ({
   value,
@@ -131,10 +131,10 @@ export const ConfidenceIndicator: React.FC<ConfidenceIndicatorProps> = ({
     percentage >= 80 ? "green" : percentage >= 60 ? "yellow" : "red";
   const textColor =
     percentage >= 80
-      ? "text-emerald-600"
+      ? "text-[var(--success)]"
       : percentage >= 60
-        ? "text-amber-600"
-        : "text-red-600";
+        ? "text-[var(--warning)]"
+        : "text-[var(--error)]";
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
@@ -145,7 +145,7 @@ export const ConfidenceIndicator: React.FC<ConfidenceIndicatorProps> = ({
         color={color}
         className="flex-1 max-w-32"
       />
-      <span className={`text-sm font-semibold ${textColor}`}>
+      <span className={`text-sm font-medium ${textColor}`}>
         {percentage}%
       </span>
     </div>
