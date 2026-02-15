@@ -6,24 +6,23 @@ import { useTranslations } from "next-intl";
 import { Card, Button } from "@/components/ui";
 
 /**
- * Login Prompt Component
- * Displayed when user is not authenticated
+ * Login Prompt — M3 clean surface card
  */
 export function LoginPrompt() {
   const t = useTranslations();
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-gray-50 p-4">
-      <Card padding="lg" className="max-w-md w-full text-center">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--surface-dim)] p-4">
+      <Card padding="lg" className="max-w-sm w-full text-center">
         <div className="mb-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl shadow-lg mb-4">
-            <span className="text-white font-bold text-2xl">A</span>
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-[var(--primary)] rounded-2xl mb-4">
+            <span className="text-white font-medium text-xl">A</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="text-xl font-medium text-[var(--on-surface)] mb-1">
             {t("common.appName")}
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-sm text-[var(--on-surface-variant)]">
             Please login to access the logistics platform
           </p>
         </div>
@@ -35,11 +34,11 @@ export function LoginPrompt() {
         >
           {t("auth.login")}
         </Button>
-        <p className="mt-4 text-sm text-gray-600">
+        <p className="mt-4 text-sm text-[var(--on-surface-variant)]">
           {t("auth.noAccount")}{" "}
           <Link
             href="/signup"
-            className="font-semibold text-blue-600 hover:text-blue-700"
+            className="font-medium text-[var(--primary)] hover:text-[var(--primary-hover)]"
           >
             {t("auth.signup")}
           </Link>

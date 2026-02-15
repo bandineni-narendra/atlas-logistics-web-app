@@ -8,12 +8,11 @@ export type SidebarLayoutProps = {
 };
 
 /**
- * Two-panel layout wrapper
- * Combines sidebar + content area
+ * Two-panel layout — M3 surface system
  */
 export function SidebarLayout({ children }: SidebarLayoutProps) {
   const pathname = usePathname();
-  
+
   // Don't show sidebar on auth pages
   const isAuthPage = ["/login", "/signup", "/forgot-password"].includes(pathname);
 
@@ -22,9 +21,9 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
   }
 
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex h-screen bg-[var(--surface)]">
       <Sidebar currentPath={pathname} />
-      <main className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-50">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden bg-[var(--surface-dim)]">
         {children}
       </main>
     </div>

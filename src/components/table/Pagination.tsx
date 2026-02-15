@@ -11,8 +11,7 @@ export type PaginationProps = {
 };
 
 /**
- * Reusable pagination controls
- * Shows previous/next buttons and page info
+ * Pagination — M3 outlined pill buttons
  */
 export function Pagination({
   currentPage,
@@ -35,19 +34,19 @@ export function Pagination({
   );
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-gray-50/50">
-      <div className="text-sm text-gray-500">
+    <div className="flex items-center justify-between px-4 py-2.5 border-t border-[var(--outline-variant)]">
+      <div className="text-sm text-[var(--on-surface-variant)]">
         {t("common.page")}{" "}
-        <span className="font-medium text-gray-700">{currentPage}</span>{" "}
+        <span className="font-medium text-[var(--on-surface)]">{currentPage}</span>{" "}
         {t("common.of")}{" "}
-        <span className="font-medium text-gray-700">{totalPages}</span>
+        <span className="font-medium text-[var(--on-surface)]">{totalPages}</span>
       </div>
 
       <div className="flex gap-2">
         <button
           onClick={handlePrevious}
           disabled={!hasPrevious || isDisabled}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline)] rounded-full hover:bg-[var(--surface-container-low)] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-100"
         >
           <svg
             className="w-4 h-4"
@@ -68,7 +67,7 @@ export function Pagination({
         <button
           onClick={handleNext}
           disabled={!hasNext || isDisabled}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline)] rounded-full hover:bg-[var(--surface-container-low)] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-100"
         >
           {t("buttons.next")}
           <svg

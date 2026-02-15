@@ -1,6 +1,5 @@
 /**
- * Input Component
- * Form input with label, error states, and validation
+ * Input Component — M3 outlined text field
  */
 
 "use client";
@@ -27,36 +26,37 @@ export const Input: React.FC<InputProps> = ({
   return (
     <div className={`${fullWidth ? "w-full" : ""}`}>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+        <label className="block text-sm font-medium text-[var(--on-surface-variant)] mb-1">
           {label}
-          {props.required && <span className="text-red-500 ml-1">*</span>}
+          {props.required && <span className="text-[var(--error)] ml-0.5">*</span>}
         </label>
       )}
       <input
         className={`
-          w-full px-3.5 py-2.5 text-sm text-gray-900
-          bg-white border rounded-lg
-          transition-colors duration-200
-          ${
-            hasError
-              ? "border-red-300 focus:border-red-500 focus:ring-red-500"
-              : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+          w-full px-3 py-2 text-sm text-[var(--on-surface)]
+          bg-[var(--surface)] border rounded-lg
+          transition-all duration-100 ease-out
+          ${hasError
+            ? "border-[var(--error)] focus:border-[var(--error)] focus:ring-[var(--error)]"
+            : "border-[var(--outline)] focus:border-[var(--primary)] focus:ring-[var(--primary)]"
           }
-          focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-opacity-50
-          disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed
-          placeholder:text-gray-400
+          focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-opacity-30
+          disabled:bg-[var(--surface-container)] disabled:text-[var(--on-surface-variant)] disabled:cursor-not-allowed
+          placeholder:text-[var(--on-surface-variant)] placeholder:opacity-60
           ${className}
         `}
         {...props}
       />
       {error && (
-        <p className="mt-1.5 text-sm text-red-600 flex items-center gap-1">
-          <span className="text-xs">⚠</span>
+        <p className="mt-1 text-xs text-[var(--error)] flex items-center gap-1">
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+          </svg>
           {error}
         </p>
       )}
       {!error && helperText && (
-        <p className="mt-1.5 text-sm text-gray-500">{helperText}</p>
+        <p className="mt-1 text-xs text-[var(--on-surface-variant)]">{helperText}</p>
       )}
     </div>
   );

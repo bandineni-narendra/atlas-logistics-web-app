@@ -1,15 +1,17 @@
 "use client";
 
 /**
- * Loading State Component
- * Displays a centered spinner with loading message
+ * Loading State — M3 circular progress
  */
 export function LoadingState() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--surface-dim)]">
       <div className="text-center">
-        <div className="inline-block w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p className="text-gray-600">Loading...</p>
+        <div className="relative inline-block w-10 h-10 mb-3">
+          <div className="w-10 h-10 border-[3px] border-[var(--surface-container-high)] rounded-full" />
+          <div className="absolute top-0 left-0 w-10 h-10 border-[3px] border-[var(--primary)] rounded-full border-t-transparent animate-spin" />
+        </div>
+        <p className="text-sm text-[var(--on-surface-variant)]">Loading...</p>
       </div>
     </div>
   );

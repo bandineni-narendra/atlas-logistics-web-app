@@ -37,11 +37,11 @@ export default function SignupPage() {
 
   const handleChange =
     (field: keyof typeof formData) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData((prev) => ({ ...prev, [field]: e.target.value }));
-      // Clear error for this field
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
-    };
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+        // Clear error for this field
+        setErrors((prev) => ({ ...prev, [field]: undefined }));
+      };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,7 +131,7 @@ export default function SignupPage() {
           <p className="text-gray-600">{t("auth.signupSubtitle")}</p>
         </div>
 
-        <Card padding="lg" shadow="md">
+        <Card padding="lg">
           {/* Google Sign-In */}
           <Button
             type="button"

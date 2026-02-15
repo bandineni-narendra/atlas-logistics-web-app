@@ -96,7 +96,7 @@ export default function LoginPage() {
           <p className="text-gray-600">{t("auth.loginSubtitle")}</p>
         </div>
 
-        <Card padding="lg" shadow="md">
+        <Card padding="lg">
           <form onSubmit={handleSubmit} className="space-y-5">
             {errors.general && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-lg">

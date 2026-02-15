@@ -11,8 +11,7 @@ export interface PageHeaderProps {
 }
 
 /**
- * Page header with title, description, and optional actions
- * Used at the top of dashboard pages
+ * Page header — M3 typography, tighter spacing
  */
 export const PageHeader: React.FC<PageHeaderProps> = ({
   title,
@@ -21,18 +20,18 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   breadcrumb,
   className = "",
 }) => (
-  <div className={`mb-6 ${className}`}>
+  <div className={`mb-5 ${className}`}>
     {breadcrumb && <div className="mb-2">{breadcrumb}</div>}
     <div className="flex items-start justify-between">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">
+        <h1 className="text-xl font-medium text-[var(--on-surface)] tracking-tight">
           {title}
         </h1>
         {description && (
-          <p className="mt-1 text-sm text-gray-500">{description}</p>
+          <p className="mt-0.5 text-sm text-[var(--on-surface-variant)]">{description}</p>
         )}
       </div>
-      {actions && <div className="flex items-center gap-3">{actions}</div>}
+      {actions && <div className="flex items-center gap-2">{actions}</div>}
     </div>
   </div>
 );
@@ -48,7 +47,7 @@ export interface SectionProps {
 export const Section: React.FC<SectionProps> = ({
   children,
   className = "",
-}) => <section className={`space-y-4 ${className}`}>{children}</section>;
+}) => <section className={`space-y-3 ${className}`}>{children}</section>;
 
 export interface SectionHeaderProps {
   title: string;
@@ -58,7 +57,7 @@ export interface SectionHeaderProps {
 }
 
 /**
- * Section header for sub-sections within a page
+ * Section header — M3 medium weight
  */
 export const SectionHeader: React.FC<SectionHeaderProps> = ({
   title,
@@ -68,9 +67,9 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
 }) => (
   <div className={`flex items-center justify-between ${className}`}>
     <div>
-      <h2 className="text-lg font-medium text-gray-900">{title}</h2>
+      <h2 className="text-base font-medium text-[var(--on-surface)]">{title}</h2>
       {description && (
-        <p className="mt-0.5 text-sm text-gray-500">{description}</p>
+        <p className="mt-0.5 text-sm text-[var(--on-surface-variant)]">{description}</p>
       )}
     </div>
     {actions && <div className="flex items-center gap-2">{actions}</div>}
@@ -92,14 +91,14 @@ const maxWidthStyles = {
 };
 
 /**
- * Page container with consistent padding and max-width
+ * Page container — M3 consistent padding
  */
 export const PageContainer: React.FC<PageContainerProps> = ({
   children,
   className = "",
   maxWidth = "xl",
 }) => (
-  <div className={`px-6 py-6 ${maxWidthStyles[maxWidth]} ${className}`}>
+  <div className={`px-6 py-5 ${maxWidthStyles[maxWidth]} ${className}`}>
     {children}
   </div>
 );
@@ -109,8 +108,8 @@ export interface DividerProps {
 }
 
 /**
- * Horizontal divider line
+ * Horizontal divider — M3 outline-variant color
  */
 export const Divider: React.FC<DividerProps> = ({ className = "" }) => (
-  <hr className={`border-t border-gray-200 ${className}`} />
+  <hr className={`border-t border-[var(--outline-variant)] ${className}`} />
 );

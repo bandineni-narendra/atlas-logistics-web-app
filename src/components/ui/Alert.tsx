@@ -14,37 +14,37 @@ export interface AlertProps {
 
 const variantStyles = {
   info: {
-    container: "bg-blue-50 border-blue-200",
-    icon: "text-blue-600",
-    title: "text-blue-800",
-    content: "text-blue-700",
-    defaultIcon: "ℹ️",
+    container: "bg-[var(--secondary-container)] border-transparent",
+    icon: "text-[var(--primary)]",
+    title: "text-[var(--on-primary-container)]",
+    content: "text-[var(--on-secondary-container)]",
+    defaultIcon: "ℹ",
   },
   success: {
-    container: "bg-emerald-50 border-emerald-200",
-    icon: "text-emerald-600",
-    title: "text-emerald-800",
-    content: "text-emerald-700",
+    container: "bg-[var(--success-container)] border-transparent",
+    icon: "text-[var(--success)]",
+    title: "text-[var(--on-success-container)]",
+    content: "text-[var(--on-success-container)]",
     defaultIcon: "✓",
   },
   warning: {
-    container: "bg-amber-50 border-amber-200",
-    icon: "text-amber-600",
-    title: "text-amber-800",
-    content: "text-amber-700",
+    container: "bg-[var(--warning-container)] border-transparent",
+    icon: "text-[var(--warning)]",
+    title: "text-[var(--on-warning-container)]",
+    content: "text-[var(--on-warning-container)]",
     defaultIcon: "⚠",
   },
   error: {
-    container: "bg-red-50 border-red-200",
-    icon: "text-red-600",
-    title: "text-red-800",
-    content: "text-red-700",
+    container: "bg-[var(--error-container)] border-transparent",
+    icon: "text-[var(--error)]",
+    title: "text-[var(--on-error-container)]",
+    content: "text-[var(--on-error-container)]",
     defaultIcon: "✕",
   },
 };
 
 /**
- * Alert component for messages, warnings, and notifications
+ * Alert — M3 tonal surface
  */
 export const Alert: React.FC<AlertProps> = ({
   variant,
@@ -59,7 +59,7 @@ export const Alert: React.FC<AlertProps> = ({
 
   return (
     <div
-      className={`flex gap-3 p-4 rounded-lg border ${styles.container} ${className}`}
+      className={`flex gap-3 p-4 rounded-xl border ${styles.container} ${className}`}
       role="alert"
     >
       <div className={`flex-shrink-0 ${styles.icon}`}>
@@ -69,7 +69,7 @@ export const Alert: React.FC<AlertProps> = ({
         {title && (
           <h3 className={`text-sm font-medium ${styles.title}`}>{title}</h3>
         )}
-        <div className={`text-sm ${styles.content} ${title ? "mt-1" : ""}`}>
+        <div className={`text-sm ${styles.content} ${title ? "mt-0.5" : ""}`}>
           {children}
         </div>
         {action && <div className="mt-3">{action}</div>}
@@ -78,10 +78,12 @@ export const Alert: React.FC<AlertProps> = ({
         <button
           type="button"
           onClick={onDismiss}
-          className={`flex-shrink-0 ${styles.icon} hover:opacity-70`}
+          className="flex-shrink-0 text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] rounded-full p-1 hover:bg-[var(--surface-container)]"
           aria-label="Dismiss"
         >
-          ✕
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       )}
     </div>
@@ -95,7 +97,7 @@ export interface WarningListProps {
 }
 
 /**
- * Warning list for displaying multiple warnings
+ * Warning list — M3 style
  */
 export const WarningList: React.FC<WarningListProps> = ({
   warnings,

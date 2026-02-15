@@ -9,8 +9,7 @@ export interface SheetTabsProps {
 }
 
 /**
- * Sheet Tabs Component
- * Horizontal tab bar — one tab per sheet.
+ * Sheet Tabs — M3 tab bar with 3px primary indicator
  */
 export const SheetTabs = memo<SheetTabsProps>(function SheetTabs({
     sheets,
@@ -20,16 +19,16 @@ export const SheetTabs = memo<SheetTabsProps>(function SheetTabs({
     if (sheets.length === 0) return null;
 
     return (
-        <div className="flex gap-1 border-b border-gray-200 overflow-x-auto">
+        <div className="flex gap-0.5 border-b border-[var(--outline-variant)] overflow-x-auto">
             {sheets.map((sheet) => {
                 const isActive = sheet.id === activeSheetId;
                 return (
                     <button
                         key={sheet.id}
                         onClick={() => onTabChange(sheet.id)}
-                        className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 ${isActive
-                                ? "border-blue-600 text-blue-600"
-                                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                        className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors duration-100 border-b-[3px] -mb-px ${isActive
+                            ? "border-[var(--primary)] text-[var(--primary)]"
+                            : "border-transparent text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] hover:bg-[var(--surface-container-low)]"
                             }`}
                     >
                         {sheet.name}

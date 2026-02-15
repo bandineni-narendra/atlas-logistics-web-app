@@ -11,8 +11,7 @@ export interface SheetDataTableProps {
 }
 
 /**
- * SheetDataTable — read-only table with client-side pagination.
- * Renders column headers from data.columns and rows from data.rows.
+ * SheetDataTable — M3 flat read-only table with client-side pagination
  */
 export function SheetDataTable({ data }: SheetDataTableProps) {
     const [page, setPage] = useState(1);
@@ -29,7 +28,7 @@ export function SheetDataTable({ data }: SheetDataTableProps) {
 
     if (columns.length === 0) {
         return (
-            <p className="text-gray-500 text-sm py-6 text-center">
+            <p className="text-[var(--on-surface-variant)] text-sm py-6 text-center">
                 This sheet has no columns defined.
             </p>
         );
@@ -38,36 +37,36 @@ export function SheetDataTable({ data }: SheetDataTableProps) {
     return (
         <div>
             {/* Scrollable table */}
-            <div className="overflow-x-auto border border-gray-200 rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200 text-sm">
-                    <thead className="bg-gray-50">
+            <div className="overflow-x-auto border border-[var(--outline-variant)] rounded-xl">
+                <table className="min-w-full divide-y divide-[var(--outline-variant)] text-sm">
+                    <thead className="bg-[var(--surface-container-low)]">
                         <tr>
-                            <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-12">
+                            <th className="px-3 py-2.5 text-left text-xs font-medium text-[var(--on-surface-variant)] w-12">
                                 #
                             </th>
                             {columns.map((col) => (
                                 <th
                                     key={col.id}
-                                    className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap"
+                                    className="px-3 py-2.5 text-left text-xs font-medium text-[var(--on-surface-variant)] whitespace-nowrap"
                                 >
                                     {col.label}
                                 </th>
                             ))}
                         </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-100">
+                    <tbody className="bg-[var(--surface)] divide-y divide-[var(--outline-variant)]">
                         {visibleRows.map((row, idx) => (
                             <tr
                                 key={row.id}
-                                className="hover:bg-gray-50 transition-colors"
+                                className="hover:bg-[var(--surface-container-low)] transition-colors duration-100"
                             >
-                                <td className="px-3 py-2 text-gray-400 text-xs">
+                                <td className="px-3 py-2 text-[var(--on-surface-variant)] text-xs">
                                     {(page - 1) * ROWS_PER_PAGE + idx + 1}
                                 </td>
                                 {columns.map((col) => (
                                     <td
                                         key={col.id}
-                                        className="px-3 py-2 text-gray-700 whitespace-nowrap"
+                                        className="px-3 py-2 text-[var(--on-surface)] whitespace-nowrap"
                                     >
                                         {row.cells[col.id] !== null &&
                                             row.cells[col.id] !== undefined
@@ -81,7 +80,7 @@ export function SheetDataTable({ data }: SheetDataTableProps) {
                             <tr>
                                 <td
                                     colSpan={columns.length + 1}
-                                    className="px-3 py-6 text-center text-gray-500"
+                                    className="px-3 py-6 text-center text-[var(--on-surface-variant)]"
                                 >
                                     No rows in this sheet.
                                 </td>
@@ -95,17 +94,17 @@ export function SheetDataTable({ data }: SheetDataTableProps) {
             {totalRows > 0 && (
                 <div className="mt-3">
                     <div className="px-4 py-1">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-[var(--on-surface-variant)]">
                             Showing{" "}
-                            <span className="font-medium text-gray-900">
+                            <span className="font-medium text-[var(--on-surface)]">
                                 {(page - 1) * ROWS_PER_PAGE + 1}
                             </span>
                             –
-                            <span className="font-medium text-gray-900">
+                            <span className="font-medium text-[var(--on-surface)]">
                                 {Math.min(page * ROWS_PER_PAGE, totalRows)}
                             </span>{" "}
                             of{" "}
-                            <span className="font-medium text-gray-900">{totalRows}</span>{" "}
+                            <span className="font-medium text-[var(--on-surface)]">{totalRows}</span>{" "}
                             rows
                         </p>
                     </div>

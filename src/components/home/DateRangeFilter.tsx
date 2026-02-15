@@ -14,9 +14,7 @@ export interface DateRangeFilterProps {
 }
 
 /**
- * Date Range Filter Component
- * Two native date inputs (From / To) for filtering files by effectiveDate.
- * Dates are in YYYY-MM-DD format to match the backend @IsDateString().
+ * Date Range Filter — M3 outlined date inputs
  */
 export const DateRangeFilter = memo<DateRangeFilterProps>(
     function DateRangeFilter({ startDate, endDate, onDateChange }) {
@@ -26,7 +24,7 @@ export const DateRangeFilter = memo<DateRangeFilterProps>(
                 <div className="flex items-center gap-2">
                     <label
                         htmlFor="filter-start-date"
-                        className="text-sm font-medium text-gray-600"
+                        className="text-sm font-medium text-[var(--on-surface-variant)]"
                     >
                         From
                     </label>
@@ -38,7 +36,7 @@ export const DateRangeFilter = memo<DateRangeFilterProps>(
                         onChange={(e) =>
                             onDateChange({ startDate: e.target.value, endDate })
                         }
-                        className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="px-3 py-1.5 text-sm border border-[var(--outline)] rounded-lg bg-[var(--surface)] text-[var(--on-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-opacity-30 focus:border-[var(--primary)] transition-all duration-100"
                     />
                 </div>
 
@@ -46,7 +44,7 @@ export const DateRangeFilter = memo<DateRangeFilterProps>(
                 <div className="flex items-center gap-2">
                     <label
                         htmlFor="filter-end-date"
-                        className="text-sm font-medium text-gray-600"
+                        className="text-sm font-medium text-[var(--on-surface-variant)]"
                     >
                         To
                     </label>
@@ -58,7 +56,7 @@ export const DateRangeFilter = memo<DateRangeFilterProps>(
                         onChange={(e) =>
                             onDateChange({ startDate, endDate: e.target.value })
                         }
-                        className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="px-3 py-1.5 text-sm border border-[var(--outline)] rounded-lg bg-[var(--surface)] text-[var(--on-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-opacity-30 focus:border-[var(--primary)] transition-all duration-100"
                     />
                 </div>
             </div>

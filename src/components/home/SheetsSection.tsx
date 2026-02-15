@@ -9,9 +9,7 @@ import { DateRangeFilter } from "./DateRangeFilter";
 import type { DateRange } from "./DateRangeFilter";
 
 /**
- * Sheets Section Component
- * Persists filter state (tab, dates, page) in URL search params
- * so it survives navigation (back button).
+ * Sheets Section — M3 styled with URL-persisted filters
  */
 
 export interface SheetsSectionProps {
@@ -66,20 +64,20 @@ export function SheetsSection({ activeTab, onTabChange }: SheetsSectionProps) {
   };
 
   return (
-    <div className="mt-8">
+    <div className="mt-6">
       {/* Header with View All Link */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-medium text-gray-900">Your Sheets</h2>
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-sm font-medium text-[var(--on-surface-variant)] uppercase tracking-wide">Your Files</h2>
         <Link
           href="/ocean"
-          className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+          className="text-sm text-[var(--primary)] hover:text-[var(--primary-hover)] font-medium"
         >
           View All →
         </Link>
       </div>
 
       {/* Filter Tabs + Date Range */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <SheetFilterTabs activeTab={activeTab} onTabChange={handleTabChange} />
         <DateRangeFilter
           startDate={startDate}
