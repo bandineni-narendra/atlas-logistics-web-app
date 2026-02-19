@@ -24,7 +24,6 @@ export default function Home() {
     lastModified: string;
   } | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"all" | "ocean" | "air">("all");
 
   // Memoize the stats loading function
   const loadStats = useCallback(async () => {
@@ -86,7 +85,7 @@ export default function Home() {
       <DashboardStatsSection stats={stats} loading={statsLoading} />
 
       {/* Your Sheets Section */}
-      <SheetsSection activeTab={activeTab} onTabChange={setActiveTab} />
+      <SheetsSection />
     </PageContainer>
   );
 }
