@@ -17,6 +17,7 @@ interface TableRowProps {
   rowIndex: number;
   onCellChange: (columnId: string, value: CellValue) => void;
   onDelete: () => void;
+  onCopy: () => void;
 }
 
 export function TableRow({
@@ -25,6 +26,7 @@ export function TableRow({
   rowIndex,
   onCellChange,
   onDelete,
+  onCopy,
 }: TableRowProps) {
   const t = useTranslations("sheetBuilder");
 
@@ -40,27 +42,51 @@ export function TableRow({
         />
       ))}
 
-      {/* Delete row button */}
+      {/* Row actions: Copy & Delete */}
       <td
-        className="border-b border-[var(--outline-variant)] bg-[var(--surface)] hover:bg-[var(--surface-container-low)] text-center px-2 py-0 transition-all duration-200"
-        style={{ width: "70px", minWidth: "70px" }}
+        className="border-b border-[var(--outline-variant)] bg-[var(--surface)] group-hover:bg-[var(--surface-container-low)] px-2 py-0 transition-all duration-200"
+        style={{ width: "80px", minWidth: "80px" }}
       >
-        <div className="flex items-center justify-center h-8">
+        <div className="flex items-center justify-center gap-1 h-8 opacity-70 group-hover:opacity-100 transition-opacity duration-200">
+          {/* Copy button */}
           <button
-            onClick={onDelete}
-            className="inline-flex items-center gap-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md px-1.5 py-1 transition-all duration-200 hover:scale-105"
-            title={t("columns.delete")}
+            onClick={onCopy}
+            className="p-1.5 text-[var(--on-surface-variant)] hover:text-[var(--primary)] hover:bg-[var(--primary-container)] rounded-md transition-all duration-200 hover:scale-110"
+            title={t("rows.copy") || "Copy row"}
             type="button"
-            aria-label={`Delete row ${rowIndex + 1}`}
+            aria-label={`Copy row ${rowIndex + 1}`}
           >
-            <span className="text-xs font-medium whitespace-nowrap">{t("columns.delete")}</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth={2}
               stroke="currentColor"
-              className="w-3 h-3"
+              className="w-3.5 h-3.5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"
+              />
+            </svg>
+          </button>
+
+          {/* Delete button */}
+          <button
+            onClick={onDelete}
+            className="p-1.5 text-[var(--on-surface-variant)] hover:text-[var(--error)] hover:bg-[var(--error-container)] rounded-md transition-all duration-200 hover:scale-110"
+            title={t("columns.delete")}
+            type="button"
+            aria-label={`Delete row ${rowIndex + 1}`}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-3.5 h-3.5"
             >
               <path
                 strokeLinecap="round"

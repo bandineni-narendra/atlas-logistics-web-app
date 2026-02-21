@@ -82,6 +82,7 @@ export const oceanFreightColumns: Column[] = [
       { label: "EUR", value: "EUR" },
       { label: "GBP", value: "GBP" },
       { label: "CNY", value: "CNY" },
+      { label: "INR", value: "INR" },
     ],
   }),
   createColumn({

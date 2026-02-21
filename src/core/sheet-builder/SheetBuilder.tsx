@@ -125,6 +125,28 @@ export function SheetBuilder({
     }));
   };
 
+  const handleCopyRow = (rowId: string) => {
+    updateSheet(activeSheetId, (sheet) => {
+      const rowIndex = sheet.rows.findIndex((r) => r.id === rowId);
+      if (rowIndex === -1) return sheet;
+
+      const rowToCopy = sheet.rows[rowIndex];
+      const newRowId = `row-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      const newRow = {
+        ...rowToCopy,
+        id: newRowId,
+      };
+
+      const updatedRows = [...sheet.rows];
+      updatedRows.splice(rowIndex + 1, 0, newRow);
+
+      return {
+        ...sheet,
+        rows: updatedRows,
+      };
+    });
+  };
+
   const handleAddColumn = (column: Column) => {
     updateSheet(activeSheetId, (sheet) => {
       const updatedRows = sheet.rows.map((row) => ({
@@ -170,7 +192,7 @@ export function SheetBuilder({
   };
 
   return (
-    <div className="flex flex-col h-full bg-[var(--surface)] rounded-lg shadow-[var(--elevation-1)] border border-[var(--outline-variant)]">
+    <div className="flex flex-col h-full bg-[var(--surface)] rounded-lg shadow-[var(--elevation-1)] border border-[var(--outline-variant)] overflow-hidden">
       {/* Sheet tabs */}
       {multiSheet && (
         <SheetTabs
@@ -191,6 +213,7 @@ export function SheetBuilder({
           onCellChange={handleCellChange}
           onAddRow={handleAddRow}
           onDeleteRow={handleDeleteRow}
+          onCopyRow={handleCopyRow}
           onAddColumn={handleAddColumn}
           onDeleteColumn={handleDeleteColumn}
           onUpdateColumnName={handleUpdateColumnName}

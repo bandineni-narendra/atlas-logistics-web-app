@@ -20,7 +20,7 @@ import { AuthRepository, UserCredentials } from "@/services/auth/AuthRepository"
 export class FirebaseAuthRepository implements AuthRepository {
   private mapFirebaseUser(firebaseUser: FirebaseUser | null): UserCredentials | null {
     if (!firebaseUser) return null;
-    
+
     return {
       uid: firebaseUser.uid,
       email: firebaseUser.email,
@@ -77,7 +77,34 @@ export class FirebaseAuthRepository implements AuthRepository {
   async getCurrentUserToken(forceRefresh = false): Promise<string | null> {
     const user = auth.currentUser;
     if (!user) return null;
-    return await user.getIdToken(forceRefresh);
+
+    const maxRetries = 3;
+    let delay = 1000; // 1 second
+
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        return await user.getIdToken(forceRefresh);
+      } catch (error: any) {
+        const isNetworkError = error.code === "auth/network-request-failed";
+        const isLastAttempt = attempt === maxRetries - 1;
+
+        if (isNetworkError && !isLastAttempt) {
+          console.warn(
+            `Firebase ID token fetch failed (attempt ${attempt + 1}). Retrying in ${delay}ms...`,
+            error
+          );
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          // Exponential backoff or static delay - sticking to static 1s as per plan
+          continue;
+        }
+
+        // Re-throw if it's not a network error or we've exhausted retries
+        console.error("Firebase ID token fetch failed definitively:", error);
+        throw error;
+      }
+    }
+
+    return null;
   }
 
   onAuthStateChanged(callback: (user: UserCredentials | null) => void): () => void {

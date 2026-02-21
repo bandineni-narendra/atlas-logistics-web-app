@@ -183,10 +183,12 @@
     "columns": {
       "name": "Column",
       "delete": "Delete",
+      "actions": "Actions",
       "add": "Add Column"
     },
     "rows": {
-      "add": "Add Row"
+      "add": "Add Row",
+      "copy": "Copy"
     },
     "tabs": {
       "add": "Add Sheet"

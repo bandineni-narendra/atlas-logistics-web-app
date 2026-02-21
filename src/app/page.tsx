@@ -9,10 +9,12 @@ import {
   SheetsSection,
 } from "@/components/home";
 import Head from "next/head";
+import { useUI } from "@/contexts/UIContext";
 
 export default function Home() {
   const t = useTranslations();
   const { isAuthenticated, isLoading } = useAuth();
+  const { isSidebarCollapsed } = useUI();
 
   // Show loading state
   if (isLoading) {
@@ -25,7 +27,7 @@ export default function Home() {
   }
 
   return (
-    <main className="px-6 py-5 max-w-7xl mx-auto flex flex-col w-full h-full">
+    <main className={`transition-all duration-300 mx-auto flex flex-col w-full h-full ${isSidebarCollapsed ? "max-w-[98%] px-2 py-4" : "px-6 py-5 max-w-7xl"}`}>
       <header className="mb-5">
         <h1 className="text-xl font-medium text-[var(--on-surface)] tracking-tight">
           {`Welcome to ${t("common.appName")}`}

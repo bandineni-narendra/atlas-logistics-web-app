@@ -26,6 +26,7 @@ interface SheetTableProps {
   onAddColumn: (column: Column) => void;
   onDeleteColumn: (columnId: string) => void;
   onUpdateColumnName: (columnId: string, newName: string) => void;
+  onCopyRow: (rowId: string) => void;
 }
 
 export function SheetTable({
@@ -36,6 +37,7 @@ export function SheetTable({
   onAddColumn,
   onDeleteColumn,
   onUpdateColumnName,
+  onCopyRow,
 }: SheetTableProps) {
   const handleAddColumn = useCallback(() => {
     const newColumnId = `col-${Date.now()}`;
@@ -51,7 +53,7 @@ export function SheetTable({
   return (
     <div className="flex flex-col gap-4">
       {/* Modern minimalistic spreadsheet container */}
-      <div className="overflow-x-auto rounded-2xl bg-[var(--surface)] shadow-[var(--elevation-2)] border border-[var(--outline-variant)] p-4">
+      <div className="overflow-x-auto rounded-2xl bg-[var(--surface)] shadow-[var(--elevation-2)] border border-[var(--outline-variant)] p-4 overflow-hidden">
         <table className="border-collapse w-full">
           <TableHeader
             columns={sheet.columns}
@@ -82,6 +84,7 @@ export function SheetTable({
                     onCellChange(row.id, columnId, value)
                   }
                   onDelete={() => onDeleteRow(row.id)}
+                  onCopy={() => onCopyRow(row.id)}
                 />
               ))
             )}

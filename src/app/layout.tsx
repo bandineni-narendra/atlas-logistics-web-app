@@ -6,6 +6,7 @@ import { SidebarLayout } from "@/components";
 import { SheetBuilderProvider } from "@/contexts/SheetBuilderContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { QueryProvider } from "./providers";
+import { UIProvider } from "@/contexts/UIContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,7 +37,9 @@ export default function RootLayout({
           <QueryProvider>
             <AuthProvider>
               <SheetBuilderProvider>
-                <SidebarLayout>{children}</SidebarLayout>
+                <UIProvider>
+                  <SidebarLayout>{children}</SidebarLayout>
+                </UIProvider>
               </SheetBuilderProvider>
             </AuthProvider>
           </QueryProvider>

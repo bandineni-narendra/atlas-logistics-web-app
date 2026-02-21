@@ -84,7 +84,7 @@ export function TableHeader({
                   <>
                     <span
                       onClick={() => startEditing(column)}
-                      className="text-xs font-semibold text-[var(--on-surface)] cursor-pointer hover:text-[var(--primary)] transition-all duration-200 block flex-1 whitespace-nowrap overflow-hidden text-ellipsis"
+                      className="text-[10px] font-bold text-[var(--on-surface)] cursor-pointer hover:text-[var(--primary)] transition-all duration-200 block flex-1 whitespace-pre-line overflow-hidden text-ellipsis leading-tight py-1"
                       title={column.label}
                     >
                       {column.label}
@@ -129,9 +129,11 @@ export function TableHeader({
         {/* Delete row column header */}
         <th
           className="bg-[var(--surface-container-low)] border-b border-[var(--outline-variant)] px-2 py-2 text-center"
-          style={{ width: "70px", minWidth: "70px" }}
+          style={{ width: "80px", minWidth: "80px" }}
         >
-          <span className="text-xs font-semibold text-[var(--on-surface-variant)]">{t("columns.delete")}</span>
+          <span className="text-xs font-semibold text-[var(--on-surface-variant)] uppercase tracking-wider">
+            {t("columns.actions")}
+          </span>
         </th>
 
         {/* Add Column button */}
