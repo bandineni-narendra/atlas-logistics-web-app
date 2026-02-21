@@ -2,6 +2,7 @@
 
 import { Sidebar } from "@/components/sidebar/Sidebar";
 import { usePathname } from "next/navigation";
+import { useUI } from "@/contexts/UIContext";
 
 export type SidebarLayoutProps = {
   children: React.ReactNode;
@@ -12,6 +13,7 @@ export type SidebarLayoutProps = {
  */
 export function SidebarLayout({ children }: SidebarLayoutProps) {
   const pathname = usePathname();
+  const { isSidebarCollapsed, toggleSidebar } = useUI();
 
   // Don't show sidebar on auth pages
   const isAuthPage = ["/login", "/signup", "/forgot-password"].includes(pathname);
@@ -23,7 +25,7 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
   return (
     <div className="flex h-screen bg-[var(--surface)]">
       <Sidebar currentPath={pathname} />
-      <main className="flex-1 overflow-y-auto overflow-x-hidden bg-[var(--surface-dim)]">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden bg-[var(--surface-dim)] transition-all duration-300">
         {children}
       </main>
     </div>

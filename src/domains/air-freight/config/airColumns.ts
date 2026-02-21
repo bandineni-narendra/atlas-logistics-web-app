@@ -52,6 +52,18 @@ export const airFreightColumns: Column[] = [
     width: 120,
   }),
   createColumn({
+    id: "normalRate",
+    label: "Normal Rate",
+    type: ColumnType.NUMBER,
+    width: 120,
+  }),
+  createColumn({
+    id: "rateMinus45",
+    label: "-45kg",
+    type: ColumnType.NUMBER,
+    width: 120,
+  }),
+  createColumn({
     id: "rate45",
     label: "+45kg",
     type: ColumnType.NUMBER,
@@ -66,8 +78,8 @@ export const airFreightColumns: Column[] = [
     width: 120,
   }),
   createColumn({
-    id: "rate250",
-    label: "+250kg",
+    id: "rate300",
+    label: "+300kg",
     type: ColumnType.NUMBER,
     width: 120,
   }),
@@ -84,6 +96,42 @@ export const airFreightColumns: Column[] = [
     width: 130,
   }),
   createColumn({
+    id: "fuelSurcharge",
+    label: "Fuel\nSurcharge",
+    type: ColumnType.NUMBER,
+    width: 100,
+  }),
+  createColumn({
+    id: "securitySurcharge",
+    label: "Security\nSurcharge",
+    type: ColumnType.NUMBER,
+    width: 100,
+  }),
+  createColumn({
+    id: "xraySurcharge",
+    label: "XRay\nSurcharge",
+    type: ColumnType.NUMBER,
+    width: 100,
+  }),
+  createColumn({
+    id: "amsSurcharge",
+    label: "AMS\nSurcharge",
+    type: ColumnType.NUMBER,
+    width: 100,
+  }),
+  createColumn({
+    id: "cartageSurcharge",
+    label: "Cartage\nSurcharge",
+    type: ColumnType.NUMBER,
+    width: 120,
+  }),
+  createColumn({
+    id: "miscSurcharge",
+    label: "MISC\nSurcharge",
+    type: ColumnType.NUMBER,
+    width: 120,
+  }),
+  createColumn({
     id: "currency",
     label: "Currency",
     type: ColumnType.SELECT,
@@ -94,6 +142,7 @@ export const airFreightColumns: Column[] = [
       { label: "EUR", value: "EUR" },
       { label: "GBP", value: "GBP" },
       { label: "CNY", value: "CNY" },
+      { label: "INR", value: "INR" },
     ],
   }),
   createColumn({

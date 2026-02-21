@@ -6,7 +6,13 @@
     "page": "Page",
     "of": "of",
     "sheets": "sheets",
-    "file": "File"
+    "file": "File",
+    "or": "OR",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "ok": "OK"
   },
   "navigation": {
     "home": "Home",
@@ -41,7 +47,9 @@
     "googleSignIn": "Continue with Google",
     "loggingIn": "Logging in...",
     "signingUp": "Creating account...",
-    "sessionExpired": "Your session has expired. Please login again."
+    "sessionExpired": "Your session has expired. Please login again.",
+    "passwordHelper": "Min 8 characters, 1 uppercase, 1 lowercase, 1 number",
+    "googleSignInFailed": "Google sign-in failed. Please try again."
   },
   "profile": {
     "subtitle": "Manage your account information",
@@ -102,6 +110,10 @@
     "pageTitle": "Ocean Freight Rates",
     "uploadDescription": "Upload an Excel file to extract and analyze Ocean Freight rate data.",
     "noDataAvailable": "No ocean freight data available",
+    "uploadFile": "Upload File",
+    "uploadFileDesc": "Select an Excel file to process",
+    "uploadRateSheet": "Upload Rate Sheet",
+    "uploadRateSheetDesc": "Upload an Excel file containing ocean freight rates for AI-powered extraction",
     "confidence": "Confidence",
     "columns": {
       "origin": "Origin",
@@ -140,13 +152,73 @@
       "transitTime": "Transit",
       "currency": "Currency",
       "validity": "Validity"
-    }
+    },
+    "processingError": "Processing Error",
+    "sheetFallback": "Sheet {index}"
+  },
+  "filters": {
+    "status": "Status",
+    "date": "Date",
+    "clear": "Clear",
+    "airFreight": "Air Freight",
+    "oceanFreight": "Ocean Freight",
+    "anyStatus": "Any Status",
+    "saved": "Saved",
+    "draft": "Draft",
+    "archived": "Archived",
+    "all": "All",
+    "selectDateRange": "Select Date Range",
+    "startDate": "Start Date",
+    "endDate": "End Date"
   },
   "progress": {
     "processed": "Processed",
-    "ofSheets": "of {total} sheets"
+    "ofSheets": "of {total} sheets",
+    "countOfTotal": "{count}/{total} sheets"
   },
   "table": {
     "noDataAvailable": "No data available"
+  },
+  "sheetBuilder": {
+    "columns": {
+      "name": "Column",
+      "delete": "Delete",
+      "actions": "Actions",
+      "add": "Add Column"
+    },
+    "rows": {
+      "add": "Add Row",
+      "copy": "Copy"
+    },
+    "tabs": {
+      "add": "Add Sheet"
+    }
+  },
+  "home": {
+    "sections": {
+      "yourFiles": "Your Files"
+    }
+  },
+  "feedback": {
+    "issuesFound": "Issues found:",
+    "row": "Row"
+  },
+  "sheetsView": {
+    "table": {
+      "name": "Name",
+      "type": "Type",
+      "status": "Status",
+      "sheets": "Sheets",
+      "updated": "Updated"
+    },
+    "empty": {
+      "title": "No files found",
+      "messageAirOcean": "Create a new Air or Ocean freight file to get started",
+      "messageSpecific": "Create a new {type} freight file to get started"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of"
+    }
   }
 }

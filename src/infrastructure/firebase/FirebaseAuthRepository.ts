@@ -78,40 +78,32 @@ export class FirebaseAuthRepository implements AuthRepository {
     const user = auth.currentUser;
     if (!user) return null;
 
-    // Retry logic for token refresh errors (e.g., network issues)
-    const MAX_RETRIES = 3;
-    let attempt = 0;
+    const maxRetries = 3;
+    let delay = 1000; // 1 second
 
-    while (attempt < MAX_RETRIES) {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
         return await user.getIdToken(forceRefresh);
       } catch (error: any) {
-        attempt++;
-        const isNetworkError = error?.code === "auth/network-request-failed";
+        const isNetworkError = error.code === "auth/network-request-failed";
+        const isLastAttempt = attempt === maxRetries - 1;
 
-        // If it's a network error and we haven't exhausted retries, wait and retry
-        if (isNetworkError && attempt < MAX_RETRIES) {
-          const delay = Math.min(1000 * Math.pow(2, attempt), 5000); // Exponential backoff: 2s, 4s, 5s max
-          console.warn(`[FirebaseAuth] Token refresh failed (attempt ${attempt}/${MAX_RETRIES}). Retrying in ${delay}ms...`, error);
-          await new Promise(resolve => setTimeout(resolve, delay));
+        if (isNetworkError && !isLastAttempt) {
+          console.warn(
+            `Firebase ID token fetch failed (attempt ${attempt + 1}). Retrying in ${delay}ms...`,
+            error
+          );
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          // Exponential backoff or static delay - sticking to static 1s as per plan
           continue;
         }
 
-        // If it's not a network error or we're out of retries, log and return safe value or throw
-        console.error("[FirebaseAuth] Failed to get ID token:", error);
-
-        // If we are just trying to get a token (not force refresh), we might return the existing one if available?
-        // But getIdToken(false) verifies validity. If network fails, we can't verify.
-        // Returning null might be safer than crashing if the app can handle unauthenticated state.
-        if (attempt >= MAX_RETRIES) {
-          // For network errors on token fetch, returning null acts as "logged out" or "offline"
-          // preventing the app from crashing.
-          return null;
-        }
-
+        // Re-throw if it's not a network error or we've exhausted retries
+        console.error("Firebase ID token fetch failed definitively:", error);
         throw error;
       }
     }
+
     return null;
   }
 

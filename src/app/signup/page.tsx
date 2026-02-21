@@ -110,7 +110,7 @@ export default function SignupPage() {
       const errorMessage =
         error instanceof Error
           ? error.message
-          : "Google sign-in failed. Please try again.";
+          : t("auth.googleSignInFailed");
       setErrors({ general: errorMessage });
     } finally {
       setIsSubmitting(false);
@@ -160,13 +160,13 @@ export default function SignupPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            Continue with Google
+            {t("auth.googleSignIn")}
           </Button>
 
           {/* Divider */}
           <div className="my-6 flex items-center">
             <div className="flex-1 border-t border-[var(--outline-variant)]"></div>
-            <span className="px-4 text-sm text-[var(--on-surface-variant)]">OR</span>
+            <span className="px-4 text-sm text-[var(--on-surface-variant)]">{t("common.or")}</span>
             <div className="flex-1 border-t border-[var(--outline-variant)]"></div>
           </div>
 
@@ -211,7 +211,7 @@ export default function SignupPage() {
               required
               fullWidth
               autoComplete="new-password"
-              helperText="Min 8 characters, 1 uppercase, 1 lowercase, 1 number"
+              helperText={t("auth.passwordHelper")}
             />
 
             <Input

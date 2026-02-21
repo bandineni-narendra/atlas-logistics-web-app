@@ -3,6 +3,11 @@ export * from "./Badge";
 export * from "./Layout";
 export * from "./States";
 export * from "./Tabs";
+export * from "./Modal";
+export * from "./FilterChip";
+export * from "./DateRangePicker";
+export * from "./Popover";
+
 export * from "./Button";
 export * from "./Metrics";
 export * from "./Alert";

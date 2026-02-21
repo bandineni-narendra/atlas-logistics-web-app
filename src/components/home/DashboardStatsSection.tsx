@@ -1,8 +1,7 @@
 "use client";
 
-import { memo, useMemo } from "react";
-import { DashboardStats } from "@/types/api/sheets";
 import { DASHBOARD_LABELS, STAT_CARD_COLORS, StatCardColor } from "@/constants";
+import { useDashboardStats } from "@/hooks/queries/useDashboardStats";
 
 export interface StatCardProps {
   label: string;
@@ -14,22 +13,15 @@ export interface StatCardProps {
 /**
  * Single stat metric — M3 flat inline style
  */
-const StatCard = memo<StatCardProps>(function StatCard({
+function StatCard({
   label,
   value,
   sublabel,
   color = "default",
-}) {
-  const colorClass = useMemo(() => {
-    switch (color) {
-      case "blue":
-        return STAT_CARD_COLORS.BLUE;
-      case "emerald":
-        return STAT_CARD_COLORS.EMERALD;
-      default:
-        return STAT_CARD_COLORS.DEFAULT;
-    }
-  }, [color]);
+}: StatCardProps) {
+  let colorClass: string = STAT_CARD_COLORS.DEFAULT;
+  if (color === "blue") colorClass = STAT_CARD_COLORS.BLUE;
+  if (color === "emerald") colorClass = STAT_CARD_COLORS.EMERALD;
 
   return (
     <div className="flex-1 min-w-0 px-4 py-3">
@@ -40,53 +32,45 @@ const StatCard = memo<StatCardProps>(function StatCard({
       <p className="mt-0.5 text-xs text-[var(--on-surface-variant)]">{sublabel}</p>
     </div>
   );
-});
-
-export interface DashboardStatsProps {
-  stats: DashboardStats | null;
-  loading: boolean;
 }
 
 /**
  * Dashboard Stats — M3 flat horizontal metrics strip with dividers
  */
-export const DashboardStatsSection = memo<DashboardStatsProps>(
-  function DashboardStatsSection({ stats, loading }) {
-    const formatValue = useMemo(
-      () => (stat: number | undefined) => (loading ? DASHBOARD_LABELS.LOADING_PLACEHOLDER : stat || 0),
-      [loading]
-    );
+export function DashboardStatsSection() {
+  const { data: stats, isLoading: loading } = useDashboardStats();
 
-    return (
-      <div className="mt-6">
-        <h2 className="text-sm font-medium text-[var(--on-surface-variant)] mb-3 uppercase tracking-wide">
-          {DASHBOARD_LABELS.OVERVIEW_TITLE}
-        </h2>
-        <div className="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-xl flex divide-x divide-[var(--outline-variant)]">
-          <StatCard
-            label={DASHBOARD_LABELS.TOTAL_SHEETS}
-            value={formatValue(stats?.totalSheets)}
-            sublabel={DASHBOARD_LABELS.TOTAL_SHEETS_SUBLABEL}
-          />
-          <StatCard
-            label={DASHBOARD_LABELS.OCEAN_SHEETS}
-            value={formatValue(stats?.oceanSheets)}
-            sublabel={DASHBOARD_LABELS.OCEAN_SHEETS_SUBLABEL}
-            color="blue"
-          />
-          <StatCard
-            label={DASHBOARD_LABELS.AIR_SHEETS}
-            value={formatValue(stats?.airSheets)}
-            sublabel={DASHBOARD_LABELS.AIR_SHEETS_SUBLABEL}
-            color="emerald"
-          />
-          <StatCard
-            label={DASHBOARD_LABELS.TOTAL_ROWS}
-            value={formatValue(stats?.totalRows)}
-            sublabel={DASHBOARD_LABELS.TOTAL_ROWS_SUBLABEL}
-          />
-        </div>
+  const formatValue = (stat: number | undefined) => (loading ? DASHBOARD_LABELS.LOADING_PLACEHOLDER : stat || 0);
+
+  return (
+    <div className="mt-6">
+      <h2 className="text-sm font-medium text-[var(--on-surface-variant)] mb-3 uppercase tracking-wide">
+        {DASHBOARD_LABELS.OVERVIEW_TITLE}
+      </h2>
+      <div className="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-xl flex divide-x divide-[var(--outline-variant)]">
+        <StatCard
+          label={DASHBOARD_LABELS.TOTAL_SHEETS}
+          value={formatValue(stats?.totalSheets)}
+          sublabel={DASHBOARD_LABELS.TOTAL_SHEETS_SUBLABEL}
+        />
+        <StatCard
+          label={DASHBOARD_LABELS.OCEAN_SHEETS}
+          value={formatValue(stats?.oceanSheets)}
+          sublabel={DASHBOARD_LABELS.OCEAN_SHEETS_SUBLABEL}
+          color="blue"
+        />
+        <StatCard
+          label={DASHBOARD_LABELS.AIR_SHEETS}
+          value={formatValue(stats?.airSheets)}
+          sublabel={DASHBOARD_LABELS.AIR_SHEETS_SUBLABEL}
+          color="emerald"
+        />
+        <StatCard
+          label={DASHBOARD_LABELS.TOTAL_ROWS}
+          value={formatValue(stats?.totalRows)}
+          sublabel={DASHBOARD_LABELS.TOTAL_ROWS_SUBLABEL}
+        />
       </div>
-    );
-  }
-);
+    </div>
+  );
+}

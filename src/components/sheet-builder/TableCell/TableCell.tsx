@@ -7,8 +7,20 @@
 
 "use client";
 
-import { useCallback, useMemo, memo } from "react";
+import { useCallback, memo } from "react";
 import { ColumnType, CellValue, Column } from "@/core/sheet-builder";
+
+// Modern minimalistic input styles
+const BASE_INPUT_CLASSES = `
+  w-full h-full px-2 py-1.5
+  text-xs font-normal text-[var(--on-surface)]
+  placeholder:text-[var(--on-surface-variant)]
+  bg-transparent
+  border-0 outline-none
+  focus:ring-0 focus:outline-none focus:border-0 focus:shadow-none
+  cursor-text
+  [color-scheme:light] dark:[color-scheme:dark]
+`;
 
 interface TableCellProps {
   column: Column;
@@ -36,22 +48,7 @@ export const TableCell = memo(function TableCell({
     [column.type, onChange],
   );
 
-  // Modern minimalistic input styles
-  const baseInputClasses = useMemo(
-    () => `
-    w-full h-full px-2 py-1.5
-    text-xs font-normal text-[var(--on-surface)]
-    placeholder:text-[var(--on-surface-variant)]
-    bg-transparent
-    border-0 outline-none
-    focus:ring-0 focus:outline-none focus:border-0 focus:shadow-none
-    cursor-text
-    [color-scheme:light] dark:[color-scheme:dark]
-  `,
-    [],
-  );
-
-  const columnWidth = useMemo(() => column.width || 150, [column.width]);
+  const columnWidth = column.width || 150;
 
   const renderInput = () => {
     switch (column.type) {
@@ -62,7 +59,7 @@ export const TableCell = memo(function TableCell({
             value={value !== null && typeof value === "number" ? value : ""}
             onChange={handleChange}
             placeholder={column.placeholder}
-            className={baseInputClasses}
+            className={BASE_INPUT_CLASSES}
           />
         );
 
@@ -72,7 +69,7 @@ export const TableCell = memo(function TableCell({
             type="date"
             value={value !== null ? String(value) : ""}
             onChange={handleChange}
-            className={`${baseInputClasses} [&::-webkit-calendar-picker-indicator]:cursor-pointer dark:[&::-webkit-calendar-picker-indicator]:invert`}
+            className={`${BASE_INPUT_CLASSES} [&::-webkit-calendar-picker-indicator]:cursor-pointer dark:[&::-webkit-calendar-picker-indicator]:invert`}
           />
         );
 
@@ -81,7 +78,7 @@ export const TableCell = memo(function TableCell({
           <select
             value={value !== null ? String(value) : ""}
             onChange={handleChange}
-            className={`${baseInputClasses} cursor-pointer appearance-none bg-right bg-no-repeat pr-8`}
+            className={`${BASE_INPUT_CLASSES} cursor-pointer appearance-none bg-right bg-no-repeat pr-8`}
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
               backgroundPosition: "right 0.5rem center",
@@ -123,7 +120,7 @@ export const TableCell = memo(function TableCell({
             value={value !== null ? String(value) : ""}
             onChange={handleChange}
             placeholder={column.placeholder}
-            className={baseInputClasses}
+            className={BASE_INPUT_CLASSES}
           />
         );
     }

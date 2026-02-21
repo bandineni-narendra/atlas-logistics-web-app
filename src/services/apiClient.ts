@@ -62,9 +62,20 @@ async function request<T>(
         headers,
     };
 
-    try {
-        const response = await fetch(url, config);
+    let response: Response;
 
+    try {
+        response = await fetch(url, config);
+    } catch (error) {
+        // Network errors (e.g., connection refused, DNS lookup failed)
+        // fetch() throws a TypeError when a network error occurs
+        if (error instanceof TypeError) {
+            throw new ApiClientError(0, "Network error — unable to reach server");
+        }
+        throw new ApiClientError(0, error instanceof Error ? error.message : "Unknown network error");
+    }
+
+    try {
         // Handle 204 No Content
         if (response.status === 204) {
             return undefined as T;
@@ -112,13 +123,7 @@ async function request<T>(
         if (error instanceof ApiClientError) {
             throw error;
         }
-
-        // Network errors
-        if (error instanceof TypeError && error.message === "Failed to fetch") {
-            throw new ApiClientError(0, "Network error — unable to reach server");
-        }
-
-        throw new ApiClientError(0, error instanceof Error ? error.message : "Unknown error");
+        throw new ApiClientError(response.status || 500, error instanceof Error ? error.message : "Unknown payload error");
     }
 }
 
@@ -127,8 +132,20 @@ async function request<T>(
 // ============================================
 
 export const apiClient = {
-    get<T>(endpoint: string): Promise<T> {
-        return request<T>(endpoint);
+    get<T>(endpoint: string, params?: Record<string, string | number | boolean | null | undefined>): Promise<T> {
+        if (!params) return request<T>(endpoint);
+
+        // Serialize query parameters
+        const searchParams = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+                searchParams.append(key, String(value));
+            }
+        });
+
+        const queryString = searchParams.toString();
+        const fullEndpoint = queryString ? `${endpoint}?${queryString}` : endpoint;
+        return request<T>(fullEndpoint);
     },
 
     post<T>(endpoint: string, data?: unknown): Promise<T> {

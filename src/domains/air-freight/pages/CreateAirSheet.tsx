@@ -14,8 +14,10 @@ import { mapToAirRate, AirRate } from "../models";
 import { validateAirSheets } from "../validation";
 import { useFeedbackModal, useFileSave } from "@/hooks";
 import { FeedbackModal } from "@/components/ui";
+import { useUI } from "@/contexts/UIContext";
 
 export default function CreateAirSheet() {
+  const { isSidebarCollapsed } = useUI();
   const [sheets, setSheets] = useState<Sheet[]>([]);
   const {
     state,
@@ -68,7 +70,7 @@ export default function CreateAirSheet() {
   };
 
   return (
-    <div className="container mx-auto p-6 max-w-7xl">
+    <div className={`container mx-auto transition-all duration-300 ${isSidebarCollapsed ? "max-w-[98%] px-2 py-4" : "max-w-7xl p-6"}`}>
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-[var(--on-surface)] mb-2">
           Air Freight Rate Sheet

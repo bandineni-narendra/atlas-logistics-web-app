@@ -8,89 +8,74 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { fileService } from "@/services/file-service";
-import { logger } from "@/utils";
+import { useQuery } from "@tanstack/react-query";
+import { filesService } from "@/services/filesService";
 import type { FileSummary, FileType } from "@/types/api";
 
 export interface UseFilesOptions {
   type: FileType | "all";
   page?: number;
   pageSize?: number;
-  autoLoad?: boolean;
+  autoLoad?: boolean; // Kept for interface backward compatibility, though React Query handles enabled state natively
 }
 
 export interface UseFilesReturn {
   files: FileSummary[];
   loading: boolean;
-  error: string | null;
+  isLoading: boolean;
+  error: Error | null;
   total: number;
   loadFiles: () => Promise<void>;
   refresh: () => Promise<void>;
 }
 
-export function useFiles(options: UseFilesOptions): UseFilesReturn {
-  const { type, page = 1, pageSize = 50, autoLoad = true } = options;
-  const [files, setFiles] = useState<FileSummary[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [total, setTotal] = useState(0);
-
-  const loadFiles = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
+export function useFiles({
+  type,
+  page = 1,
+  pageSize = 50,
+  autoLoad = true
+}: UseFilesOptions): UseFilesReturn {
+  const query = useQuery({
+    queryKey: ["files", type, page, pageSize],
+    queryFn: async () => {
+      const typesToFetch: FileType[] =
+        type === "all" ? ["AIR", "OCEAN"] : [type.toUpperCase() as FileType];
 
       const allFiles: FileSummary[] = [];
       let totalCount = 0;
 
-      // Determine which types to fetch
-      const typesToFetch: FileType[] =
-        type === "all"
-          ? ["AIR", "OCEAN"]
-          : [type.toUpperCase() as FileType];
+      // Fetch files for each type concurrently using Promise.all
+      const responses = await Promise.all(
+        typesToFetch.map((fileType) =>
+          filesService.getFiles({ type: fileType, page, pageSize })
+        )
+      );
 
-      // Fetch files for each type
-      for (const fileType of typesToFetch) {
-        const response = await fileService.getFiles({
-          type: fileType,
-          page,
-          pageSize,
-        });
-
+      for (const response of responses) {
         if (response.files && Array.isArray(response.files)) {
           allFiles.push(...response.files);
           totalCount += response.total || 0;
         }
       }
 
-      setFiles(allFiles);
-      setTotal(totalCount);
-    } catch (err: unknown) {
-      logger.error("[useFiles] Failed to load files:", err);
-      setError(err instanceof Error ? err.message : "Failed to load files");
-      setFiles([]);
-      setTotal(0);
-    } finally {
-      setLoading(false);
-    }
-  }, [type, page, pageSize]);
-
-  const refresh = loadFiles;
-
-  // Auto-load on mount and when dependencies change
-  useEffect(() => {
-    if (autoLoad) {
-      loadFiles();
-    }
-  }, [autoLoad, loadFiles]);
+      return { files: allFiles, total: totalCount };
+    },
+    enabled: autoLoad, // Only run the query automatically if autoLoad is true
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+  });
 
   return {
-    files,
-    loading,
-    error,
-    total,
-    loadFiles,
-    refresh,
+    files: query.data?.files || [],
+    loading: query.isLoading, // Backward compatibility alias
+    isLoading: query.isLoading,
+    error: query.error,
+    total: query.data?.total || 0,
+    // Provide Promise-based aliases for backward compatibility with consumers expecting imperitave fetches
+    loadFiles: async () => {
+      await query.refetch();
+    },
+    refresh: async () => {
+      await query.refetch();
+    },
   };
 }

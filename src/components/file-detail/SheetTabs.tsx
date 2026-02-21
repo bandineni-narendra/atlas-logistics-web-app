@@ -1,6 +1,5 @@
 "use client";
 
-import { memo } from "react";
 
 export interface SheetTabsProps {
     sheets: { id: string; name: string }[];
@@ -11,11 +10,11 @@ export interface SheetTabsProps {
 /**
  * Sheet Tabs — M3 tab bar with 3px primary indicator
  */
-export const SheetTabs = memo<SheetTabsProps>(function SheetTabs({
+export function SheetTabs({
     sheets,
     activeSheetId,
     onTabChange,
-}) {
+}: SheetTabsProps) {
     if (sheets.length === 0) return null;
 
     return (
@@ -37,4 +36,4 @@ export const SheetTabs = memo<SheetTabsProps>(function SheetTabs({
             })}
         </div>
     );
-});
+}

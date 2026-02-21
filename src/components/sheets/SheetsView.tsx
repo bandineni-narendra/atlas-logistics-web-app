@@ -4,8 +4,10 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { useFilesQuery } from "@/hooks/queries/useFiles";
 import { Pagination } from "@/components/table/Pagination";
-import { FILE_TYPE_CONFIG, FILE_STATUS_CONFIG, ROUTES } from "@/constants";
-import { logger } from "@/utils";
+import { FILE_TYPE_CONFIG, FILE_STATUS_CONFIG } from "@/constants";
+import { ROUTES } from "@/constants/routes";
+import { logger } from "@/utils/logger";
+import { useTranslations } from "next-intl";
 import type { FileType } from "@/types/api";
 
 const PAGE_SIZE = 10;
@@ -28,6 +30,8 @@ export function SheetsView({
   startDate,
   endDate,
 }: SheetsViewProps) {
+  const t = useTranslations("sheetsView");
+
   // Build query params — omit type when "all", include date range if provided
   const queryParams = useMemo(
     () => ({
@@ -50,10 +54,10 @@ export function SheetsView({
   // Empty-state message
   const emptyStateMessage = useMemo(() => {
     if (filter === "all") {
-      return "Create a new Air or Ocean freight file to get started";
+      return t("empty.messageAirOcean");
     }
-    return `Create a new ${filter} freight file to get started`;
-  }, [filter]);
+    return t("empty.messageSpecific", { type: filter });
+  }, [filter, t]);
 
   logger.debug(
     `[SheetsView] filter="${filter}", page=${page}, total=${total}, files=${files.length}, loading=${isLoading}`
@@ -90,7 +94,7 @@ export function SheetsView({
   if (files.length === 0) {
     return (
       <div className="text-center py-10">
-        <p className="text-[var(--on-surface)] text-base font-medium">No files found</p>
+        <p className="text-[var(--on-surface)] text-base font-medium">{t("empty.title")}</p>
         <p className="text-sm text-[var(--on-surface-variant)] mt-1">{emptyStateMessage}</p>
       </div>
     );
@@ -101,11 +105,11 @@ export function SheetsView({
     <div className="border border-[var(--outline-variant)] rounded-xl overflow-hidden bg-[var(--surface)]">
       {/* Table header */}
       <div className="hidden sm:grid sm:grid-cols-12 gap-4 px-4 py-2 text-xs font-medium text-[var(--on-surface-variant)] border-b border-[var(--outline-variant)] bg-[var(--surface-container-low)]">
-        <span className="col-span-5">Name</span>
-        <span className="col-span-2">Type</span>
-        <span className="col-span-2">Status</span>
-        <span className="col-span-1 text-center">Sheets</span>
-        <span className="col-span-2 text-right">Updated</span>
+        <span className="col-span-5">{t("table.name")}</span>
+        <span className="col-span-2">{t("table.type")}</span>
+        <span className="col-span-2">{t("table.status")}</span>
+        <span className="col-span-1 text-center">{t("table.sheets")}</span>
+        <span className="col-span-2 text-right">{t("table.updated")}</span>
       </div>
 
       {/* Rows */}
@@ -178,7 +182,7 @@ export function SheetsView({
       <div>
         <div className="flex items-center justify-between px-4 py-2 border-t border-[var(--outline-variant)]">
           <p className="text-sm text-[var(--on-surface-variant)]">
-            Showing{" "}
+            {t("pagination.showing")}{" "}
             <span className="font-medium text-[var(--on-surface)]">
               {(page - 1) * PAGE_SIZE + 1}
             </span>
@@ -186,7 +190,7 @@ export function SheetsView({
             <span className="font-medium text-[var(--on-surface)]">
               {Math.min(page * PAGE_SIZE, total)}
             </span>{" "}
-            of{" "}
+            {t("pagination.of")}{" "}
             <span className="font-medium text-[var(--on-surface)]">{total}</span>
           </p>
         </div>

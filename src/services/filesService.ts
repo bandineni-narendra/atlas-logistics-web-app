@@ -30,18 +30,14 @@ export class FilesService {
      * Get paginated list of files with optional filters
      */
     async getFiles(params: GetFilesParams = {}): Promise<GetFilesResponse> {
-        const queryParams = new URLSearchParams();
+        const queryParams: Record<string, string | number> = {};
 
-        Object.entries(params).forEach(([key, value]) => {
-            if (value !== undefined && value !== null) {
-                queryParams.append(key, String(value));
-            }
-        });
+        if (params.type) queryParams.type = params.type;
+        if (params.page !== undefined) queryParams.page = params.page;
+        if (params.pageSize !== undefined) queryParams.pageSize = params.pageSize;
+        if (params.status) queryParams.status = params.status;
 
-        const query = queryParams.toString();
-        const endpoint = query ? `/files?${query}` : "/files";
-
-        return apiClient.get<GetFilesResponse>(endpoint);
+        return apiClient.get<GetFilesResponse>("/files", queryParams);
     }
 
     /**

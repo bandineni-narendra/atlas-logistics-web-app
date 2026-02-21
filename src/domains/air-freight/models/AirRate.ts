@@ -11,11 +11,19 @@ export interface AirRate {
   airline: string;
   serviceLevel: string;
   minRate: number;
+  normalRate: number;
+  rateMinus45: number;
   rate45: number;
   rate100: number;
-  rate250: number;
+  rate300: number;
   rate500: number;
   rate1000: number;
+  fuelSurcharge: number;
+  securitySurcharge: number;
+  xraySurcharge: number;
+  amsSurcharge: number;
+  cartageSurcharge: number;
+  miscSurcharge: number;
   currency: string;
   validFrom: string;
   validTo: string;
@@ -35,11 +43,19 @@ export function mapToAirRate(rowData: Record<string, any>): AirRate | null {
       airline: rowData.airline || "",
       serviceLevel: rowData.serviceLevel || "",
       minRate: parseFloat(rowData.minRate) || 0,
+      normalRate: parseFloat(rowData.normalRate) || 0,
+      rateMinus45: parseFloat(rowData.rateMinus45) || 0,
       rate45: parseFloat(rowData.rate45) || 0,
       rate100: parseFloat(rowData.rate100) || 0,
-      rate250: parseFloat(rowData.rate250) || 0,
+      rate300: parseFloat(rowData.rate300) || 0,
       rate500: parseFloat(rowData.rate500) || 0,
       rate1000: parseFloat(rowData.rate1000) || 0,
+      fuelSurcharge: parseFloat(rowData.fuelSurcharge) || 0,
+      securitySurcharge: parseFloat(rowData.securitySurcharge) || 0,
+      xraySurcharge: parseFloat(rowData.xraySurcharge) || 0,
+      amsSurcharge: parseFloat(rowData.amsSurcharge) || 0,
+      cartageSurcharge: parseFloat(rowData.cartageSurcharge) || 0,
+      miscSurcharge: parseFloat(rowData.miscSurcharge) || 0,
       currency: rowData.currency || "USD",
       validFrom: rowData.validFrom || "",
       validTo: rowData.validTo || "",
@@ -70,8 +86,16 @@ export function validateAirRate(rate: AirRate): string[] {
 
   // Check number fields (they can be 0, but not negative)
   if (rate.minRate < 0) errors.push("Min Rate cannot be negative");
+  if (rate.normalRate < 0) errors.push("Normal Rate cannot be negative");
+  if (rate.rateMinus45 < 0) errors.push("Rate -45 cannot be negative");
   if (rate.rate45 < 0) errors.push("Rate 45 cannot be negative");
   if (rate.rate100 < 0) errors.push("Rate 100 cannot be negative");
+  if (rate.fuelSurcharge < 0) errors.push("Fuel Surcharge cannot be negative");
+  if (rate.securitySurcharge < 0) errors.push("Security Surcharge cannot be negative");
+  if (rate.xraySurcharge < 0) errors.push("XRay Surcharge cannot be negative");
+  if (rate.amsSurcharge < 0) errors.push("AMS Surcharge cannot be negative");
+  if (rate.cartageSurcharge < 0) errors.push("Cartage Surcharge cannot be negative");
+  if (rate.miscSurcharge < 0) errors.push("MISC Surcharge cannot be negative");
 
   return errors;
 }

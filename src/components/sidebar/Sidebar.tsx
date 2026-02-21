@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { SideBarMenu } from "@/components/sidebar/SideBarMenu";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useUI } from "@/contexts/UIContext";
 import Link from "next/link";
 import Switch from "@mui/material/Switch";
 
@@ -20,6 +21,7 @@ export function Sidebar({ currentPath }: SidebarProps) {
   const t = useTranslations();
   const { user, isAuthenticated, logout } = useAuth();
   const { mode, toggleTheme, mounted } = useTheme();
+  const { isSidebarCollapsed, toggleSidebar } = useUI();
   const [showDropdown, setShowDropdown] = useState(false);
 
   const menuItems = useMemo(
@@ -56,25 +58,37 @@ export function Sidebar({ currentPath }: SidebarProps) {
   );
 
   return (
-    <aside className="w-60 bg-[var(--surface)] border-r border-[var(--outline-variant)] flex flex-col h-screen">
-      {/* Logo Section */}
-      <div className="px-4 py-4 border-b border-[var(--outline-variant)]">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[var(--primary)] rounded-lg flex items-center justify-center">
-            <span className="text-[var(--on-primary)] font-medium text-sm">A</span>
+    <aside className={`${isSidebarCollapsed ? "w-20" : "w-64"} bg-[var(--surface)] border-r border-[var(--outline-variant)] flex flex-col h-screen transition-all duration-300 ease-in-out`}>
+      {/* Header Section: Toggle & Logo */}
+      <div className={`px-4 py-4 border-b border-[var(--outline-variant)] flex items-center ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
+        <button
+          onClick={toggleSidebar}
+          className="p-2 rounded-full hover:bg-[var(--surface-container-low)] text-[var(--on-surface-variant)] transition-colors duration-200"
+          title={isSidebarCollapsed ? "Expand" : "Collapse"}
+        >
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+        </button>
+
+        {!isSidebarCollapsed && (
+          <div className="flex items-center gap-3 overflow-hidden transition-opacity duration-300">
+            <div className="w-8 h-8 bg-[var(--primary)] rounded-lg flex items-center justify-center flex-shrink-0">
+              <span className="text-[var(--on-primary)] font-medium text-sm">A</span>
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-sm font-medium text-[var(--on-surface)] truncate">
+                {t("common.appName")}
+              </h1>
+              <p className="text-xs text-[var(--on-surface-variant)] truncate">{t("common.appTagline")}</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-sm font-medium text-[var(--on-surface)]">
-              {t("common.appName")}
-            </h1>
-            <p className="text-xs text-[var(--on-surface-variant)]">{t("common.appTagline")}</p>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-3 overflow-y-auto">
-        <div className="space-y-0.5">
+      <nav className={`flex-1 px-3 py-3 overflow-y-auto ${isSidebarCollapsed ? "flex flex-col items-center" : ""}`}>
+        <div className={`space-y-1 w-full`}>
           {menuItems.map((item) => (
             <SideBarMenu
               key={item.href}
@@ -82,49 +96,53 @@ export function Sidebar({ currentPath }: SidebarProps) {
               href={item.href}
               icon={item.icon}
               isActive={currentPath === item.href}
+              isCollapsed={isSidebarCollapsed}
             />
           ))}
         </div>
       </nav>
 
       {/* Footer — User Section */}
-      <div className="px-3 py-3 border-t border-[var(--outline-variant)]">
+      <div className={`px-3 py-3 border-t border-[var(--outline-variant)] ${isSidebarCollapsed ? "flex justify-center" : ""}`}>
         {isAuthenticated && user ? (
-          <div className="relative">
+          <div className="relative w-full">
             <button
               onClick={() => setShowDropdown(!showDropdown)}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-full hover:bg-[var(--surface-container-low)] transition-colors duration-100"
+              className={`w-full flex items-center rounded-full hover:bg-[var(--surface-container-low)] transition-colors duration-100 ${isSidebarCollapsed ? "justify-center p-2" : "gap-3 px-3 py-2"}`}
             >
               <div className="w-8 h-8 bg-[var(--primary)] rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-[var(--on-primary)] text-sm font-medium">
                   {user.name.charAt(0).toUpperCase()}
                 </span>
               </div>
-              <div className="flex-1 min-w-0 text-left">
-                <p className="text-sm font-medium text-[var(--on-surface)] truncate">
-                  {user.name}
-                </p>
-                <p className="text-xs text-[var(--on-surface-variant)] truncate">{user.email}</p>
-              </div>
-              <svg
-                className={`w-4 h-4 text-[var(--on-surface-variant)] transition-transform duration-100 ${showDropdown ? "rotate-180" : ""
-                  }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
+              {!isSidebarCollapsed && (
+                <>
+                  <div className="flex-1 min-w-0 text-left">
+                    <p className="text-sm font-medium text-[var(--on-surface)] truncate">
+                      {user.name}
+                    </p>
+                    <p className="text-xs text-[var(--on-surface-variant)] truncate">{user.email}</p>
+                  </div>
+                  <svg
+                    className={`w-4 h-4 text-[var(--on-surface-variant)] transition-transform duration-100 ${showDropdown ? "rotate-180" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </>
+              )}
             </button>
 
             {/* Dropdown Menu */}
             {showDropdown && (
-              <div className="absolute bottom-full left-0 right-0 mb-1 bg-[var(--surface)] border border-[var(--outline-variant)] rounded-xl shadow-[var(--elevation-2)] overflow-hidden">
+              <div className={`absolute bottom-full mb-1 bg-[var(--surface)] border border-[var(--outline-variant)] rounded-xl shadow-[var(--elevation-2)] overflow-hidden ${isSidebarCollapsed ? "left-14 w-48" : "left-0 right-0"}`}>
                 <Link
                   href="/profile"
                   className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--on-surface)] hover:bg-[var(--surface-container-low)] transition-colors duration-100"
@@ -155,17 +173,17 @@ export function Sidebar({ currentPath }: SidebarProps) {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
                           </svg>
                         )}
-                        <span>{mode === "dark" ? "Dark Mode" : "Light Mode"}</span>
+                        <span>{mode === "dark" ? t("common.darkMode") : t("common.lightMode")}</span>
                       </div>
                       <Switch checked={mode === "dark"} size="small" color="default" />
                     </>
                   ) : (
                     <>
                       <div className="flex items-center gap-3">
-                        <div className="w-4 h-4" /> {/* Spacer */}
-                        <span>Light Mode</span>
+                        <div className="w-4 h-4" />
+                        <span>{t("common.lightMode")}</span>
                       </div>
-                      <div className="w-8 h-5" /> {/* Spacer for Switch */}
+                      <div className="w-8 h-5" />
                     </>
                   )}
                 </div>
@@ -187,18 +205,21 @@ export function Sidebar({ currentPath }: SidebarProps) {
         ) : (
           <Link
             href="/login"
-            className="flex items-center gap-3 px-3 py-2 rounded-full hover:bg-[var(--surface-container-low)] transition-colors duration-100"
+            className={`flex items-center rounded-full hover:bg-[var(--surface-container-low)] transition-colors duration-100 ${isSidebarCollapsed ? "justify-center p-2" : "gap-3 px-3 py-2"}`}
+            title={isSidebarCollapsed ? t("auth.login") : ""}
           >
             <div className="w-8 h-8 bg-[var(--surface-container-high)] rounded-full flex items-center justify-center">
               <svg className="w-4 h-4 text-[var(--on-surface-variant)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
               </svg>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-[var(--on-surface)]">
-                {t("auth.login")}
-              </p>
-            </div>
+            {!isSidebarCollapsed && (
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-[var(--on-surface)]">
+                  {t("auth.login")}
+                </p>
+              </div>
+            )}
           </Link>
         )}
       </div>
