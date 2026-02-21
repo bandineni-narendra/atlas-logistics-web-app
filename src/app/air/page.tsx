@@ -9,8 +9,6 @@ import { AirTable } from "@/components/air";
 import { AirFreightResult, AirFreightRow } from "@/types/air";
 import AirUploadFlow from "@/components/air/AirUploadFlow";
 import {
-  PageContainer,
-  PageHeader,
   Card,
   CardContent,
   Alert,
@@ -92,12 +90,14 @@ export default function AirPage() {
   );
 
   return (
-    <PageContainer>
-      <div className="flex items-start justify-between gap-4">
-        <PageHeader
-          title={t("air.pageTitle")}
-          description={t("air.uploadDescription")}
-        />
+    <main className="px-6 py-5 max-w-7xl mx-auto flex flex-col w-full h-full">
+      <header className="mb-5 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-medium text-[var(--on-surface)] tracking-tight">
+            {t("air.pageTitle")}
+          </h1>
+          <p className="mt-0.5 text-sm text-[var(--on-surface-variant)]">{t("air.uploadDescription")}</p>
+        </div>
 
         {/* Compact progress indicator */}
         {totalSheets > 0 && completedCount < totalSheets && (
@@ -122,11 +122,11 @@ export default function AirPage() {
               />
             </svg>
             <span className="text-sm font-medium text-blue-700">
-              {completedCount}/{totalSheets} sheets
+              {t("progress.countOfTotal", { count: completedCount, total: totalSheets })}
             </span>
           </div>
         )}
-      </div>
+      </header>
 
       {/* Upload Section */}
       <Card>
@@ -140,7 +140,7 @@ export default function AirPage() {
       </Card>
 
       {error && (
-        <Alert variant="error" title="Processing Error">
+        <Alert variant="error" title={t("air.processingError")}>
           {error}
         </Alert>
       )}
@@ -154,13 +154,13 @@ export default function AirPage() {
                 <button
                   key={sheetName}
                   className={`px-4 py-3 text-sm font-medium transition-colors duration-150 border-b-2 -mb-px whitespace-nowrap ${activeTab === idx
-                      ? "border-blue-600 text-blue-700 bg-white"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                    ? "border-blue-600 text-blue-700 bg-white"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                     }`}
                   onClick={() => setActiveTab(idx)}
                   type="button"
                 >
-                  {formatSheetName(sheetName, `Sheet ${idx + 1}`)}
+                  {formatSheetName(sheetName, t("air.sheetFallback", { index: idx + 1 }))}
                 </button>
               ))}
             </div>
@@ -178,6 +178,6 @@ export default function AirPage() {
           </CardContent>
         </Card>
       )}
-    </PageContainer>
+    </main>
   );
 }

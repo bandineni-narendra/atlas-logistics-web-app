@@ -4,12 +4,14 @@ import Link from "next/link";
 import { SheetsView } from "@/components/sheets";
 import { FilterBar } from "./FilterBar";
 import { useFileFilters } from "@/hooks/useFileFilters";
+import { useTranslations } from "next-intl";
 
 /**
  * Sheets Section — M3 styled with URL-persisted filters
  */
 
 export function SheetsSection() {
+  const t = useTranslations("home");
   const { filters, setFilter } = useFileFilters();
 
   const handlePageChange = (newPage: number) => {
@@ -25,7 +27,7 @@ export function SheetsSection() {
     <div className="mt-6">
       {/* Header with View All Link */}
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-medium text-[var(--on-surface-variant)] uppercase tracking-wide">Your Files</h2>
+        <h2 className="text-sm font-medium text-[var(--on-surface-variant)] uppercase tracking-wide">{t("sections.yourFiles")}</h2>
         <Link
           href="/files"
           className="text-sm text-[var(--primary)] hover:text-[var(--primary-hover)] font-medium"

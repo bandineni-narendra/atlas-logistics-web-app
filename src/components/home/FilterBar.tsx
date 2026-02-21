@@ -1,25 +1,18 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import { FilterChip, DateRangePicker, Popover } from "@/components/ui";
+import React from "react";
 import { useFileFilters } from "@/hooks/useFileFilters";
-import { KeyboardArrowDown, Close, FilterList } from "@mui/icons-material";
+import { Close, FilterList } from "@mui/icons-material";
+import { useTranslations } from "next-intl";
+import { TypeFilter, StatusFilter, DateRangeFilter } from "./filters";
 
 /**
  * Filter Bar - Gmail style
  * Displays actionable chips for filtering data
  */
 export function FilterBar() {
-    const { filters, setFilter, clearFilters, hasActiveFilters } = useFileFilters();
-
-    // Local state for popovers
-    const [activePopover, setActivePopover] = useState<"none" | "status" | "date">("none");
-    const dateButtonRef = useRef<HTMLButtonElement>(null);
-    const statusButtonRef = useRef<HTMLButtonElement>(null);
-
-    // Helper to toggle 'Type' (cycle through options or simple toggle)
-    // For simplicity: Type is a toggle between All -> Air -> Ocean -> All (or separate chips)
-    // Gmail style: usually separate dropdowns. We'll use specific chips for common actions.
+    const t = useTranslations("filters");
+    const { hasActiveFilters, clearFilters } = useFileFilters();
 
     return (
         <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-2 scrollbar-none">
@@ -30,85 +23,24 @@ export function FilterBar() {
             </div>
 
             {/* --- Filter: Type (Air / Ocean) --- */}
-            {/* Simple toggle chips for quick access */}
-            <FilterChip
-                label="Air Freight"
-                isActive={filters.type === "AIR"}
-                onClick={() => setFilter({ type: filters.type === "AIR" ? "all" : "AIR" })}
-            />
-            <FilterChip
-                label="Ocean Freight"
-                isActive={filters.type === "OCEAN"}
-                onClick={() => setFilter({ type: filters.type === "OCEAN" ? "all" : "OCEAN" })}
-            />
+            <TypeFilter />
 
             <div className="w-[1px] h-6 bg-[var(--outline-variant)] mx-1" />
 
             {/* --- Filter: Status (Dropdown) --- */}
-            <div className="relative">
-                <div ref={statusButtonRef}>
-                    <FilterChip
-                        label={filters.status === "all" ? "Status" : `Status: ${filters.status}`}
-                        isActive={filters.status !== "all"}
-                        trailingIcon={<KeyboardArrowDown fontSize="small" />}
-                        onClick={() => setActivePopover(activePopover === "status" ? "none" : "status")}
-                    />
-                </div>
-
-                {/* Status Dropdown Menu */}
-                <Popover
-                    isOpen={activePopover === "status"}
-                    onClose={() => setActivePopover("none")}
-                    anchorRef={statusButtonRef as React.RefObject<HTMLElement>}
-                    className="w-40 bg-[var(--surface-container)] rounded-lg shadow-lg border border-[var(--outline-variant)] py-1"
-                >
-                    {["all", "saved", "draft", "archived"].map((status) => (
-                        <button
-                            key={status}
-                            className={`w-full text-left px-4 py-2 text-sm hover:bg-[var(--surface-container-high)] ${filters.status === status ? "text-[var(--primary)] font-medium" : "text-[var(--on-surface)]"
-                                }`}
-                            onClick={() => {
-                                setFilter({ status: status as any });
-                                setActivePopover("none");
-                            }}
-                        >
-                            {status === "all" ? "Any Status" : status.charAt(0).toUpperCase() + status.slice(1)}
-                        </button>
-                    ))}
-                </Popover>
-            </div>
+            <StatusFilter />
 
             {/* --- Filter: Date Range --- */}
-            <div className="relative">
-                <div ref={dateButtonRef}>
-                    <FilterChip
-                        label={filters.startDate ? `${filters.startDate} - ${filters.endDate}` : "Date"}
-                        isActive={!!filters.startDate}
-                        trailingIcon={<KeyboardArrowDown fontSize="small" />}
-                        onClick={() => setActivePopover(activePopover === "date" ? "none" : "date")}
-                    />
-                </div>
-
-                <DateRangePicker
-                    isOpen={activePopover === "date"}
-                    onClose={() => setActivePopover("none")}
-                    anchorRef={dateButtonRef as any}
-                    range={{ startDate: filters.startDate, endDate: filters.endDate }}
-                    onChange={(range) => {
-                        setFilter(range);
-                        // Don't close immediately to allow selecting end date
-                    }}
-                />
-            </div>
+            <DateRangeFilter />
 
             {/* --- Clear All --- */}
             {hasActiveFilters && (
                 <button
                     onClick={clearFilters}
-                    className="ml-auto text-xs font-medium text-[var(--primary)] hover:underline flex items-center gap-1"
+                    className="ml-2 p-1 rounded-full hover:bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] transition-colors"
+                    title={t("clear")}
                 >
-                    <Close fontSize="small" style={{ fontSize: 14 }} />
-                    Clear filters
+                    <Close fontSize="small" />
                 </button>
             )}
         </div>

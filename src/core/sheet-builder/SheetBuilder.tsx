@@ -21,7 +21,7 @@
 
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import { Column, createSheet } from "./models";
 import { useSheetManager } from "@/hooks/sheet-builder";
 import { SheetTabs, SheetTable } from "@/components/sheet-builder";
@@ -88,6 +88,87 @@ export function SheetBuilder({
     return <div className="p-8 text-center text-[var(--on-surface-variant)]">No active sheet</div>;
   }
 
+  const handleCellChange = (rowId: string, columnId: string, value: any) => {
+    updateSheet(activeSheetId, (sheet) => {
+      const updatedRows = sheet.rows.map((row) => {
+        if (row.id !== rowId) return row;
+        return {
+          ...row,
+          cells: {
+            ...row.cells,
+            [columnId]: value,
+          },
+        };
+      });
+      return { ...sheet, rows: updatedRows };
+    });
+  };
+
+  const handleAddRow = () => {
+    updateSheet(activeSheetId, (sheet) => {
+      const newRowId = `row-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      const cells: Record<string, string | number | boolean | null> = {};
+      sheet.columns.forEach((col) => {
+        cells[col.id] = null;
+      });
+      return {
+        ...sheet,
+        rows: [...sheet.rows, { id: newRowId, cells }],
+      };
+    });
+  };
+
+  const handleDeleteRow = (rowId: string) => {
+    updateSheet(activeSheetId, (sheet) => ({
+      ...sheet,
+      rows: sheet.rows.filter((r) => r.id !== rowId),
+    }));
+  };
+
+  const handleAddColumn = (column: Column) => {
+    updateSheet(activeSheetId, (sheet) => {
+      const updatedRows = sheet.rows.map((row) => ({
+        ...row,
+        cells: {
+          ...row.cells,
+          [column.id]: null,
+        },
+      }));
+      return {
+        ...sheet,
+        columns: [...sheet.columns, column],
+        rows: updatedRows,
+      };
+    });
+  };
+
+  const handleDeleteColumn = (columnId: string) => {
+    updateSheet(activeSheetId, (sheet) => {
+      const updatedRows = sheet.rows.map((row) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { [columnId]: removed, ...remainingCells } = row.cells;
+        return {
+          ...row,
+          cells: remainingCells,
+        };
+      });
+      return {
+        ...sheet,
+        columns: sheet.columns.filter((c) => c.id !== columnId),
+        rows: updatedRows,
+      };
+    });
+  };
+
+  const handleUpdateColumnName = (columnId: string, newName: string) => {
+    updateSheet(activeSheetId, (sheet) => ({
+      ...sheet,
+      columns: sheet.columns.map((col) =>
+        col.id === columnId ? { ...col, label: newName } : col,
+      ),
+    }));
+  };
+
   return (
     <div className="flex flex-col h-full bg-[var(--surface)] rounded-lg shadow-[var(--elevation-1)] border border-[var(--outline-variant)]">
       {/* Sheet tabs */}
@@ -107,81 +188,12 @@ export function SheetBuilder({
       <div className="flex-1 overflow-auto p-4">
         <SheetTable
           sheet={activeSheet}
-          onCellChange={useCallback((rowId: string, columnId: string, value: any) => {
-            updateSheet(activeSheetId, (sheet) => {
-              const updatedRows = sheet.rows.map((row) => {
-                if (row.id !== rowId) return row;
-                return {
-                  ...row,
-                  cells: {
-                    ...row.cells,
-                    [columnId]: value,
-                  },
-                };
-              });
-              return { ...sheet, rows: updatedRows };
-            });
-          }, [updateSheet, activeSheetId])}
-          onAddRow={useCallback(() => {
-            updateSheet(activeSheetId, (sheet) => {
-              const newRowId = `row-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-              const cells: Record<string, string | number | boolean | null> =
-                {};
-              sheet.columns.forEach((col) => {
-                cells[col.id] = null;
-              });
-              return {
-                ...sheet,
-                rows: [...sheet.rows, { id: newRowId, cells }],
-              };
-            });
-          }, [updateSheet, activeSheetId])}
-          onDeleteRow={useCallback((rowId: string) => {
-            updateSheet(activeSheetId, (sheet) => ({
-              ...sheet,
-              rows: sheet.rows.filter((r) => r.id !== rowId),
-            }));
-          }, [updateSheet, activeSheetId])}
-          onAddColumn={useCallback((column: Column) => {
-            updateSheet(activeSheetId, (sheet) => {
-              const updatedRows = sheet.rows.map((row) => ({
-                ...row,
-                cells: {
-                  ...row.cells,
-                  [column.id]: null,
-                },
-              }));
-              return {
-                ...sheet,
-                columns: [...sheet.columns, column],
-                rows: updatedRows,
-              };
-            });
-          }, [updateSheet, activeSheetId])}
-          onDeleteColumn={useCallback((columnId: string) => {
-            updateSheet(activeSheetId, (sheet) => {
-              const updatedRows = sheet.rows.map((row) => {
-                const { [columnId]: removed, ...remainingCells } = row.cells;
-                return {
-                  ...row,
-                  cells: remainingCells,
-                };
-              });
-              return {
-                ...sheet,
-                columns: sheet.columns.filter((c) => c.id !== columnId),
-                rows: updatedRows,
-              };
-            });
-          }, [updateSheet, activeSheetId])}
-          onUpdateColumnName={useCallback((columnId: string, newName: string) => {
-            updateSheet(activeSheetId, (sheet) => ({
-              ...sheet,
-              columns: sheet.columns.map((col) =>
-                col.id === columnId ? { ...col, label: newName } : col,
-              ),
-            }));
-          }, [updateSheet, activeSheetId])}
+          onCellChange={handleCellChange}
+          onAddRow={handleAddRow}
+          onDeleteRow={handleDeleteRow}
+          onAddColumn={handleAddColumn}
+          onDeleteColumn={handleDeleteColumn}
+          onUpdateColumnName={handleUpdateColumnName}
         />
       </div>
     </div>

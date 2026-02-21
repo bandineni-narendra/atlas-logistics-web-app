@@ -6,8 +6,6 @@ import { OceanFreightResult } from "@/types/ocean";
 import { ExcelUpload } from "@/components/excel";
 import { OceanHeader, OceanWarnings, OceanTable } from "@/components/ocean";
 import {
-  PageContainer,
-  PageHeader,
   Card,
   CardContent,
   CardHeader,
@@ -46,11 +44,13 @@ export default function OceanPage() {
   // Error state
   if (error) {
     return (
-      <PageContainer>
-        <PageHeader
-          title={t("ocean.pageTitle")}
-          description={t("ocean.uploadDescription")}
-        />
+      <main className="px-6 py-5 max-w-7xl mx-auto flex flex-col w-full h-full">
+        <header className="mb-5">
+          <h1 className="text-xl font-medium text-[var(--on-surface)] tracking-tight">
+            {t("ocean.pageTitle")}
+          </h1>
+          <p className="mt-0.5 text-sm text-[var(--on-surface-variant)]">{t("ocean.uploadDescription")}</p>
+        </header>
         <div className="space-y-6">
           <Alert
             variant="error"
@@ -65,8 +65,8 @@ export default function OceanPage() {
           </Alert>
           <Card>
             <CardHeader>
-              <CardTitle>Upload File</CardTitle>
-              <CardDescription>Select an Excel file to process</CardDescription>
+              <CardTitle>{t("ocean.uploadFile")}</CardTitle>
+              <CardDescription>{t("ocean.uploadFileDesc")}</CardDescription>
             </CardHeader>
             <CardContent>
               <ExcelUpload
@@ -76,24 +76,25 @@ export default function OceanPage() {
             </CardContent>
           </Card>
         </div>
-      </PageContainer>
+      </main>
     );
   }
 
   // Empty state - no result yet
   if (!result) {
     return (
-      <PageContainer>
-        <PageHeader
-          title={t("ocean.pageTitle")}
-          description={t("ocean.uploadDescription")}
-        />
+      <main className="px-6 py-5 max-w-7xl mx-auto flex flex-col w-full h-full">
+        <header className="mb-5">
+          <h1 className="text-xl font-medium text-[var(--on-surface)] tracking-tight">
+            {t("ocean.pageTitle")}
+          </h1>
+          <p className="mt-0.5 text-sm text-[var(--on-surface-variant)]">{t("ocean.uploadDescription")}</p>
+        </header>
         <Card>
           <CardHeader>
-            <CardTitle>Upload Rate Sheet</CardTitle>
+            <CardTitle>{t("ocean.uploadRateSheet")}</CardTitle>
             <CardDescription>
-              Upload an Excel file containing ocean freight rates for AI-powered
-              extraction
+              {t("ocean.uploadRateSheetDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -103,21 +104,21 @@ export default function OceanPage() {
             />
           </CardContent>
         </Card>
-      </PageContainer>
+      </main>
     );
   }
 
   // Result state - show data
   return (
-    <PageContainer maxWidth="full">
-      <PageHeader
-        title={t("ocean.pageTitle")}
-        actions={
-          <Button variant="secondary" onClick={handleReset}>
-            {t("buttons.uploadDifferentFile")}
-          </Button>
-        }
-      />
+    <main className="px-6 py-5 w-full h-full">
+      <header className="mb-5 flex items-start justify-between">
+        <h1 className="text-xl font-medium text-[var(--on-surface)] tracking-tight">
+          {t("ocean.pageTitle")}
+        </h1>
+        <Button variant="secondary" onClick={handleReset}>
+          {t("buttons.uploadDifferentFile")}
+        </Button>
+      </header>
 
       <div className="space-y-6">
         {/* Confidence & Warnings Section */}
@@ -129,6 +130,6 @@ export default function OceanPage() {
           <OceanTable data={result.data} isLoading={isLoading} />
         </Card>
       </div>
-    </PageContainer>
+    </main>
   );
 }

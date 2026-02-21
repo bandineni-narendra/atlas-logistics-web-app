@@ -9,8 +9,6 @@ import { OceanTable, ErrorBox, ProgressLabel } from "@/components";
 import { OceanFreightResult, OceanFreightRow } from "@/types/ocean";
 import ExcelUploadFlow from "@/app/excel-flow/ExcelUploadFlow";
 import {
-  PageContainer,
-  PageHeader,
   Card,
   CardContent,
   Alert,
@@ -89,12 +87,14 @@ export default function OceanPage() {
   );
 
   return (
-    <PageContainer>
-      <div className="flex items-start justify-between gap-4">
-        <PageHeader
-          title="Excel Flow Processing"
-          description="Process multi-sheet Excel files with sequential job handling"
-        />
+    <main className="px-6 py-5 max-w-7xl mx-auto flex flex-col w-full h-full">
+      <header className="mb-5 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-medium text-[var(--on-surface)] tracking-tight">
+            Excel Flow Processing
+          </h1>
+          <p className="mt-0.5 text-sm text-[var(--on-surface-variant)]">Process multi-sheet Excel files with sequential job handling</p>
+        </div>
 
         {/* Compact progress indicator */}
         {totalSheets > 0 && completedCount < totalSheets && (
@@ -123,7 +123,7 @@ export default function OceanPage() {
             </span>
           </div>
         )}
-      </div>
+      </header>
 
       {/* Upload Section */}
       <Card>
@@ -150,11 +150,10 @@ export default function OceanPage() {
               {results.map(({ sheetName }, idx) => (
                 <button
                   key={sheetName}
-                  className={`px-4 py-3 text-sm font-medium transition-colors duration-150 border-b-2 -mb-px whitespace-nowrap ${
-                    activeTab === idx
+                  className={`px-4 py-3 text-sm font-medium transition-colors duration-150 border-b-2 -mb-px whitespace-nowrap ${activeTab === idx
                       ? "border-blue-600 text-blue-700 bg-white"
                       : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100"
-                  }`}
+                    }`}
                   onClick={() => setActiveTab(idx)}
                   type="button"
                 >
@@ -176,6 +175,6 @@ export default function OceanPage() {
           </CardContent>
         </Card>
       )}
-    </PageContainer>
+    </main>
   );
 }

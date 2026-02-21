@@ -1,68 +1,18 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/contexts/AuthContext";
-import { PageContainer, PageHeader } from "@/components/ui";
 import {
   LoadingState,
   LoginPrompt,
   DashboardStatsSection,
   SheetsSection,
 } from "@/components/home";
-import { filesService } from "@/services/filesService";
-import { logger } from "@/utils";
+import Head from "next/head";
 
 export default function Home() {
   const t = useTranslations();
   const { isAuthenticated, isLoading } = useAuth();
-  const [stats, setStats] = useState<{
-    totalSheets: number;
-    oceanSheets: number;
-    airSheets: number;
-    totalRows: number;
-    lastModified: string;
-  } | null>(null);
-  const [statsLoading, setStatsLoading] = useState(true);
-
-  // Memoize the stats loading function
-  const loadStats = useCallback(async () => {
-    try {
-      logger.debug("[HomePage] Loading dashboard stats...");
-
-      // Fetch files for both types to compute stats
-      const [airResponse, oceanResponse] = await Promise.all([
-        filesService.getFiles({ type: "AIR", page: 1, pageSize: 1 }),
-        filesService.getFiles({ type: "OCEAN", page: 1, pageSize: 1 }),
-      ]);
-
-      const dashboardStats = {
-        totalSheets: (airResponse.total || 0) + (oceanResponse.total || 0),
-        airSheets: airResponse.total || 0,
-        oceanSheets: oceanResponse.total || 0,
-        totalRows: 0,
-        lastModified: new Date().toISOString(),
-      };
-
-      logger.debug("[HomePage] Dashboard stats loaded", dashboardStats);
-      setStats(dashboardStats);
-    } catch (error) {
-      logger.error("[HomePage] Failed to load stats:", error);
-      setStats(null);
-    } finally {
-      setStatsLoading(false);
-    }
-  }, []);
-
-  // Load dashboard stats when authenticated
-  useEffect(() => {
-    if (!isAuthenticated) {
-      logger.debug("[HomePage] Not yet authenticated, skipping stats fetch");
-      return;
-    }
-
-    loadStats();
-  }, [isAuthenticated, loadStats]);
 
   // Show loading state
   if (isLoading) {
@@ -75,17 +25,21 @@ export default function Home() {
   }
 
   return (
-    <PageContainer>
-      <PageHeader
-        title={`Welcome to ${t("common.appName")}`}
-        description="Manage and organize your sheet data efficiently"
-      />
+    <main className="px-6 py-5 max-w-7xl mx-auto flex flex-col w-full h-full">
+      <header className="mb-5">
+        <h1 className="text-xl font-medium text-[var(--on-surface)] tracking-tight">
+          {`Welcome to ${t("common.appName")}`}
+        </h1>
+        <p className="mt-0.5 text-sm text-[var(--on-surface-variant)]">
+          Manage and organize your sheet data efficiently
+        </p>
+      </header>
 
       {/* Dashboard Stats */}
-      <DashboardStatsSection stats={stats} loading={statsLoading} />
+      <DashboardStatsSection />
 
       {/* Your Sheets Section */}
       <SheetsSection />
-    </PageContainer>
+    </main>
   );
 }

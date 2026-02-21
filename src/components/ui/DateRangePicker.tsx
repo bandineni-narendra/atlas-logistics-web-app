@@ -18,6 +18,10 @@ export interface DateRangePickerProps {
 /**
  * Simple Date Range Picker Popover
  */
+import { useTranslations } from "next-intl";
+
+// ... imports
+
 export const DateRangePicker: React.FC<DateRangePickerProps> = ({
     isOpen,
     onClose,
@@ -25,7 +29,7 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
     onChange,
     anchorRef,
 }) => {
-    // Popover now handles click-outside and positioning
+    const t = useTranslations("filters");
 
     return (
         <Popover
@@ -35,13 +39,13 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
             className="p-4 bg-[var(--surface-container)] rounded-xl shadow-lg border border-[var(--outline-variant)] w-72"
         >
             <div className="flex justify-between items-center mb-3">
-                <h4 className="text-sm font-semibold text-[var(--on-surface)]">Select Date Range</h4>
+                <h4 className="text-sm font-semibold text-[var(--on-surface)]">{t("selectDateRange")}</h4>
             </div>
 
             <div className="space-y-3">
                 <div>
                     <label className="block text-xs font-medium text-[var(--on-surface-variant)] mb-1">
-                        Start Date
+                        {t("startDate")}
                     </label>
                     <input
                         type="date"
@@ -53,7 +57,7 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
 
                 <div>
                     <label className="block text-xs font-medium text-[var(--on-surface-variant)] mb-1">
-                        End Date
+                        {t("endDate")}
                     </label>
                     <input
                         type="date"

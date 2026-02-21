@@ -7,6 +7,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { Sheet } from "@/core/sheet-builder";
 import { useFeedbackModal } from "@/hooks";
 import { FeedbackModal } from "@/components/ui";
@@ -29,6 +30,7 @@ export function SheetTabs({
   onUpdateSheetName,
   onResetSheet,
 }: SheetTabsProps) {
+  const t = useTranslations("sheetBuilder");
   const [editingSheetId, setEditingSheetId] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState("");
   const [resetTarget, setResetTarget] = useState<{
@@ -181,7 +183,7 @@ export function SheetTabs({
       <button
         onClick={onAddSheet}
         className="inline-flex items-center gap-1.5 px-3 py-2 ml-2 text-sm font-medium text-[var(--on-surface-variant)] hover:text-[var(--primary)] hover:bg-[var(--primary-container)] rounded-md transition-colors duration-150 group"
-        title="Add sheet"
+        title={t("tabs.add")}
         type="button"
       >
         <svg
@@ -198,7 +200,7 @@ export function SheetTabs({
             d="M12 4.5v15m7.5-7.5h-15"
           />
         </svg>
-        <span>Add Sheet</span>
+        <span>{t("tabs.add")}</span>
       </button>
 
       {/* Feedback Modal for confirmations */}

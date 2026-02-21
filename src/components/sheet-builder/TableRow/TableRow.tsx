@@ -6,9 +6,10 @@
 
 "use client";
 
-import { memo, useCallback } from "react";
+import { useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { Row as RowModel, Column, CellValue } from "@/core/sheet-builder";
-import { MemoizedTableCell } from "./MemoizedTableCell";
+import { TableCell } from "../TableCell";
 
 interface TableRowProps {
   row: RowModel;
@@ -18,23 +19,24 @@ interface TableRowProps {
   onDelete: () => void;
 }
 
-export const TableRow = memo(function TableRow({
+export function TableRow({
   row,
   columns,
   rowIndex,
   onCellChange,
   onDelete,
 }: TableRowProps) {
+  const t = useTranslations("sheetBuilder");
+
   return (
     <tr className="group hover:bg-[var(--surface-container-low)] transition-all duration-200">
       {/* Data cells */}
       {columns.map((column) => (
-        <MemoizedTableCell
+        <TableCell
           key={column.id}
           column={column}
           value={row.cells[column.id]}
-          columnId={column.id}
-          onCellChange={onCellChange}
+          onChange={(val) => onCellChange(column.id, val)}
         />
       ))}
 
@@ -47,11 +49,11 @@ export const TableRow = memo(function TableRow({
           <button
             onClick={onDelete}
             className="inline-flex items-center gap-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md px-1.5 py-1 transition-all duration-200 hover:scale-105"
-            title="Delete row"
+            title={t("columns.delete")}
             type="button"
             aria-label={`Delete row ${rowIndex + 1}`}
           >
-            <span className="text-xs font-medium whitespace-nowrap">Delete</span>
+            <span className="text-xs font-medium whitespace-nowrap">{t("columns.delete")}</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -77,4 +79,4 @@ export const TableRow = memo(function TableRow({
       ></td>
     </tr>
   );
-});
+}

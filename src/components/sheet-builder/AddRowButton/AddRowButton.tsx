@@ -5,17 +5,20 @@
  */
 
 "use client";
+import { useTranslations } from "next-intl";
 
 interface AddRowButtonProps {
   onAdd: () => void;
 }
 
 export function AddRowButton({ onAdd }: AddRowButtonProps) {
+  const t = useTranslations("sheetBuilder");
+
   return (
     <button
       onClick={onAdd}
       className="inline-flex items-center gap-2.5 px-6 py-3 text-sm font-semibold text-[var(--on-primary)] bg-[var(--primary)] hover:bg-[var(--primary-hover)] rounded-lg transition-all duration-200 group shadow-[var(--elevation-2)] hover:shadow-[var(--elevation-3)] border border-transparent hover:scale-105"
-      title="Add row"
+      title={t("rows.add")}
       type="button"
     >
       <svg
@@ -32,7 +35,7 @@ export function AddRowButton({ onAdd }: AddRowButtonProps) {
           d="M12 4.5v15m7.5-7.5h-15"
         />
       </svg>
-      <span className="tracking-wide">Add Row</span>
+      <span className="tracking-wide">{t("rows.add")}</span>
     </button>
   );
 }
