@@ -15,8 +15,10 @@ import { validateAirSheets } from "../validation";
 import { useFeedbackModal, useFileSave } from "@/hooks";
 import { FeedbackModal } from "@/components/ui";
 import { useUI } from "@/contexts/UIContext";
+import { useTranslations } from "next-intl";
 
 export default function CreateAirSheet() {
+  const t = useTranslations("air");
   const { isSidebarCollapsed } = useUI();
   const [sheets, setSheets] = useState<Sheet[]>([]);
   const {
@@ -73,10 +75,10 @@ export default function CreateAirSheet() {
     <div className={`container mx-auto transition-all duration-300 ${isSidebarCollapsed ? "max-w-[98%] px-2 py-4" : "max-w-7xl p-6"}`}>
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-[var(--on-surface)] mb-2">
-          Air Freight Rate Sheet
+          {t("createTitle")}
         </h1>
         <p className="text-[var(--on-surface-variant)]">
-          Create and manage air freight rates using the generic sheet builder.
+          {t("createDescription")}
         </p>
       </div>
 

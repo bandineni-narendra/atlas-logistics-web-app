@@ -37,17 +37,17 @@ export function SheetDataTable({ data }: SheetDataTableProps) {
     return (
         <div>
             {/* Scrollable table */}
-            <div className="overflow-x-auto border border-[var(--outline-variant)] rounded-xl">
+            <div className="overflow-x-auto border border-[var(--outline-variant)] rounded-xl bg-[var(--surface)] shadow-sm">
                 <table className="min-w-full divide-y divide-[var(--outline-variant)] text-sm">
-                    <thead className="bg-[var(--surface-container-low)]">
-                        <tr>
-                            <th className="px-3 py-2.5 text-left text-xs font-medium text-[var(--on-surface-variant)] w-12">
+                    <thead>
+                        <tr className="bg-[var(--surface-container-low)]">
+                            <th className="px-4 py-3 text-left text-[11px] font-bold text-[var(--on-surface-variant)] uppercase tracking-wider w-12">
                                 #
                             </th>
-                            {columns.map((col) => (
+                            {columns.map((col, idx) => (
                                 <th
                                     key={col.id}
-                                    className="px-3 py-2.5 text-left text-xs font-medium text-[var(--on-surface-variant)] whitespace-nowrap"
+                                    className="px-4 py-3 text-left text-[11px] font-bold text-[var(--on-surface-variant)] uppercase tracking-wider whitespace-nowrap"
                                 >
                                     {col.label}
                                 </th>
@@ -58,20 +58,20 @@ export function SheetDataTable({ data }: SheetDataTableProps) {
                         {visibleRows.map((row, idx) => (
                             <tr
                                 key={row.id}
-                                className="hover:bg-[var(--surface-container-low)] transition-colors duration-100"
+                                className="hover:bg-[var(--primary-container)]/10 hover:text-[var(--primary)] transition-all duration-150 group"
                             >
-                                <td className="px-3 py-2 text-[var(--on-surface-variant)] text-xs">
+                                <td className="px-4 py-2.5 text-[var(--on-surface-variant)] text-xs font-medium bg-transparent">
                                     {(page - 1) * ROWS_PER_PAGE + idx + 1}
                                 </td>
-                                {columns.map((col) => (
+                                {columns.map((col, cIdx) => (
                                     <td
                                         key={col.id}
-                                        className="px-3 py-2 text-[var(--on-surface)] whitespace-nowrap"
+                                        className="px-4 py-2.5 text-[var(--on-surface)] whitespace-nowrap font-medium"
                                     >
                                         {row.cells[col.id] !== null &&
                                             row.cells[col.id] !== undefined
                                             ? String(row.cells[col.id])
-                                            : "—"}
+                                            : <span className="text-[var(--outline-variant)]">—</span>}
                                     </td>
                                 ))}
                             </tr>

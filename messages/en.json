@@ -108,6 +108,8 @@
   },
   "ocean": {
     "pageTitle": "Ocean Freight Rates",
+    "createTitle": "Ocean Freight Rates",
+    "createDescription": "Configure and manage ocean freight tariffs and surcharges.",
     "uploadDescription": "Upload an Excel file to extract and analyze Ocean Freight rate data.",
     "noDataAvailable": "No ocean freight data available",
     "uploadFile": "Upload File",
@@ -131,6 +133,8 @@
   },
   "air": {
     "pageTitle": "Air Freight Rates",
+    "createTitle": "Air Freight Rates",
+    "createDescription": "Configure and manage air freight tariffs and surcharges.",
     "uploadDescription": "Upload an Excel file to extract and analyze Air Freight rate data.",
     "noDataAvailable": "No air freight data available",
     "confidence": "Confidence",
@@ -195,6 +199,8 @@
     }
   },
   "home": {
+    "title": "Logistics Dashboard",
+    "description": "Efficiently manage your freight operations and rate sheets.",
     "sections": {
       "yourFiles": "Your Files"
     }
