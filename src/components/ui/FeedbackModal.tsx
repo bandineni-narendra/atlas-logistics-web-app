@@ -12,43 +12,43 @@ export interface FeedbackModalProps {
 
 const modalStyles = {
   success: {
-    bgColor: "bg-[var(--success-container)]",
-    borderColor: "border-[var(--success)]",
-    iconBg: "bg-[var(--success)]",
-    iconColor: "text-[var(--on-success)]",
-    titleColor: "text-[var(--on-success-container)]",
-    textColor: "text-[var(--on-success-container)]",
-    buttonBg: "bg-[var(--success)] hover:brightness-110 text-[var(--on-success)]",
+    bgColor: "bg-success",
+    borderColor: "border-success",
+    iconBg: "bg-success",
+    iconColor: "text-white",
+    titleColor: "text-white",
+    textColor: "text-white",
+    buttonBg: "bg-success hover:brightness-110 text-white",
     icon: "✓",
   },
   error: {
-    bgColor: "bg-[var(--error-container)]",
-    borderColor: "border-[var(--error)]",
-    iconBg: "bg-[var(--error)]",
-    iconColor: "text-[var(--on-error)]",
-    titleColor: "text-[var(--on-error-container)]",
-    textColor: "text-[var(--on-error-container)]",
-    buttonBg: "bg-[var(--error)] hover:brightness-110 text-[var(--on-error)]",
+    bgColor: "bg-error",
+    borderColor: "border-error",
+    iconBg: "bg-error",
+    iconColor: "text-white",
+    titleColor: "text-white",
+    textColor: "text-white",
+    buttonBg: "bg-error hover:brightness-110 text-white",
     icon: "✕",
   },
   warning: {
-    bgColor: "bg-[var(--warning-container)]",
-    borderColor: "border-[var(--warning)]",
-    iconBg: "bg-[var(--warning)]",
-    iconColor: "text-[var(--on-warning)]",
-    titleColor: "text-[var(--on-warning-container)]",
-    textColor: "text-[var(--on-warning-container)]",
-    buttonBg: "bg-[var(--warning)] hover:brightness-110 text-black", // Warning usually needs dark text
+    bgColor: "bg-warning",
+    borderColor: "border-warning",
+    iconBg: "bg-warning",
+    iconColor: "text-white",
+    titleColor: "text-white",
+    textColor: "text-white",
+    buttonBg: "bg-warning hover:brightness-110 text-white", // Warning usually needs dark text
     icon: "⚠",
   },
   info: {
-    bgColor: "bg-[var(--surface-container)]",
-    borderColor: "border-[var(--primary)]",
-    iconBg: "bg-[var(--primary-container)]",
-    iconColor: "text-[var(--on-primary-container)]",
-    titleColor: "text-[var(--on-surface)]",
-    textColor: "text-[var(--on-surface-variant)]",
-    buttonBg: "bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-[var(--on-primary)]",
+    bgColor: "bg-surface",
+    borderColor: "border-primary",
+    iconBg: "bg-primary-soft",
+    iconColor: "text-primary",
+    titleColor: "text-textPrimary",
+    textColor: "text-textSecondary",
+    buttonBg: "bg-primary hover:bg-primary-hover text-white",
     icon: "ℹ",
   },
 };
@@ -68,7 +68,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   return (
     <Modal isOpen={state.isOpen} onClose={onClose} maxWidth="max-w-2xl">
       {/* Header with Icon */}
-      <div className="flex items-center gap-3 p-6 border-b border-[var(--outline-variant)] sticky top-0 bg-inherit rounded-t-[calc(0.75rem-2px)]">
+      <div className="flex items-center gap-3 p-6 border-b border-border sticky top-0 bg-inherit rounded-t-[calc(0.75rem-2px)]">
         <div className={`${styles.iconBg} rounded-full p-2 flex-shrink-0`}>
           <span className={`${styles.iconColor} text-lg font-bold flex items-center justify-center w-6 h-6`}>
             {styles.icon}
@@ -108,14 +108,14 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
               ).map(([key, group]) => (
                 <div
                   key={key}
-                  className={`text-sm p-4 rounded-xl border border-[var(--outline-variant)] bg-[var(--surface-container-low)] shadow-sm`}
+                  className={`text-sm p-4 rounded-xl border border-border bg-surface shadow-sm`}
                 >
                   <div className={`font-bold text-base mb-2 flex items-center gap-2 ${styles.titleColor}`}>
-                    <span className="w-1.5 h-6 bg-[var(--primary)] rounded-full mr-1"></span>
+                    <span className="w-1.5 h-6 bg-primary rounded-full mr-1"></span>
                     {group.sheetName} • {t("feedback.row")} {group.rowIndex}
                   </div>
                   <div className={`text-sm ${styles.textColor} leading-relaxed pl-4`}>
-                    <span className="font-semibold text-[var(--primary)] mr-2">
+                    <span className="font-semibold text-primary mr-2">
                       Missing:
                     </span>
                     <span className="opacity-90 italic">
@@ -135,25 +135,25 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
           width: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: var(--surface-container-low);
+          background: var(--color-surface);
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: var(--outline-variant);
+          background: var(--color-border);
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: var(--outline);
+          background: var(--color-border);
         }
       `}</style>
 
       {/* Footer */}
-      <div className="flex gap-3 p-6 border-t border-[var(--outline-variant)] justify-end bg-inherit rounded-b-[calc(0.75rem-2px)] sticky bottom-0">
+      <div className="flex gap-3 p-6 border-t border-border justify-end bg-inherit rounded-b-[calc(0.75rem-2px)] sticky bottom-0">
         {state.type === "warning" && state.onConfirm ? (
           <>
             <button
               onClick={onClose}
-              className="px-6 py-2 rounded-full font-medium text-[var(--on-surface)] bg-[var(--surface-container-high)] hover:bg-[var(--surface-container-highest)] transition-colors duration-150"
+              className="px-6 py-2 rounded-full font-medium text-textPrimary bg-surface hover:bg-primary-soft transition-colors duration-150"
             >
               {t("common.cancel")}
             </button>

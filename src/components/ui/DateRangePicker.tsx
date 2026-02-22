@@ -36,34 +36,34 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
             isOpen={isOpen}
             onClose={onClose}
             anchorRef={anchorRef}
-            className="p-4 bg-[var(--surface-container)] rounded-xl shadow-lg border border-[var(--outline-variant)] w-72"
+            className="p-4 bg-surface rounded-xl shadow-lg border border-border w-72"
         >
             <div className="flex justify-between items-center mb-3">
-                <h4 className="text-sm font-semibold text-[var(--on-surface)]">{t("selectDateRange")}</h4>
+                <h4 className="text-sm font-semibold text-textPrimary">{t("selectDateRange")}</h4>
             </div>
 
             <div className="space-y-3">
                 <div>
-                    <label className="block text-xs font-medium text-[var(--on-surface-variant)] mb-1">
+                    <label className="block text-xs font-medium text-textSecondary mb-1">
                         {t("startDate")}
                     </label>
                     <input
                         type="date"
                         value={range.startDate}
                         onChange={(e) => onChange({ ...range, startDate: e.target.value })}
-                        className="w-full px-3 py-2 bg-[var(--surface-container-highest)] border border-[var(--outline)] rounded-md text-sm text-[var(--on-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                        className="w-full px-3 py-2 bg-surface border border-border rounded-md text-sm text-textPrimary focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-xs font-medium text-[var(--on-surface-variant)] mb-1">
+                    <label className="block text-xs font-medium text-textSecondary mb-1">
                         {t("endDate")}
                     </label>
                     <input
                         type="date"
                         value={range.endDate}
                         onChange={(e) => onChange({ ...range, endDate: e.target.value })}
-                        className="w-full px-3 py-2 bg-[var(--surface-container-highest)] border border-[var(--outline)] rounded-md text-sm text-[var(--on-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                        className="w-full px-3 py-2 bg-surface border border-border rounded-md text-sm text-textPrimary focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                 </div>
             </div>

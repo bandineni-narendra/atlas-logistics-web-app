@@ -26,8 +26,8 @@ export function SheetFilterTabs({
           key={tab.value}
           onClick={() => onTabChange(tab.value)}
           className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-100 ease-out ${activeTab === tab.value
-              ? "bg-[var(--secondary-container)] text-[var(--on-secondary-container)]"
-              : "border border-[var(--outline)] text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-low)] bg-transparent"
+              ? "bg-primary-soft text-primary"
+              : "border border-border text-textSecondary hover:bg-surface bg-transparent"
             }`}
         >
           {tab.label}

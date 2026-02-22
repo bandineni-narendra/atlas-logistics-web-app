@@ -50,24 +50,24 @@ export const lightTheme = createTheme({
                     borderRadius: "9999px", // Pill shape
                     // Force CSS variables for coloring to maintain dynamic theming capabilities
                     "&.MuiButton-containedPrimary": {
-                        backgroundColor: "var(--primary)",
-                        color: "var(--on-primary)",
+                        backgroundColor: "var(--color-primary)",
+                        color: "var(--color-bg)",
                         "&:hover": {
-                            backgroundColor: "var(--primary-hover)",
+                            backgroundColor: "var(--color-primary-hover)",
                         },
                     },
                     "&.MuiButton-outlinedPrimary": {
-                        color: "var(--primary)",
-                        borderColor: "var(--outline)",
+                        color: "var(--color-primary)",
+                        borderColor: "var(--color-border)",
                         "&:hover": {
-                            backgroundColor: "var(--surface-container-low)",
-                            borderColor: "var(--primary)",
+                            backgroundColor: "var(--color-surface)",
+                            borderColor: "var(--color-primary)",
                         },
                     },
                     "&.MuiButton-textPrimary": {
-                        color: "var(--primary)",
+                        color: "var(--color-primary)",
                         "&:hover": {
-                            backgroundColor: "var(--surface-container-low)",
+                            backgroundColor: "var(--color-surface)",
                         },
                     },
                 },
@@ -76,17 +76,17 @@ export const lightTheme = createTheme({
         MuiSwitch: {
             styleOverrides: {
                 switchBase: {
-                    color: "var(--on-surface-variant)",
+                    color: "var(--color-text-secondary)",
                     "&.Mui-checked": {
-                        color: "var(--primary)",
+                        color: "var(--color-primary)",
                         "& + .MuiSwitch-track": {
-                            backgroundColor: "var(--primary)",
+                            backgroundColor: "var(--color-primary)",
                             opacity: 1,
                         },
                     },
                 },
                 track: {
-                    backgroundColor: "var(--outline)",
+                    backgroundColor: "var(--color-border)",
                     opacity: 1,
                 },
             },
@@ -142,24 +142,24 @@ export const darkTheme = createTheme({
                     borderRadius: "9999px", // Pill shape
                     // Force CSS variables for coloring
                     "&.MuiButton-containedPrimary": {
-                        backgroundColor: "var(--primary)",
-                        color: "var(--on-primary)",
+                        backgroundColor: "var(--color-primary)",
+                        color: "var(--color-bg)",
                         "&:hover": {
-                            backgroundColor: "var(--primary-hover)",
+                            backgroundColor: "var(--color-primary-hover)",
                         },
                     },
                     "&.MuiButton-outlinedPrimary": {
-                        color: "var(--primary)",
-                        borderColor: "var(--outline)",
+                        color: "var(--color-primary)",
+                        borderColor: "var(--color-border)",
                         "&:hover": {
-                            backgroundColor: "var(--surface-container-low)",
-                            borderColor: "var(--primary)",
+                            backgroundColor: "var(--color-surface)",
+                            borderColor: "var(--color-primary)",
                         },
                     },
                     "&.MuiButton-textPrimary": {
-                        color: "var(--primary)",
+                        color: "var(--color-primary)",
                         "&:hover": {
-                            backgroundColor: "var(--surface-container-low)",
+                            backgroundColor: "var(--color-surface)",
                         },
                     },
                 },
@@ -168,17 +168,17 @@ export const darkTheme = createTheme({
         MuiSwitch: {
             styleOverrides: {
                 switchBase: {
-                    color: "var(--on-surface-variant)",
+                    color: "var(--color-text-secondary)",
                     "&.Mui-checked": {
-                        color: "var(--primary)",
+                        color: "var(--color-primary)",
                         "& + .MuiSwitch-track": {
-                            backgroundColor: "var(--primary)",
+                            backgroundColor: "var(--color-primary)",
                             opacity: 1,
                         },
                     },
                 },
                 track: {
-                    backgroundColor: "var(--outline)",
+                    backgroundColor: "var(--color-border)",
                     opacity: 1,
                 },
             },

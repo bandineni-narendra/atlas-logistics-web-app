@@ -95,17 +95,17 @@ export default function AirPage() {
     <main className="px-6 py-5 max-w-7xl mx-auto flex flex-col w-full h-full">
       <header className="mb-5 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl font-medium text-[var(--on-surface)] tracking-tight">
+          <h1 className="text-xl font-medium text-textPrimary tracking-tight">
             {t("air.pageTitle")}
           </h1>
-          <p className="mt-0.5 text-sm text-[var(--on-surface-variant)]">{t("air.uploadDescription")}</p>
+          <p className="mt-0.5 text-sm text-textSecondary">{t("air.uploadDescription")}</p>
         </div>
 
         {/* Compact progress indicator */}
         {totalSheets > 0 && completedCount < totalSheets && (
-          <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-100 shrink-0">
-            <Loader2 className="w-4 h-4 text-blue-600 animate-spin" />
-            <span className="text-sm font-medium text-blue-700">
+          <div className="flex items-center gap-2 px-3 py-2 bg-primary-soft rounded-lg border border-transparent shrink-0">
+            <Loader2 className="w-4 h-4 text-primary animate-spin" />
+            <span className="text-sm font-medium text-primary">
               {t("progress.countOfTotal", { count: completedCount, total: totalSheets })}
             </span>
           </div>
@@ -132,15 +132,15 @@ export default function AirPage() {
       {/* Tab UI for sheets */}
       {results.length > 0 && (
         <Card padding="none">
-          <div className="border-b border-gray-200 bg-gray-50 px-4">
+          <div className="border-b border-border bg-surface px-4">
             <div className="flex gap-1 overflow-x-auto">
               {results.map(({ sheetName }, idx) => (
                 <Button
                   key={sheetName}
                   variant="ghost"
                   className={`px-4 py-3 rounded-none text-sm font-medium transition-colors duration-150 border-b-2 -mb-px whitespace-nowrap ${activeTab === idx
-                    ? "border-[var(--primary)] text-[var(--primary)] bg-[var(--surface)]"
-                    : "border-transparent text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] hover:bg-[var(--surface-container-low)]"
+                    ? "border-primary text-primary bg-surface"
+                    : "border-transparent text-textSecondary hover:text-textPrimary hover:bg-surface"
                     }`}
                   onClick={() => setActiveTab(idx)}
                 >

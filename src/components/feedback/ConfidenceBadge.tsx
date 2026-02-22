@@ -17,18 +17,18 @@ export const ConfidenceBadge: React.FC<ConfidenceBadgeProps> = ({
   const confidencePercent = Math.round(confidence * 100);
   const confidenceColor =
     confidencePercent >= 80
-      ? "text-green-600"
+      ? "text-success"
       : confidencePercent >= 60
-        ? "text-yellow-600"
-        : "text-red-600";
+        ? "text-warning"
+        : "text-error";
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-gray-700">{t("ocean.confidence")}:</span>
+      <span className="text-sm text-textSecondary">{t("ocean.confidence")}:</span>
       <div className="flex items-center gap-2">
-        <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div className="w-32 h-2 bg-[var(--surface-container-highest)] rounded-full overflow-hidden">
           <div
-            className="h-full bg-blue-500"
+            className="h-full bg-primary"
             style={{ width: `${confidencePercent}%` }}
           />
         </div>

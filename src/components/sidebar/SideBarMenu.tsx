@@ -27,8 +27,8 @@ export function SideBarMenu({
           flex items-center gap-3 px-3 py-2 rounded-full text-sm font-medium
           transition-all duration-300 ease-in-out
           ${isActive
-            ? "bg-[var(--secondary-container)] text-[var(--on-secondary-container)]"
-            : "text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-low)] hover:text-[var(--on-surface)]"
+            ? "bg-primary-soft text-primary"
+            : "text-textSecondary hover:bg-surface hover:text-textPrimary"
           }
           ${isCollapsed ? "justify-center px-2" : ""}
         `}

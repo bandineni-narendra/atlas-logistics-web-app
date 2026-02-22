@@ -27,35 +27,35 @@ export const Input: React.FC<InputProps> = ({
   return (
     <div className={`${fullWidth ? "w-full" : ""}`}>
       {label && (
-        <label className="block text-sm font-medium text-[var(--on-surface-variant)] mb-1">
+        <label className="block text-sm font-medium text-textSecondary mb-1">
           {label}
-          {props.required && <span className="text-[var(--error)] ml-0.5">*</span>}
+          {props.required && <span className="text-error ml-0.5">*</span>}
         </label>
       )}
       <input
         className={`
-          w-full px-3 py-2 text-sm text-[var(--on-surface)]
-          bg-[var(--surface-container-lowest)] border rounded-lg
+          w-full px-3 py-2 text-sm text-textPrimary
+          bg-background border rounded-lg
           transition-all duration-100 ease-out
           ${hasError
-            ? "border-[var(--error)] focus:border-[var(--error)] focus:ring-[var(--error)]"
-            : "border-[var(--outline)] focus:border-[var(--primary)] focus:ring-[var(--primary)]"
+            ? "border-error focus:border-error focus:ring-error"
+            : "border-border focus:border-primary focus:ring-primary"
           }
           focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-opacity-30
-          disabled:bg-[var(--surface-container)] disabled:text-[var(--on-surface-variant)] disabled:cursor-not-allowed
-          placeholder:text-[var(--on-surface-variant)] placeholder:opacity-60
+          disabled:bg-surface disabled:text-textSecondary disabled:cursor-not-allowed
+          placeholder:text-textSecondary placeholder:opacity-60
           ${className}
         `}
         {...props}
       />
       {error && (
-        <p className="mt-1 text-xs text-[var(--error)] flex items-center gap-1">
+        <p className="mt-1 text-xs text-error flex items-center gap-1">
           <AlertCircle className="w-3.5 h-3.5" />
           {error}
         </p>
       )}
       {!error && helperText && (
-        <p className="mt-1 text-xs text-[var(--on-surface-variant)]">{helperText}</p>
+        <p className="mt-1 text-xs text-textSecondary">{helperText}</p>
       )}
     </div>
   );

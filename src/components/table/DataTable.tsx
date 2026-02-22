@@ -35,12 +35,12 @@ export function DataTable<T extends Record<string, unknown>>({
   }, [data, currentPage, pageSize, totalItems]);
 
   return (
-    <div className="border border-[var(--outline-variant)] rounded-xl overflow-hidden bg-[var(--surface)]">
+    <div className="border border-border rounded-xl overflow-hidden bg-surface">
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full" style={{ minWidth: "1200px" }}>
           <TableHeader columns={columns} />
-          <tbody className="divide-y divide-[var(--outline-variant)]">
+          <tbody className="divide-y divide-border">
             {isLoading ? (
               <tr>
                 <td colSpan={columns.length}>

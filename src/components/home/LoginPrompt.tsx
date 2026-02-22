@@ -13,16 +13,16 @@ export function LoginPrompt() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--surface-dim)] p-4">
+    <div className="min-h-screen flex items-center justify-center bg-surface p-4">
       <Card padding="lg" className="max-w-sm w-full text-center">
         <div className="mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-[var(--primary)] rounded-2xl mb-4">
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-primary rounded-2xl mb-4">
             <span className="text-white font-medium text-xl">A</span>
           </div>
-          <h1 className="text-xl font-medium text-[var(--on-surface)] mb-1">
+          <h1 className="text-xl font-medium text-textPrimary mb-1">
             {t("common.appName")}
           </h1>
-          <p className="text-sm text-[var(--on-surface-variant)]">
+          <p className="text-sm text-textSecondary">
             Please login to access the logistics platform
           </p>
         </div>
@@ -34,11 +34,11 @@ export function LoginPrompt() {
         >
           {t("auth.login")}
         </Button>
-        <p className="mt-4 text-sm text-[var(--on-surface-variant)]">
+        <p className="mt-4 text-sm text-textSecondary">
           {t("auth.noAccount")}{" "}
           <Link
             href="/signup"
-            className="font-medium text-[var(--primary)] hover:text-[var(--primary-hover)]"
+            className="font-medium text-primary hover:text-primary-hover"
           >
             {t("auth.signup")}
           </Link>

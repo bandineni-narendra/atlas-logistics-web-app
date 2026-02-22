@@ -46,10 +46,10 @@ export default function OceanPage() {
     return (
       <main className="px-6 py-5 max-w-7xl mx-auto flex flex-col w-full h-full">
         <header className="mb-5">
-          <h1 className="text-xl font-medium text-[var(--on-surface)] tracking-tight">
+          <h1 className="text-xl font-medium text-textPrimary tracking-tight">
             {t("ocean.pageTitle")}
           </h1>
-          <p className="mt-0.5 text-sm text-[var(--on-surface-variant)]">{t("ocean.uploadDescription")}</p>
+          <p className="mt-0.5 text-sm text-textSecondary">{t("ocean.uploadDescription")}</p>
         </header>
         <div className="space-y-6">
           <Alert
@@ -85,10 +85,10 @@ export default function OceanPage() {
     return (
       <main className="px-6 py-5 max-w-7xl mx-auto flex flex-col w-full h-full">
         <header className="mb-5">
-          <h1 className="text-xl font-medium text-[var(--on-surface)] tracking-tight">
+          <h1 className="text-xl font-medium text-textPrimary tracking-tight">
             {t("ocean.pageTitle")}
           </h1>
-          <p className="mt-0.5 text-sm text-[var(--on-surface-variant)]">{t("ocean.uploadDescription")}</p>
+          <p className="mt-0.5 text-sm text-textSecondary">{t("ocean.uploadDescription")}</p>
         </header>
         <Card>
           <CardHeader>
@@ -112,7 +112,7 @@ export default function OceanPage() {
   return (
     <main className="px-6 py-5 w-full h-full">
       <header className="mb-5 flex items-start justify-between">
-        <h1 className="text-xl font-medium text-[var(--on-surface)] tracking-tight">
+        <h1 className="text-xl font-medium text-textPrimary tracking-tight">
           {t("ocean.pageTitle")}
         </h1>
         <Button variant="secondary" onClick={handleReset}>

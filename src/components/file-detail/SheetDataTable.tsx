@@ -36,7 +36,7 @@ export function SheetDataTable({
 
     if (columns.length === 0) {
         return (
-            <p className="text-[var(--on-surface-variant)] text-sm py-6 text-center">
+            <p className="text-textSecondary text-sm py-6 text-center">
                 This sheet has no columns defined.
             </p>
         );
@@ -45,46 +45,46 @@ export function SheetDataTable({
     return (
         <div>
             {/* Scrollable table */}
-            <div className="overflow-x-auto border border-[var(--outline-variant)] rounded-xl bg-[var(--surface)] shadow-sm min-h-[200px] relative">
+            <div className="overflow-x-auto border border-border rounded-xl bg-surface shadow-sm min-h-[200px] relative">
                 {isLoading && (
-                    <div className="absolute inset-0 bg-[var(--surface)]/50 flex items-center justify-center z-10 backdrop-blur-[1px]">
-                        <div className="w-6 h-6 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin" />
+                    <div className="absolute inset-0 bg-surface/50 flex items-center justify-center z-10 backdrop-blur-[1px]">
+                        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                     </div>
                 )}
-                <table className="min-w-full divide-y divide-[var(--outline-variant)] text-sm">
+                <table className="min-w-full divide-y divide-border text-sm">
                     <thead>
-                        <tr className="bg-[var(--surface-container-low)]">
-                            <th className="px-4 py-3 text-left text-[11px] font-bold text-[var(--on-surface-variant)] uppercase tracking-wider w-12">
+                        <tr className="bg-surface">
+                            <th className="px-4 py-3 text-left text-[11px] font-bold text-textSecondary uppercase tracking-wider w-12">
                                 #
                             </th>
                             {columns.map((col) => (
                                 <th
                                     key={col.id}
-                                    className="px-4 py-3 text-left text-[11px] font-bold text-[var(--on-surface-variant)] uppercase tracking-wider whitespace-nowrap"
+                                    className="px-4 py-3 text-left text-[11px] font-bold text-textSecondary uppercase tracking-wider whitespace-nowrap"
                                 >
                                     {col.label}
                                 </th>
                             ))}
                         </tr>
                     </thead>
-                    <tbody className="bg-[var(--surface)] divide-y divide-[var(--outline-variant)]">
+                    <tbody className="bg-surface divide-y divide-border">
                         {rows.map((row, idx) => (
                             <tr
                                 key={row.id}
-                                className="hover:bg-[var(--primary-container)]/10 hover:text-[var(--primary)] transition-all duration-150 group"
+                                className="hover:bg-primary-soft/10 hover:text-primary transition-all duration-150 group"
                             >
-                                <td className="px-4 py-2.5 text-[var(--on-surface-variant)] text-xs font-medium bg-transparent">
+                                <td className="px-4 py-2.5 text-textSecondary text-xs font-medium bg-transparent">
                                     {(page - 1) * ROWS_PER_PAGE + idx + 1}
                                 </td>
                                 {columns.map((col) => (
                                     <td
                                         key={col.id}
-                                        className="px-4 py-2.5 text-[var(--on-surface)] whitespace-nowrap font-medium"
+                                        className="px-4 py-2.5 text-textPrimary whitespace-nowrap font-medium"
                                     >
                                         {row.cells[col.id] !== null &&
                                             row.cells[col.id] !== undefined
                                             ? String(row.cells[col.id])
-                                            : <span className="text-[var(--outline-variant)]">—</span>}
+                                            : <span className="text-border">—</span>}
                                     </td>
                                 ))}
                             </tr>
@@ -93,7 +93,7 @@ export function SheetDataTable({
                             <tr>
                                 <td
                                     colSpan={columns.length + 1}
-                                    className="px-3 py-6 text-center text-[var(--on-surface-variant)]"
+                                    className="px-3 py-6 text-center text-textSecondary"
                                 >
                                     No rows in this sheet.
                                 </td>
@@ -107,17 +107,17 @@ export function SheetDataTable({
             {totalRows > 0 && (
                 <div className="mt-3">
                     <div className="px-4 py-1">
-                        <p className="text-sm text-[var(--on-surface-variant)]">
+                        <p className="text-sm text-textSecondary">
                             Showing{" "}
-                            <span className="font-medium text-[var(--on-surface)]">
+                            <span className="font-medium text-textPrimary">
                                 {(page - 1) * ROWS_PER_PAGE + 1}
                             </span>
                             –
-                            <span className="font-medium text-[var(--on-surface)]">
+                            <span className="font-medium text-textPrimary">
                                 {Math.min(page * ROWS_PER_PAGE, totalRows)}
                             </span>{" "}
                             of{" "}
-                            <span className="font-medium text-[var(--on-surface)]">{totalRows}</span>{" "}
+                            <span className="font-medium text-textPrimary">{totalRows}</span>{" "}
                             rows
                         </p>
                     </div>

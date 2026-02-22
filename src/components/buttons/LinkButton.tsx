@@ -16,11 +16,10 @@ export const LinkButton: React.FC<LinkButtonProps> = ({
 }) => (
   <button
     onClick={onClick}
-    className={`text-sm font-medium ${
-      variant === "primary"
-        ? "text-blue-600 hover:text-blue-700"
-        : "text-gray-600 hover:text-gray-700"
-    }`}
+    className={`text-sm font-medium ${variant === "primary"
+        ? "text-primary hover:text-primary-hover"
+        : "text-textSecondary hover:text-textPrimary"
+      }`}
   >
     {children}
   </button>

@@ -18,14 +18,14 @@ export function FilterBar() {
         <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-2 scrollbar-none">
 
             {/* Icon only label */}
-            <div className="text-[var(--on-surface-variant)] mr-1">
+            <div className="text-textSecondary mr-1">
                 <FilterList fontSize="small" />
             </div>
 
             {/* --- Filter: Type (Air / Ocean) --- */}
             <TypeFilter />
 
-            <div className="w-[1px] h-6 bg-[var(--outline-variant)] mx-1" />
+            <div className="w-[1px] h-6 bg-border mx-1" />
 
             {/* --- Filter: Status (Dropdown) --- */}
             <StatusFilter />
@@ -37,7 +37,7 @@ export function FilterBar() {
             {hasActiveFilters && (
                 <button
                     onClick={clearFilters}
-                    className="ml-2 p-1 rounded-full hover:bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] transition-colors"
+                    className="ml-2 p-1 rounded-full hover:bg-surface text-textSecondary transition-colors"
                     title={t("clear")}
                 >
                     <Close fontSize="small" />

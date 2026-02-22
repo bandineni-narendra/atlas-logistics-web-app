@@ -69,10 +69,10 @@ export function SheetsView({
       <div className="flex items-center justify-center py-10">
         <div className="text-center">
           <div className="relative inline-block w-8 h-8 mb-2">
-            <div className="w-8 h-8 border-[3px] border-[var(--surface-container-high)] rounded-full" />
-            <div className="absolute top-0 left-0 w-8 h-8 border-[3px] border-[var(--primary)] rounded-full border-t-transparent animate-spin" />
+            <div className="w-8 h-8 border-[3px] border-surface rounded-full" />
+            <div className="absolute top-0 left-0 w-8 h-8 border-[3px] border-primary rounded-full border-t-transparent animate-spin" />
           </div>
-          <p className="text-sm text-[var(--on-surface-variant)]">Loading files...</p>
+          <p className="text-sm text-textSecondary">Loading files...</p>
         </div>
       </div>
     );
@@ -81,8 +81,8 @@ export function SheetsView({
   // ── Error ──────────────────────────────────────────────
   if (isError) {
     return (
-      <div className="bg-[var(--error-container)] rounded-xl p-4">
-        <p className="text-sm text-[var(--on-error-container)]">
+      <div className="bg-error rounded-xl p-4">
+        <p className="text-sm text-white">
           <span className="font-medium">Error:</span>{" "}
           {error instanceof Error ? error.message : "Failed to load files"}
         </p>
@@ -94,17 +94,17 @@ export function SheetsView({
   if (files.length === 0) {
     return (
       <div className="text-center py-10">
-        <p className="text-[var(--on-surface)] text-base font-medium">{t("empty.title")}</p>
-        <p className="text-sm text-[var(--on-surface-variant)] mt-1">{emptyStateMessage}</p>
+        <p className="text-textPrimary text-base font-medium">{t("empty.title")}</p>
+        <p className="text-sm text-textSecondary mt-1">{emptyStateMessage}</p>
       </div>
     );
   }
 
   // ── List View ──────────────────────────────────────────
   return (
-    <div className="border border-[var(--outline-variant)] rounded-xl overflow-hidden bg-[var(--surface)]">
+    <div className="border border-border rounded-xl overflow-hidden bg-surface">
       {/* Table header */}
-      <div className="hidden sm:grid sm:grid-cols-12 gap-4 px-4 py-2 text-xs font-medium text-[var(--on-surface-variant)] border-b border-[var(--outline-variant)] bg-[var(--surface-container-low)]">
+      <div className="hidden sm:grid sm:grid-cols-12 gap-4 px-4 py-2 text-xs font-medium text-textSecondary border-b border-border bg-surface">
         <span className="col-span-5">{t("table.name")}</span>
         <span className="col-span-2">{t("table.type")}</span>
         <span className="col-span-2">{t("table.status")}</span>
@@ -113,7 +113,7 @@ export function SheetsView({
       </div>
 
       {/* Rows */}
-      <ul className="divide-y divide-[var(--outline-variant)]">
+      <ul className="divide-y divide-border">
         {files.map((file) => {
           const fileTypeKey =
             file.type.toLowerCase() as keyof typeof FILE_TYPE_CONFIG;
@@ -131,7 +131,7 @@ export function SheetsView({
             <li key={file.id}>
               <Link
                 href={ROUTES.FILE_DETAIL(file.id)}
-                className="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 items-center px-4 py-2.5 hover:bg-[var(--surface-container-low)] transition-colors duration-100 group"
+                className="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 items-center px-4 py-2.5 hover:bg-surface transition-colors duration-100 group"
               >
                 {/* Name + icon */}
                 <div className="sm:col-span-5 flex items-center gap-3 min-w-0">
@@ -140,7 +140,7 @@ export function SheetsView({
                   >
                     {typeInfo.icon}
                   </span>
-                  <span className="truncate font-medium text-[var(--on-surface)] text-sm group-hover:text-[var(--primary)] transition-colors duration-100">
+                  <span className="truncate font-medium text-textPrimary text-sm group-hover:text-primary transition-colors duration-100">
                     {file.name}
                   </span>
                 </div>
@@ -164,12 +164,12 @@ export function SheetsView({
                 </div>
 
                 {/* Sheet count */}
-                <div className="sm:col-span-1 text-center text-sm text-[var(--on-surface)] font-medium">
+                <div className="sm:col-span-1 text-center text-sm text-textPrimary font-medium">
                   {file.sheetCount}
                 </div>
 
                 {/* Updated date */}
-                <div className="sm:col-span-2 text-right text-xs text-[var(--on-surface-variant)]">
+                <div className="sm:col-span-2 text-right text-xs text-textSecondary">
                   {new Date(file.updatedAt).toLocaleDateString()}
                 </div>
               </Link>
@@ -180,18 +180,18 @@ export function SheetsView({
 
       {/* Pagination */}
       <div>
-        <div className="flex items-center justify-between px-4 py-2 border-t border-[var(--outline-variant)]">
-          <p className="text-sm text-[var(--on-surface-variant)]">
+        <div className="flex items-center justify-between px-4 py-2 border-t border-border">
+          <p className="text-sm text-textSecondary">
             {t("pagination.showing")}{" "}
-            <span className="font-medium text-[var(--on-surface)]">
+            <span className="font-medium text-textPrimary">
               {(page - 1) * PAGE_SIZE + 1}
             </span>
             –
-            <span className="font-medium text-[var(--on-surface)]">
+            <span className="font-medium text-textPrimary">
               {Math.min(page * PAGE_SIZE, total)}
             </span>{" "}
             {t("pagination.of")}{" "}
-            <span className="font-medium text-[var(--on-surface)]">{total}</span>
+            <span className="font-medium text-textPrimary">{total}</span>
           </p>
         </div>
         <Pagination

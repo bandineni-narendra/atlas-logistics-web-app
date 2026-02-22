@@ -26,8 +26,8 @@ export const ProgressLabel: React.FC<ProgressLabelProps> = ({
     <div className="inline-flex items-center gap-2 text-sm">
       <span
         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium ${isComplete
-            ? "bg-green-100 text-green-700"
-            : "bg-blue-100 text-blue-700"
+          ? "bg-success/10 text-success"
+          : "bg-primary-soft text-primary"
           }`}
       >
         {isComplete ? (

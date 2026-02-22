@@ -67,7 +67,7 @@ export const Modal: React.FC<ModalProps> = ({
 
             <div className="fixed inset-0 flex items-center justify-center z-50 p-4 pointer-events-none">
                 <div
-                    className={`bg-[var(--surface)] border-2 border-[var(--outline-variant)] rounded-xl shadow-[var(--elevation-3)] ${maxWidth} w-full max-h-[90vh] overflow-y-auto pointer-events-auto animate-in fade-in zoom-in duration-200`}
+                    className={`bg-surface border-2 border-border rounded-xl shadow-lg ${maxWidth} w-full max-h-[90vh] overflow-y-auto pointer-events-auto animate-in fade-in zoom-in duration-200`}
                     role="dialog"
                     aria-modal="true"
                 >

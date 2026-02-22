@@ -27,10 +27,10 @@ export function SheetsSection() {
     <div className="mt-6">
       {/* Header with View All Link */}
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-medium text-[var(--on-surface-variant)] uppercase tracking-wide">{t("sections.yourFiles")}</h2>
+        <h2 className="text-sm font-medium text-textSecondary uppercase tracking-wide">{t("sections.yourFiles")}</h2>
         <Link
           href="/files"
-          className="text-sm text-[var(--primary)] hover:text-[var(--primary-hover)] font-medium"
+          className="text-sm text-primary hover:text-primary-hover font-medium"
         >
           {/* View All → */}
         </Link>

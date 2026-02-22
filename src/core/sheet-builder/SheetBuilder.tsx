@@ -85,7 +85,7 @@ export function SheetBuilder({
   }, [sheets, onChange]);
 
   if (!activeSheet) {
-    return <div className="p-8 text-center text-[var(--on-surface-variant)]">No active sheet</div>;
+    return <div className="p-8 text-center text-textSecondary">No active sheet</div>;
   }
 
   const handleCellChange = (rowId: string, columnId: string, value: any) => {
@@ -192,7 +192,7 @@ export function SheetBuilder({
   };
 
   return (
-    <div className="flex flex-col h-full bg-[var(--surface)] rounded-lg shadow-[var(--elevation-1)] border border-[var(--outline-variant)] overflow-hidden">
+    <div className="flex flex-col h-full bg-surface rounded-lg shadow-sm border border-border overflow-hidden">
       {/* Sheet tabs */}
       {multiSheet && (
         <SheetTabs

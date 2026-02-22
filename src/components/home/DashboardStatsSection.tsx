@@ -2,6 +2,7 @@
 
 import { DASHBOARD_LABELS, STAT_CARD_COLORS, StatCardColor } from "@/constants";
 import { useDashboardStats } from "@/hooks/queries/useDashboardStats";
+import { Ship, Plane } from "lucide-react";
 
 export interface StatCardProps {
   label: string;
@@ -25,11 +26,15 @@ function StatCard({
 
   return (
     <div className="flex-1 min-w-0 px-4 py-3">
-      <p className="text-xs font-medium text-[var(--on-surface-variant)] uppercase tracking-wide">{label}</p>
+      <p className="text-xs font-medium text-textSecondary uppercase tracking-wide">{label}</p>
       <p className={`mt-0.5 text-2xl font-medium ${colorClass}`}>
         {value}
       </p>
-      <p className="mt-0.5 text-xs text-[var(--on-surface-variant)]">{sublabel}</p>
+      <div className="mt-0.5 flex items-center gap-1.5 text-xs text-textSecondary">
+        {color === "blue" && <Ship className="w-3.5 h-3.5" />}
+        {color === "emerald" && <Plane className="w-3.5 h-3.5" />}
+        <span>{sublabel}</span>
+      </div>
     </div>
   );
 }
@@ -44,10 +49,10 @@ export function DashboardStatsSection() {
 
   return (
     <div className="mt-6">
-      <h2 className="text-sm font-medium text-[var(--on-surface-variant)] mb-3 uppercase tracking-wide">
+      <h2 className="text-sm font-medium text-textSecondary mb-3 uppercase tracking-wide">
         {DASHBOARD_LABELS.OVERVIEW_TITLE}
       </h2>
-      <div className="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-xl flex divide-x divide-[var(--outline-variant)]">
+      <div className="bg-surface border border-border rounded-xl flex divide-x divide-border">
         <StatCard
           label={DASHBOARD_LABELS.TOTAL_SHEETS}
           value={formatValue(stats?.totalSheets)}

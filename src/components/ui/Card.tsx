@@ -24,7 +24,7 @@ export const Card: React.FC<CardProps> = ({
   padding = "md",
 }) => (
   <div
-    className={`bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-xl ${paddingStyles[padding]} ${className}`}
+    className={`bg-background border border-border rounded-xl ${paddingStyles[padding]} ${className}`}
   >
     {children}
   </div>
@@ -45,7 +45,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
   actions,
 }) => (
   <div
-    className={`flex items-center justify-between pb-3 border-b border-[var(--outline-variant)] mb-3 ${className}`}
+    className={`flex items-center justify-between pb-3 border-b border-border mb-3 ${className}`}
   >
     <div>{children}</div>
     {actions && <div className="flex items-center gap-2">{actions}</div>}
@@ -64,7 +64,7 @@ export const CardTitle: React.FC<CardTitleProps> = ({
   children,
   className = "",
 }) => (
-  <h3 className={`text-base font-medium text-[var(--on-surface)] ${className}`}>
+  <h3 className={`text-base font-medium text-textPrimary ${className}`}>
     {children}
   </h3>
 );
@@ -80,7 +80,7 @@ export interface CardDescriptionProps {
 export const CardDescription: React.FC<CardDescriptionProps> = ({
   children,
   className = "",
-}) => <p className={`text-sm text-[var(--on-surface-variant)] mt-1 ${className}`}>{children}</p>;
+}) => <p className={`text-sm text-textSecondary mt-1 ${className}`}>{children}</p>;
 
 export interface CardContentProps {
   children: React.ReactNode;
@@ -107,7 +107,7 @@ export const CardFooter: React.FC<CardFooterProps> = ({
   children,
   className = "",
 }) => (
-  <div className={`pt-3 mt-3 border-t border-[var(--outline-variant)] ${className}`}>
+  <div className={`pt-3 mt-3 border-t border-border ${className}`}>
     {children}
   </div>
 );

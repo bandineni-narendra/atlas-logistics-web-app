@@ -17,15 +17,15 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-hover)] border-transparent shadow-none",
+    "bg-primary text-white hover:bg-primary-hover border-transparent shadow-none",
   secondary:
-    "bg-[var(--secondary-container)] text-[var(--on-secondary-container)] hover:brightness-95 border-transparent shadow-none",
+    "bg-transparent text-primary border border-primary hover:bg-primary-soft shadow-none",
   outline:
-    "bg-transparent text-[var(--primary)] hover:bg-[var(--surface-container-low)] border-[var(--outline)] shadow-none",
+    "bg-transparent text-textPrimary hover:bg-surface border border-border shadow-none",
   ghost:
-    "bg-transparent text-[var(--on-surface-variant)] hover:bg-[var(--surface-container)] border-transparent shadow-none",
+    "bg-transparent text-textSecondary hover:bg-surface border-transparent shadow-none",
   danger:
-    "bg-[var(--error)] text-[var(--on-error)] hover:brightness-90 border-transparent shadow-none",
+    "bg-error text-white hover:brightness-90 border-transparent shadow-none",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -58,7 +58,7 @@ export const Button: React.FC<ButtonProps> = ({
       className={`
         inline-flex items-center justify-center font-medium rounded-full border
         transition-all duration-100 ease-out
-        focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-1
+        focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1
         disabled:opacity-40 disabled:cursor-not-allowed
         ${variantStyles[variant]}
         ${sizeStyles[size]}
@@ -109,7 +109,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
       className={`
         inline-flex items-center justify-center rounded-full border
         transition-all duration-100 ease-out
-        focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-1
+        focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1
         disabled:opacity-40 disabled:cursor-not-allowed
         ${variantStyles[variant]}
         ${sizeStylesIcon[size]}

@@ -23,9 +23,9 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
   }
 
   return (
-    <div className="flex h-screen bg-[var(--surface)]">
+    <div className="flex h-screen bg-surface">
       <Sidebar currentPath={pathname} />
-      <main className="flex-1 overflow-y-auto overflow-x-hidden bg-[var(--surface-dim)] transition-all duration-300">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden bg-surface transition-all duration-300">
         {children}
       </main>
     </div>

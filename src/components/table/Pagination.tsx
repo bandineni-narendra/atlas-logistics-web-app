@@ -35,19 +35,19 @@ export function Pagination({
   );
 
   return (
-    <div className="flex items-center justify-between px-4 py-2.5 border-t border-[var(--outline-variant)]">
-      <div className="text-sm text-[var(--on-surface-variant)]">
+    <div className="flex items-center justify-between px-4 py-2.5 border-t border-border">
+      <div className="text-sm text-textSecondary">
         {t("common.page")}{" "}
-        <span className="font-medium text-[var(--on-surface)]">{currentPage}</span>{" "}
+        <span className="font-medium text-textPrimary">{currentPage}</span>{" "}
         {t("common.of")}{" "}
-        <span className="font-medium text-[var(--on-surface)]">{totalPages}</span>
+        <span className="font-medium text-textPrimary">{totalPages}</span>
       </div>
 
       <div className="flex gap-2">
         <button
           onClick={handlePrevious}
           disabled={!hasPrevious || isDisabled}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline)] rounded-full hover:bg-[var(--surface-container-low)] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-100"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-textSecondary bg-surface border border-border rounded-full hover:bg-surface disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-100"
         >
           <ChevronLeft className="w-4 h-4" />
           {t("buttons.previous")}
@@ -56,7 +56,7 @@ export function Pagination({
         <button
           onClick={handleNext}
           disabled={!hasNext || isDisabled}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline)] rounded-full hover:bg-[var(--surface-container-low)] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-100"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-textSecondary bg-surface border border-border rounded-full hover:bg-surface disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-100"
         >
           {t("buttons.next")}
           <ChevronRight className="w-4 h-4" />

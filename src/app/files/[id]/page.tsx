@@ -65,7 +65,7 @@ export default function FileDetailPage() {
 
             {/* Sheet Tabs */}
             {sheets.length > 0 ? (
-                <div className="bg-[var(--surface)] rounded-2xl border border-[var(--outline-variant)] shadow-[var(--elevation-1)] overflow-hidden transition-all duration-300">
+                <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden transition-all duration-300">
                     <SheetTabs
                         sheets={sheets.map((s) => ({ id: s.id, name: s.name }))}
                         activeSheetId={activeSheetId}
@@ -82,16 +82,16 @@ export default function FileDetailPage() {
                                 initialTotalRows={activeSheet.rowCount}
                             />
                         ) : (
-                            <p className="text-[var(--on-surface-variant)] text-sm text-center py-12">
+                            <p className="text-textSecondary text-sm text-center py-12">
                                 Select a sheet tab above.
                             </p>
                         )}
                     </div>
                 </div>
             ) : (
-                <div className="bg-[var(--surface)] rounded-2xl border border-[var(--outline-variant)] p-12 text-center shadow-sm">
-                    <FileQuestion className="w-16 h-16 mx-auto mb-4 text-[var(--outline-variant)]" />
-                    <p className="text-[var(--on-surface-variant)] font-medium">
+                <div className="bg-surface rounded-2xl border border-border p-12 text-center shadow-sm">
+                    <FileQuestion className="w-16 h-16 mx-auto mb-4 text-border" />
+                    <p className="text-textSecondary font-medium">
                         This file has no sheets.
                     </p>
                 </div>

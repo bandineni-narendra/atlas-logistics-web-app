@@ -6,15 +6,15 @@
 export const FILE_STATUS_CONFIG = {
   draft: {
     label: "Draft",
-    color: "bg-[var(--warning-container)] text-[var(--on-warning-container)]"
+    color: "bg-warning text-white"
   },
   saved: {
     label: "Saved",
-    color: "bg-[var(--success-container)] text-[var(--on-success-container)]"
+    color: "bg-success text-white"
   },
   archived: {
     label: "Archived",
-    color: "bg-[var(--surface-container-high)] text-[var(--on-surface-variant)]"
+    color: "bg-surface text-textSecondary"
   },
 } as const;
 

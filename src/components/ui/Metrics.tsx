@@ -14,9 +14,9 @@ export interface MetricCardProps {
 }
 
 const trendColors = {
-  up: "text-[var(--success)]",
-  down: "text-[var(--error)]",
-  neutral: "text-[var(--on-surface-variant)]",
+  up: "text-success",
+  down: "text-error",
+  neutral: "text-textSecondary",
 };
 
 const trendIcons = {
@@ -36,12 +36,12 @@ export const MetricCard: React.FC<MetricCardProps> = ({
   className = "",
 }) => (
   <div
-    className={`bg-[var(--surface)] border border-[var(--outline-variant)] rounded-xl p-4 ${className}`}
+    className={`bg-surface border border-border rounded-xl p-4 ${className}`}
   >
     <div className="flex items-start justify-between">
       <div>
-        <p className="text-sm text-[var(--on-surface-variant)]">{label}</p>
-        <p className="mt-1 text-2xl font-medium text-[var(--on-surface)]">{value}</p>
+        <p className="text-sm text-textSecondary">{label}</p>
+        <p className="mt-1 text-2xl font-medium text-textPrimary">{value}</p>
         {trend && (
           <p className={`mt-1 text-sm ${trendColors[trend.direction]}`}>
             {trendIcons[trend.direction]} {trend.value}
@@ -49,8 +49,8 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         )}
       </div>
       {icon && (
-        <div className="p-2 bg-[var(--primary-container)] rounded-lg">
-          <span className="text-[var(--primary)]">{icon}</span>
+        <div className="p-2 bg-primary-soft rounded-lg">
+          <span className="text-primary">{icon}</span>
         </div>
       )}
     </div>
@@ -73,10 +73,10 @@ const progressSizes = {
 };
 
 const progressColors = {
-  blue: "bg-[var(--primary)]",
-  green: "bg-[var(--success)]",
-  yellow: "bg-[var(--warning)]",
-  red: "bg-[var(--error)]",
+  blue: "bg-primary",
+  green: "bg-success",
+  yellow: "bg-warning",
+  red: "bg-error",
 };
 
 /**
@@ -96,12 +96,12 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     <div className={className}>
       {showLabel && (
         <div className="flex justify-between text-sm mb-1">
-          <span className="text-[var(--on-surface-variant)]">{value}</span>
-          <span className="text-[var(--on-surface-variant)] opacity-60">{max}</span>
+          <span className="text-textSecondary">{value}</span>
+          <span className="text-textSecondary opacity-60">{max}</span>
         </div>
       )}
       <div
-        className={`w-full bg-[var(--surface-container)] rounded-full overflow-hidden ${progressSizes[size]}`}
+        className={`w-full bg-surface rounded-full overflow-hidden ${progressSizes[size]}`}
       >
         <div
           className={`${progressSizes[size]} ${progressColors[color]} transition-all duration-200 rounded-full`}
@@ -131,10 +131,10 @@ export const ConfidenceIndicator: React.FC<ConfidenceIndicatorProps> = ({
     percentage >= 80 ? "green" : percentage >= 60 ? "yellow" : "red";
   const textColor =
     percentage >= 80
-      ? "text-[var(--success)]"
+      ? "text-success"
       : percentage >= 60
-        ? "text-[var(--warning)]"
-        : "text-[var(--error)]";
+        ? "text-warning"
+        : "text-error";
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>

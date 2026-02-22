@@ -3,17 +3,20 @@
  * Centralized configuration for freight types
  */
 
+import { Ship, Plane } from "lucide-react";
+import React from "react";
+
 export const FILE_TYPE_CONFIG = {
   ocean: {
-    icon: "🚢",
-    color: "bg-[var(--primary-container)]",
-    textColor: "text-[var(--on-primary-container)]",
+    icon: React.createElement(Ship, { className: "w-4 h-4" }),
+    color: "bg-primary-soft",
+    textColor: "text-primary",
     label: "Ocean Freight",
   },
   air: {
-    icon: "✈️",
-    color: "bg-[var(--tertiary-container)]",
-    textColor: "text-[var(--on-tertiary-container)]",
+    icon: React.createElement(Plane, { className: "w-4 h-4" }),
+    color: "bg-primary-soft",
+    textColor: "text-primary",
     label: "Air Freight",
   },
 } as const;

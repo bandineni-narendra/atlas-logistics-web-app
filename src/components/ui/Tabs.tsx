@@ -54,7 +54,7 @@ export const TabList: React.FC<TabListProps> = ({
   children,
   className = "",
 }) => (
-  <div className={`flex border-b border-[var(--outline-variant)] ${className}`} role="tablist">
+  <div className={`flex border-b border-border ${className}`} role="tablist">
     {children}
   </div>
 );
@@ -91,10 +91,10 @@ export const Tab: React.FC<TabProps> = ({
       onClick={() => !disabled && setActiveTab(id)}
       className={`
         px-4 py-2.5 text-sm font-medium -mb-px border-b-[3px] transition-colors duration-100
-        focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-1
+        focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1
         ${isActive
-          ? "text-[var(--primary)] border-[var(--primary)]"
-          : "text-[var(--on-surface-variant)] border-transparent hover:text-[var(--on-surface)] hover:bg-[var(--surface-container-low)]"
+          ? "text-primary border-primary"
+          : "text-textSecondary border-transparent hover:text-textPrimary hover:bg-surface"
         }
         ${disabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}
         ${className}

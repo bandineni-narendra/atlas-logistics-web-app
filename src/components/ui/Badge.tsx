@@ -21,12 +21,12 @@ export interface BadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  default: "bg-[var(--surface-container)] text-[var(--on-surface)] border-[var(--outline-variant)]",
-  success: "bg-[var(--success-container)] text-[var(--on-success-container)] border-transparent",
-  warning: "bg-[var(--warning-container)] text-[var(--on-warning-container)] border-transparent",
-  error: "bg-[var(--error-container)] text-[var(--on-error-container)] border-transparent",
-  info: "bg-[var(--secondary-container)] text-[var(--on-secondary-container)] border-transparent",
-  neutral: "bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] border-transparent",
+  default: "bg-surface text-textPrimary border-border",
+  success: "bg-success text-white border-transparent",
+  warning: "bg-warning text-white border-transparent",
+  error: "bg-error text-white border-transparent",
+  info: "bg-primary-soft text-primary border-transparent",
+  neutral: "bg-surface text-textSecondary border-transparent",
 };
 
 const sizeStyles: Record<BadgeSize, string> = {
@@ -68,16 +68,16 @@ const statusConfig: Record<
   StatusType,
   { variant: BadgeVariant; dotColor: string }
 > = {
-  loading: { variant: "info", dotColor: "bg-[var(--primary)]" },
-  waiting: { variant: "neutral", dotColor: "bg-[var(--on-surface-variant)]" },
-  pending: { variant: "warning", dotColor: "bg-[var(--warning)]" },
-  running: { variant: "info", dotColor: "bg-[var(--primary)]" },
-  completed: { variant: "success", dotColor: "bg-[var(--success)]" },
-  failed: { variant: "error", dotColor: "bg-[var(--error)]" },
-  success: { variant: "success", dotColor: "bg-[var(--success)]" },
-  error: { variant: "error", dotColor: "bg-[var(--error)]" },
-  warning: { variant: "warning", dotColor: "bg-[var(--warning)]" },
-  info: { variant: "info", dotColor: "bg-[var(--primary)]" },
+  loading: { variant: "info", dotColor: "bg-primary" },
+  waiting: { variant: "neutral", dotColor: "bg-textSecondary" },
+  pending: { variant: "warning", dotColor: "bg-warning" },
+  running: { variant: "info", dotColor: "bg-primary" },
+  completed: { variant: "success", dotColor: "bg-success" },
+  failed: { variant: "error", dotColor: "bg-error" },
+  success: { variant: "success", dotColor: "bg-success" },
+  error: { variant: "error", dotColor: "bg-error" },
+  warning: { variant: "warning", dotColor: "bg-warning" },
+  info: { variant: "info", dotColor: "bg-primary" },
 };
 
 export interface StatusBadgeProps {

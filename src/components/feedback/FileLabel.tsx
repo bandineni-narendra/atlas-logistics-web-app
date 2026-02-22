@@ -15,8 +15,8 @@ export const FileLabel: React.FC<FileLabelProps> = ({
 }) => (
   <div
     className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg ${variant === "muted"
-        ? "bg-gray-100 text-gray-600"
-        : "bg-blue-50 text-blue-700"
+      ? "bg-surface text-textSecondary border border-border"
+      : "bg-primary-soft text-primary"
       }`}
   >
     <FileText className="w-4 h-4 flex-shrink-0" />

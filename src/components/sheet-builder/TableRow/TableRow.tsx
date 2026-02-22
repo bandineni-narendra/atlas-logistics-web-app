@@ -32,7 +32,7 @@ export function TableRow({
   const t = useTranslations("sheetBuilder");
 
   return (
-    <tr className="group hover:bg-[var(--surface-container-low)] transition-all duration-200">
+    <tr className="group hover:bg-surface transition-all duration-200">
       {/* Data cells */}
       {columns.map((column) => (
         <TableCell
@@ -45,14 +45,14 @@ export function TableRow({
 
       {/* Row actions: Copy & Delete */}
       <td
-        className="border-b border-[var(--outline-variant)] bg-[var(--surface)] group-hover:bg-[var(--surface-container-low)] px-2 py-0 transition-all duration-200"
+        className="border-b border-border bg-surface group-hover:bg-surface px-2 py-0 transition-all duration-200"
         style={{ width: "80px", minWidth: "80px" }}
       >
         <div className="flex items-center justify-center gap-1 h-8 opacity-70 group-hover:opacity-100 transition-opacity duration-200">
           {/* Copy button */}
           <button
             onClick={onCopy}
-            className="p-1.5 text-[var(--on-surface-variant)] hover:text-[var(--primary)] hover:bg-[var(--primary-container)] rounded-md transition-all duration-200 hover:scale-110"
+            className="p-1.5 text-textSecondary hover:text-primary hover:bg-primary-soft rounded-md transition-all duration-200 hover:scale-110"
             title={t("rows.copy") || "Copy row"}
             type="button"
             aria-label={`Copy row ${rowIndex + 1}`}
@@ -63,7 +63,7 @@ export function TableRow({
           {/* Delete button */}
           <button
             onClick={onDelete}
-            className="p-1.5 text-[var(--on-surface-variant)] hover:text-[var(--error)] hover:bg-[var(--error-container)] rounded-md transition-all duration-200 hover:scale-110"
+            className="p-1.5 text-textSecondary hover:text-error hover:bg-error rounded-md transition-all duration-200 hover:scale-110"
             title={t("columns.delete")}
             type="button"
             aria-label={`Delete row ${rowIndex + 1}`}
@@ -75,7 +75,7 @@ export function TableRow({
 
       {/* Empty cell for Add Column header alignment */}
       <td
-        className="border-b border-[var(--outline-variant)] bg-[var(--surface)]"
+        className="border-b border-border bg-surface"
         style={{ minWidth: "100px" }}
       ></td>
     </tr>

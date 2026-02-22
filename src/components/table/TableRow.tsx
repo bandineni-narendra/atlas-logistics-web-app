@@ -20,7 +20,7 @@ export function TableRow<T>({
 }: TableRowProps<T>) {
   return (
     <tr
-      className="bg-[var(--surface)] hover:bg-[var(--surface-container-low)] transition-colors duration-100"
+      className="bg-surface hover:bg-surface transition-colors duration-100"
     >
       {columns.map((column) => {
         const value = row[column.key];
@@ -30,7 +30,7 @@ export function TableRow<T>({
         return (
           <td
             key={String(column.key)}
-            className="px-1 py-1 text-sm text-[var(--on-surface)]"
+            className="px-1 py-1 text-sm text-textPrimary"
             style={column.width ? { minWidth: column.width } : undefined}
           >
             <input
@@ -39,7 +39,7 @@ export function TableRow<T>({
               onChange={(e) =>
                 onCellChange?.(rowIndex, column.key, e.target.value)
               }
-              className="w-full px-2 py-1.5 text-sm border border-transparent rounded-lg focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] bg-transparent hover:bg-[var(--surface-container-low)] transition-colors duration-100"
+              className="w-full px-2 py-1.5 text-sm border border-transparent rounded-lg focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary bg-transparent hover:bg-surface transition-colors duration-100"
             />
           </td>
         );

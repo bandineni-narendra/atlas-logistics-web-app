@@ -9,7 +9,7 @@ export function FileNotesSection({ notes }: FileNotesSectionProps) {
     if (!notes) return null;
 
     return (
-        <div className="mt-4 bg-[var(--secondary-container)] text-[var(--on-secondary-container)] p-4 rounded-2xl border border-[var(--outline-variant)] shadow-sm">
+        <div className="mt-4 bg-primary-soft text-primary p-4 rounded-2xl border border-border shadow-sm">
             <div className="flex items-start gap-3">
                 <div className="mt-0.5">
                     <StickyNote className="w-5 h-5 opacity-70" />

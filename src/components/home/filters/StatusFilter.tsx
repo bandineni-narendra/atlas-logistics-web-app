@@ -29,12 +29,12 @@ export function StatusFilter() {
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
                 anchorRef={anchorRef as unknown as React.RefObject<HTMLElement>}
-                className="w-40 bg-[var(--surface-container)] rounded-lg shadow-lg border border-[var(--outline-variant)] py-1"
+                className="w-40 bg-surface rounded-lg shadow-lg border border-border py-1"
             >
                 {statuses.map((status) => (
                     <button
                         key={status}
-                        className={`w-full text-left px-4 py-2 text-sm hover:bg-[var(--surface-container-high)] ${filters.status === status ? "text-[var(--primary)] font-medium" : "text-[var(--on-surface)]"
+                        className={`w-full text-left px-4 py-2 text-sm hover:bg-surface ${filters.status === status ? "text-primary font-medium" : "text-textPrimary"
                             }`}
                         onClick={() => {
                             setFilter({ status });

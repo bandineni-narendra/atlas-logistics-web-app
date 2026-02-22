@@ -139,13 +139,13 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={onCancel} preventBackdropClose={isSaving} maxWidth="max-w-md">
       {/* Header */}
-      <div className="flex items-center gap-3 p-6 border-b border-[var(--outline-variant)]">
-        <div className="bg-[var(--primary-container)] rounded-full p-3 flex-shrink-0">
-          <span className="text-[var(--on-primary-container)] text-2xl">📁</span>
+      <div className="flex items-center gap-3 p-6 border-b border-border">
+        <div className="bg-primary-soft rounded-full p-3 flex-shrink-0">
+          <span className="text-primary text-2xl">📁</span>
         </div>
         <h2
           id="file-name-modal-title"
-          className="text-[var(--on-surface)] font-bold text-xl flex-1"
+          className="text-textPrimary font-bold text-xl flex-1"
         >
           {t("title", { type: fileType === "AIR" ? "Air" : "Ocean" })}
         </h2>
@@ -154,22 +154,22 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
       {/* Body */}
       <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
         {/* Info text */}
-        <p className="text-sm text-[var(--on-surface-variant)]">
+        <p className="text-sm text-textSecondary">
           {t("info")}
         </p>
 
         {/* File metadata display */}
         {effectiveDate && (
-          <div className="bg-[var(--surface-container-low)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+          <div className="bg-surface border border-border rounded-lg p-3 text-sm">
             <div className="flex justify-between">
-              <span className="text-[var(--on-surface-variant)]">Type:</span>
-              <span className="font-semibold text-[var(--on-surface)]">
+              <span className="text-textSecondary">Type:</span>
+              <span className="font-semibold text-textPrimary">
                 {fileType}
               </span>
             </div>
             <div className="flex justify-between mt-1">
-              <span className="text-[var(--on-surface-variant)]">Effective Date:</span>
-              <span className="font-semibold text-[var(--on-surface)]">
+              <span className="text-textSecondary">Effective Date:</span>
+              <span className="font-semibold text-textPrimary">
                 {effectiveDate}
               </span>
             </div>
@@ -178,8 +178,8 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
 
         {/* File name input */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[var(--on-surface-variant)]">
-            {t("fields.fileName")} <span className="text-[var(--error)]">*</span>
+          <label className="text-sm font-medium text-textSecondary">
+            {t("fields.fileName")} <span className="text-error">*</span>
           </label>
           <input
             type="text"
@@ -195,23 +195,23 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
             autoFocus
             className={`
               w-full px-3 py-2 
-              bg-[var(--surface-container-lowest)] 
+              bg-background 
               border rounded-md 
-              text-[var(--on-surface)] 
-              placeholder-[var(--on-surface-variant)]
-              focus:outline-none focus:ring-2 focus:ring-[var(--primary)]
+              text-textPrimary 
+              placeholder-textSecondary
+              focus:outline-none focus:ring-2 focus:ring-primary
               disabled:opacity-50
-              ${touched.fileName && errors.fileName ? 'border-[var(--error)] focus:ring-[var(--error)]' : 'border-[var(--outline)]'}
+              ${touched.fileName && errors.fileName ? 'border-error focus:ring-error' : 'border-border'}
             `}
           />
           {touched.fileName && errors.fileName && (
-            <p className="text-xs text-[var(--error)] mt-1">{errors.fileName}</p>
+            <p className="text-xs text-error mt-1">{errors.fileName}</p>
           )}
         </div>
 
         {/* To Client input */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[var(--on-surface-variant)]">
+          <label className="text-sm font-medium text-textSecondary">
             {t("fields.clientEmail")}
           </label>
           <input
@@ -227,23 +227,23 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
             disabled={isSaving}
             className={`
               w-full px-3 py-2 
-              bg-[var(--surface-container-lowest)] 
+              bg-background 
               border rounded-md 
-              text-[var(--on-surface)] 
-              placeholder-[var(--on-surface-variant)]
-              focus:outline-none focus:ring-2 focus:ring-[var(--primary)]
+              text-textPrimary 
+              placeholder-textSecondary
+              focus:outline-none focus:ring-2 focus:ring-primary
               disabled:opacity-50
-              ${touched.clientEmail && errors.clientEmail ? 'border-[var(--error)] focus:ring-[var(--error)]' : 'border-[var(--outline)]'}
+              ${touched.clientEmail && errors.clientEmail ? 'border-error focus:ring-error' : 'border-border'}
             `}
           />
           {touched.clientEmail && errors.clientEmail && (
-            <p className="text-xs text-[var(--error)] mt-1">{errors.clientEmail}</p>
+            <p className="text-xs text-error mt-1">{errors.clientEmail}</p>
           )}
         </div>
 
         {/* Notes input */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[var(--on-surface-variant)]">
+          <label className="text-sm font-medium text-textSecondary">
             {t("fields.notes")}
           </label>
           <textarea
@@ -254,11 +254,11 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
             rows={3}
             className="
               w-full px-3 py-2 
-              bg-[var(--surface-container-lowest)] 
-              border border-[var(--outline)] rounded-md 
-              text-[var(--on-surface)] 
-              placeholder-[var(--on-surface-variant)]
-              focus:outline-none focus:ring-2 focus:ring-[var(--primary)]
+              bg-background 
+              border border-border rounded-md 
+              text-textPrimary 
+              placeholder-textSecondary
+              focus:outline-none focus:ring-2 focus:ring-primary
               disabled:opacity-50
               resize-none
             "
@@ -268,22 +268,22 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
       </div>
 
       {/* Footer */}
-      <div className="flex gap-3 p-6 border-t border-[var(--outline-variant)] justify-end bg-[var(--surface-container-low)] rounded-b-xl">
+      <div className="flex gap-3 p-6 border-t border-border justify-end bg-surface rounded-b-xl">
         <button
           onClick={onCancel}
           disabled={isSaving}
-          className="px-6 py-2 rounded-full font-medium text-[var(--on-surface)] bg-[var(--surface-container-high)] hover:bg-[var(--surface-container-highest)] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-6 py-2 rounded-full font-medium text-textPrimary bg-surface hover:bg-primary-soft transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Cancel
         </button>
         <button
           onClick={handleSave}
           disabled={isSaving || Object.keys(errors).length > 0}
-          className="px-6 py-2 rounded-full font-medium text-[var(--on-primary)] bg-[var(--primary)] hover:bg-[var(--primary-hover)] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="px-6 py-2 rounded-full font-medium text-white bg-primary hover:bg-primary-hover transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           {isSaving ? (
             <>
-              <span className="inline-block w-4 h-4 border-2 border-[var(--on-primary)] border-t-transparent rounded-full animate-spin" />
+              <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               {t("buttons.saving")}
             </>
           ) : (

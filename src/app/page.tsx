@@ -29,10 +29,10 @@ export default function Home() {
   return (
     <main className={`transition-all duration-300 mx-auto flex flex-col w-full h-full ${isSidebarCollapsed ? "max-w-[98%] px-2 py-4" : "px-6 py-5 max-w-7xl"}`}>
       <header className="mb-5">
-        <h1 className="text-xl font-medium text-[var(--on-surface)] tracking-tight">
+        <h1 className="text-xl font-medium text-textPrimary tracking-tight">
           {t("home.title")}
         </h1>
-        <p className="mt-0.5 text-sm text-[var(--on-surface-variant)]">
+        <p className="mt-0.5 text-sm text-textSecondary">
           {t("home.description")}
         </p>
       </header>

@@ -35,9 +35,9 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
 }) => (
   <div className={`flex items-center justify-between ${className}`}>
     <div>
-      <h2 className="text-base font-medium text-[var(--on-surface)]">{title}</h2>
+      <h2 className="text-base font-medium text-textPrimary">{title}</h2>
       {description && (
-        <p className="mt-0.5 text-sm text-[var(--on-surface-variant)]">{description}</p>
+        <p className="mt-0.5 text-sm text-textSecondary">{description}</p>
       )}
     </div>
     {actions && <div className="flex items-center gap-2">{actions}</div>}
@@ -54,5 +54,5 @@ export interface DividerProps {
  * Horizontal divider — M3 outline-variant color
  */
 export const Divider: React.FC<DividerProps> = ({ className = "" }) => (
-  <hr className={`border-t border-[var(--outline-variant)] ${className}`} />
+  <hr className={`border-t border-border ${className}`} />
 );

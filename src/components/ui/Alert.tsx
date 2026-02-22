@@ -15,31 +15,31 @@ export interface AlertProps {
 
 const variantStyles = {
   info: {
-    container: "bg-[var(--secondary-container)] border-transparent",
-    icon: "text-[var(--primary)]",
-    title: "text-[var(--on-primary-container)]",
-    content: "text-[var(--on-secondary-container)]",
+    container: "bg-primary-soft border-transparent",
+    icon: "text-primary",
+    title: "text-primary",
+    content: "text-primary",
     defaultIcon: "ℹ",
   },
   success: {
-    container: "bg-[var(--success-container)] border-transparent",
-    icon: "text-[var(--success)]",
-    title: "text-[var(--on-success-container)]",
-    content: "text-[var(--on-success-container)]",
+    container: "bg-success border-transparent",
+    icon: "text-success",
+    title: "text-white",
+    content: "text-white",
     defaultIcon: "✓",
   },
   warning: {
-    container: "bg-[var(--warning-container)] border-transparent",
-    icon: "text-[var(--warning)]",
-    title: "text-[var(--on-warning-container)]",
-    content: "text-[var(--on-warning-container)]",
+    container: "bg-warning border-transparent",
+    icon: "text-warning",
+    title: "text-white",
+    content: "text-white",
     defaultIcon: "⚠",
   },
   error: {
-    container: "bg-[var(--error-container)] border-transparent",
-    icon: "text-[var(--error)]",
-    title: "text-[var(--on-error-container)]",
-    content: "text-[var(--on-error-container)]",
+    container: "bg-error border-transparent",
+    icon: "text-error",
+    title: "text-white",
+    content: "text-white",
     defaultIcon: "✕",
   },
 };
@@ -79,7 +79,7 @@ export const Alert: React.FC<AlertProps> = ({
         <button
           type="button"
           onClick={onDismiss}
-          className="flex-shrink-0 text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] rounded-full p-1 hover:bg-[var(--surface-container)]"
+          className="flex-shrink-0 text-textSecondary hover:text-textPrimary rounded-full p-1 hover:bg-surface"
           aria-label="Dismiss"
         >
           <XIcon className="w-4 h-4" />

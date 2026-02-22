@@ -13,8 +13,8 @@ import { ColumnType, CellValue, Column } from "@/core/sheet-builder";
 // Modern minimalistic input styles
 const BASE_INPUT_CLASSES = `
   w-full h-full px-2 py-1.5
-  text-xs font-normal text-[var(--on-surface)]
-  placeholder:text-[var(--on-surface-variant)]
+  text-xs font-normal text-textPrimary
+  placeholder:text-textSecondary
   bg-transparent
   border-0 outline-none
   focus:ring-0 focus:outline-none focus:border-0 focus:shadow-none
@@ -85,14 +85,14 @@ export const TableCell = memo(function TableCell({
               backgroundSize: "1.25rem 1.25rem",
             }}
           >
-            <option value="" className="text-[var(--on-surface-variant)]">
+            <option value="" className="text-textSecondary">
               Select...
             </option>
             {column.options?.map((opt) => (
               <option
                 key={opt.value}
                 value={opt.value}
-                className="text-[var(--on-surface)] bg-[var(--surface)]"
+                className="text-textPrimary bg-surface"
               >
                 {opt.label}
               </option>
@@ -107,7 +107,7 @@ export const TableCell = memo(function TableCell({
               type="checkbox"
               checked={!!value}
               onChange={handleChange}
-              className="w-5 h-5 text-[var(--primary)] bg-[var(--surface)] border-[var(--outline)] rounded cursor-pointer focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-0 transition-all duration-200 hover:scale-110"
+              className="w-5 h-5 text-primary bg-surface border-border rounded cursor-pointer focus:ring-2 focus:ring-primary focus:ring-offset-0 transition-all duration-200 hover:scale-110"
             />
           </div>
         );
@@ -128,7 +128,7 @@ export const TableCell = memo(function TableCell({
 
   return (
     <td
-      className="relative border-r border-b border-[var(--outline-variant)] bg-[var(--surface)] hover:bg-[var(--surface-container-low)] outline-none focus-within:bg-[var(--surface-container-low)] focus-within:shadow-md focus-within:border-[var(--primary)] focus-within:z-10"
+      className="relative border-r border-b border-border bg-surface hover:bg-surface outline-none focus-within:bg-surface focus-within:shadow-md focus-within:border-primary focus-within:z-10"
       style={{
         width: `${columnWidth}px`,
         transition:

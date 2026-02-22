@@ -78,15 +78,15 @@ export function SheetTabs({
   );
 
   return (
-    <div className="flex items-center gap-0.5 border-b-2 border-[var(--outline-variant)] bg-[var(--surface-container-low)] px-3 py-1.5">
+    <div className="flex items-center gap-0.5 border-b-2 border-border bg-surface px-3 py-1.5">
       {sheets.map((sheet) => (
         <div
           key={sheet.id}
           className={`
             group flex items-center gap-2 px-4 py-2 rounded-t-lg cursor-pointer
             transition-all duration-200            ${sheet.id === activeSheetId
-              ? "bg-[var(--surface)] shadow-sm border-t-2 border-l border-r border-[var(--primary)] border-b-0 text-[var(--on-surface)] font-semibold -mb-0.5"
-              : "bg-transparent hover:bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] border-b-2 border-transparent"
+              ? "bg-surface shadow-sm border-t-2 border-l border-r border-primary border-b-0 text-textPrimary font-semibold -mb-0.5"
+              : "bg-transparent hover:bg-surface text-textSecondary hover:text-textPrimary border-b-2 border-transparent"
             }
           `}
         >
@@ -106,7 +106,7 @@ export function SheetTabs({
               }}
               onClick={(e) => e.stopPropagation()}
               autoFocus
-              className="text-sm bg-[var(--surface-container-lowest)] border border-[var(--primary)] text-[var(--on-surface)] rounded px-2 py-0.5 outline-none focus:ring-2 focus:ring-[var(--primary)] min-w-[80px]"
+              className="text-sm bg-background border border-primary text-textPrimary rounded px-2 py-0.5 outline-none focus:ring-2 focus:ring-primary min-w-[80px]"
             />
           ) : (
             <span
@@ -123,7 +123,7 @@ export function SheetTabs({
               onClick={(e) => handleReset(sheet.id, sheet.name, e)}
               className={`
                 opacity-0 group-hover:opacity-100
-                text-[var(--on-surface-variant)] hover:text-[var(--warning)] hover:bg-[var(--warning-container)] 
+                text-textSecondary hover:text-warning hover:bg-warning 
                 rounded p-0.5 transition-all duration-150
               `}
               title="Reset sheet data"
@@ -140,7 +140,7 @@ export function SheetTabs({
                 }}
                 className={`
                   opacity-0 group-hover:opacity-100
-                  text-[var(--on-surface-variant)] hover:text-[var(--error)] hover:bg-[var(--error-container)] 
+                  text-textSecondary hover:text-error hover:bg-error 
                   rounded p-0.5 transition-all duration-150
                 `}
                 title="Delete sheet"
@@ -157,11 +157,11 @@ export function SheetTabs({
       {/* Add sheet button */}
       <button
         onClick={onAddSheet}
-        className="inline-flex items-center gap-1.5 px-3 py-2 ml-2 text-sm font-medium text-[var(--on-surface-variant)] hover:text-[var(--primary)] hover:bg-[var(--primary-container)] rounded-md transition-colors duration-150 group"
+        className="inline-flex items-center gap-1.5 px-3 py-2 ml-2 text-sm font-medium text-textSecondary hover:text-primary hover:bg-primary-soft rounded-md transition-colors duration-150 group"
         title={t("tabs.add")}
         type="button"
       >
-        <Plus className="w-4 h-4 text-[var(--on-surface-variant)] group-hover:text-[var(--primary)] transition-colors" />
+        <Plus className="w-4 h-4 text-textSecondary group-hover:text-primary transition-colors" />
         <span>{t("tabs.add")}</span>
       </button>
 

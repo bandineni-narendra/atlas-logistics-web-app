@@ -18,11 +18,11 @@ export function AddColumnButton({ onAdd }: AddColumnButtonProps) {
   return (
     <button
       onClick={onAdd}
-      className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--on-surface)] hover:text-[var(--primary)] hover:bg-[var(--surface-container-high)] rounded-md border border-[var(--outline)] hover:border-[var(--primary)] transition-all duration-150 group"
+      className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-textPrimary hover:text-primary hover:bg-surface rounded-md border border-border hover:border-primary transition-all duration-150 group"
       title={t("columns.add")}
       type="button"
     >
-      <Plus className="w-4 h-4 text-[var(--on-surface-variant)] group-hover:text-[var(--primary)] transition-colors" />
+      <Plus className="w-4 h-4 text-textSecondary group-hover:text-primary transition-colors" />
       <span>{t("columns.add")}</span>
     </button>
   );

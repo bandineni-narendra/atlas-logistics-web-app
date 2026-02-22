@@ -53,12 +53,12 @@ export function Sidebar({ currentPath }: SidebarProps) {
   );
 
   return (
-    <aside className={`${isSidebarCollapsed ? "w-20" : "w-64"} bg-[var(--surface)] border-r border-[var(--outline-variant)] flex flex-col h-screen transition-all duration-300 ease-in-out`}>
+    <aside className={`${isSidebarCollapsed ? "w-20" : "w-64"} bg-surface border-r border-border flex flex-col h-screen transition-all duration-300 ease-in-out`}>
       {/* Header Section: Toggle & Logo */}
-      <div className={`px-4 py-4 border-b border-[var(--outline-variant)] flex items-center ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
+      <div className={`px-4 py-4 border-b border-border flex items-center ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
         <button
           onClick={toggleSidebar}
-          className="p-2 rounded-full hover:bg-[var(--surface-container-low)] text-[var(--on-surface-variant)] transition-colors duration-200"
+          className="p-2 rounded-full hover:bg-surface text-textSecondary transition-colors duration-200"
           title={isSidebarCollapsed ? "Expand" : "Collapse"}
         >
           <Menu className="w-6 h-6" />
@@ -66,14 +66,14 @@ export function Sidebar({ currentPath }: SidebarProps) {
 
         {!isSidebarCollapsed && (
           <div className="flex items-center gap-3 overflow-hidden transition-opacity duration-300">
-            <div className="w-8 h-8 bg-[var(--primary)] rounded-lg flex items-center justify-center flex-shrink-0">
-              <span className="text-[var(--on-primary)] font-medium text-sm">A</span>
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+              <span className="text-white font-medium text-sm">A</span>
             </div>
             <div className="min-w-0">
-              <h1 className="text-sm font-medium text-[var(--on-surface)] truncate">
+              <h1 className="text-sm font-medium text-textPrimary truncate">
                 {t("common.appName")}
               </h1>
-              <p className="text-xs text-[var(--on-surface-variant)] truncate">{t("common.appTagline")}</p>
+              <p className="text-xs text-textSecondary truncate">{t("common.appTagline")}</p>
             </div>
           </div>
         )}
@@ -96,28 +96,28 @@ export function Sidebar({ currentPath }: SidebarProps) {
       </nav>
 
       {/* Footer — User Section */}
-      <div className={`px-3 py-3 border-t border-[var(--outline-variant)] ${isSidebarCollapsed ? "flex justify-center" : ""}`}>
+      <div className={`px-3 py-3 border-t border-border ${isSidebarCollapsed ? "flex justify-center" : ""}`}>
         {isAuthenticated && user ? (
           <div className="relative w-full">
             <button
               onClick={() => setShowDropdown(!showDropdown)}
-              className={`w-full flex items-center rounded-full hover:bg-[var(--surface-container-low)] transition-colors duration-100 ${isSidebarCollapsed ? "justify-center p-2" : "gap-3 px-3 py-2"}`}
+              className={`w-full flex items-center rounded-full hover:bg-surface transition-colors duration-100 ${isSidebarCollapsed ? "justify-center p-2" : "gap-3 px-3 py-2"}`}
             >
-              <div className="w-8 h-8 bg-[var(--primary)] rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-[var(--on-primary)] text-sm font-medium">
+              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-white text-sm font-medium">
                   {user.name.charAt(0).toUpperCase()}
                 </span>
               </div>
               {!isSidebarCollapsed && (
                 <>
                   <div className="flex-1 min-w-0 text-left">
-                    <p className="text-sm font-medium text-[var(--on-surface)] truncate">
+                    <p className="text-sm font-medium text-textPrimary truncate">
                       {user.name}
                     </p>
-                    <p className="text-xs text-[var(--on-surface-variant)] truncate">{user.email}</p>
+                    <p className="text-xs text-textSecondary truncate">{user.email}</p>
                   </div>
                   <ChevronDown
-                    className={`w-4 h-4 text-[var(--on-surface-variant)] transition-transform duration-100 ${showDropdown ? "rotate-180" : ""}`}
+                    className={`w-4 h-4 text-textSecondary transition-transform duration-100 ${showDropdown ? "rotate-180" : ""}`}
                   />
                 </>
               )}
@@ -125,18 +125,18 @@ export function Sidebar({ currentPath }: SidebarProps) {
 
             {/* Dropdown Menu */}
             {showDropdown && (
-              <div className={`absolute bottom-full mb-1 bg-[var(--surface)] border border-[var(--outline-variant)] rounded-xl shadow-[var(--elevation-2)] overflow-hidden ${isSidebarCollapsed ? "left-14 w-48" : "left-0 right-0"}`}>
+              <div className={`absolute bottom-full mb-1 bg-surface border border-border rounded-xl shadow-md overflow-hidden ${isSidebarCollapsed ? "left-14 w-48" : "left-0 right-0"}`}>
                 <Link
                   href="/profile"
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--on-surface)] hover:bg-[var(--surface-container-low)] transition-colors duration-100"
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-textPrimary hover:bg-surface transition-colors duration-100"
                   onClick={() => setShowDropdown(false)}
                 >
-                  <User className="w-4 h-4 text-[var(--on-surface-variant)]" />
+                  <User className="w-4 h-4 text-textSecondary" />
                   <span>{t("navigation.profile")}</span>
                 </Link>
                 {/* Theme Toggle */}
                 <div
-                  className="flex items-center justify-between px-4 py-2.5 text-sm text-[var(--on-surface)] hover:bg-[var(--surface-container-low)] transition-colors duration-100 cursor-pointer border-t border-[var(--outline-variant)]"
+                  className="flex items-center justify-between px-4 py-2.5 text-sm text-textPrimary hover:bg-surface transition-colors duration-100 cursor-pointer border-t border-border"
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleTheme();
@@ -146,9 +146,9 @@ export function Sidebar({ currentPath }: SidebarProps) {
                     <>
                       <div className="flex items-center gap-3">
                         {mode === "dark" ? (
-                          <Moon className="w-4 h-4 text-[var(--on-surface-variant)]" />
+                          <Moon className="w-4 h-4 text-textSecondary" />
                         ) : (
-                          <Sun className="w-4 h-4 text-[var(--on-surface-variant)]" />
+                          <Sun className="w-4 h-4 text-textSecondary" />
                         )}
                         <span>{mode === "dark" ? t("common.darkMode") : t("common.lightMode")}</span>
                       </div>
@@ -169,7 +169,7 @@ export function Sidebar({ currentPath }: SidebarProps) {
                     setShowDropdown(false);
                     logout();
                   }}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--error)] hover:bg-[var(--error-container)] transition-colors duration-100 text-left border-t border-[var(--outline-variant)]"
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-error hover:bg-error transition-colors duration-100 text-left border-t border-border"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>{t("navigation.logout")}</span>
@@ -180,15 +180,15 @@ export function Sidebar({ currentPath }: SidebarProps) {
         ) : (
           <Link
             href="/login"
-            className={`flex items-center rounded-full hover:bg-[var(--surface-container-low)] transition-colors duration-100 ${isSidebarCollapsed ? "justify-center p-2" : "gap-3 px-3 py-2"}`}
+            className={`flex items-center rounded-full hover:bg-surface transition-colors duration-100 ${isSidebarCollapsed ? "justify-center p-2" : "gap-3 px-3 py-2"}`}
             title={isSidebarCollapsed ? t("auth.login") : ""}
           >
-            <div className="w-8 h-8 bg-[var(--surface-container-high)] rounded-full flex items-center justify-center">
-              <User className="w-4 h-4 text-[var(--on-surface-variant)]" />
+            <div className="w-8 h-8 bg-surface rounded-full flex items-center justify-center">
+              <User className="w-4 h-4 text-textSecondary" />
             </div>
             {!isSidebarCollapsed && (
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-[var(--on-surface)]">
+                <p className="text-sm font-medium text-textPrimary">
                   {t("auth.login")}
                 </p>
               </div>

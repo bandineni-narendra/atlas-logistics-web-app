@@ -8,5 +8,5 @@ export interface ErrorTextProps {
  * Inline error text (small, red)
  */
 export const ErrorText: React.FC<ErrorTextProps> = ({ message }) => (
-  <p className="text-sm text-red-600">{message}</p>
+  <p className="text-sm text-error">{message}</p>
 );
