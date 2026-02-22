@@ -4,6 +4,7 @@ import { formatSheetName } from "@/utils";
 
 import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
+import { Loader2 } from "lucide-react";
 
 import { AirTable } from "@/components/air";
 import { AirFreightResult, AirFreightRow } from "@/types/air";
@@ -12,6 +13,7 @@ import {
   Card,
   CardContent,
   Alert,
+  Button
 } from "@/components/ui";
 
 type SheetResult = {
@@ -102,25 +104,7 @@ export default function AirPage() {
         {/* Compact progress indicator */}
         {totalSheets > 0 && completedCount < totalSheets && (
           <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-100 shrink-0">
-            <svg
-              className="w-4 h-4 text-blue-600 animate-spin"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              />
-            </svg>
+            <Loader2 className="w-4 h-4 text-blue-600 animate-spin" />
             <span className="text-sm font-medium text-blue-700">
               {t("progress.countOfTotal", { count: completedCount, total: totalSheets })}
             </span>
@@ -151,17 +135,17 @@ export default function AirPage() {
           <div className="border-b border-gray-200 bg-gray-50 px-4">
             <div className="flex gap-1 overflow-x-auto">
               {results.map(({ sheetName }, idx) => (
-                <button
+                <Button
                   key={sheetName}
-                  className={`px-4 py-3 text-sm font-medium transition-colors duration-150 border-b-2 -mb-px whitespace-nowrap ${activeTab === idx
-                    ? "border-blue-600 text-blue-700 bg-white"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                  variant="ghost"
+                  className={`px-4 py-3 rounded-none text-sm font-medium transition-colors duration-150 border-b-2 -mb-px whitespace-nowrap ${activeTab === idx
+                    ? "border-[var(--primary)] text-[var(--primary)] bg-[var(--surface)]"
+                    : "border-transparent text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] hover:bg-[var(--surface-container-low)]"
                     }`}
                   onClick={() => setActiveTab(idx)}
-                  type="button"
                 >
                   {formatSheetName(sheetName, t("air.sheetFallback", { index: idx + 1 }))}
-                </button>
+                </Button>
               ))}
             </div>
           </div>

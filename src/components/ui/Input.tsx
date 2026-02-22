@@ -5,6 +5,7 @@
 "use client";
 
 import React from "react";
+import { AlertCircle } from "lucide-react";
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -49,9 +50,7 @@ export const Input: React.FC<InputProps> = ({
       />
       {error && (
         <p className="mt-1 text-xs text-[var(--error)] flex items-center gap-1">
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
-          </svg>
+          <AlertCircle className="w-3.5 h-3.5" />
           {error}
         </p>
       )}

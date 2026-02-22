@@ -6,6 +6,7 @@
 
 "use client";
 import { useTranslations } from "next-intl";
+import { Plus } from "lucide-react";
 
 interface AddColumnButtonProps {
   onAdd: () => void;
@@ -21,20 +22,7 @@ export function AddColumnButton({ onAdd }: AddColumnButtonProps) {
       title={t("columns.add")}
       type="button"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={2.5}
-        stroke="currentColor"
-        className="w-4 h-4 text-[var(--on-surface-variant)] group-hover:text-[var(--primary)] transition-colors"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 4.5v15m7.5-7.5h-15"
-        />
-      </svg>
+      <Plus className="w-4 h-4 text-[var(--on-surface-variant)] group-hover:text-[var(--primary)] transition-colors" />
       <span>{t("columns.add")}</span>
     </button>
   );

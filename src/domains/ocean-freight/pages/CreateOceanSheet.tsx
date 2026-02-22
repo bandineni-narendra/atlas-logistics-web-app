@@ -13,7 +13,7 @@ import { oceanFreightColumns } from "../config";
 import { mapToOceanRate, OceanRate } from "../models";
 import { validateOceanSheets } from "../validation";
 import { useFeedbackModal, useFileSave } from "@/hooks";
-import { FeedbackModal } from "@/components/ui";
+import { FeedbackModal, FileNameModal, Button } from "@/components/ui";
 import { useUI } from "@/contexts/UIContext";
 import { useTranslations } from "next-intl";
 
@@ -29,7 +29,7 @@ export default function CreateOceanSheet() {
   } = useFeedbackModal();
 
   // File save flow with modal
-  const { handleSaveFile, FileNameModalComponent } = useFileSave({
+  const { handleSaveFile, fileNameModalProps } = useFileSave({
     fileType: "OCEAN",
     effectiveDate: new Date().toISOString().split("T")[0],
     validateSheets: (sheets) => validateOceanSheets(sheets, { skipEmptyRows: true }),
@@ -92,19 +92,19 @@ export default function CreateOceanSheet() {
 
       {/* Save Button */}
       <div className="flex justify-center">
-        <button
+        <Button
           onClick={handleSave}
-          className="px-8 py-3 bg-[var(--primary)] text-[var(--on-primary)] font-semibold rounded-md hover:bg-[var(--primary-hover)] transition-colors shadow-md hover:shadow-lg"
+          className="px-8 py-3"
         >
           Save
-        </button>
+        </Button>
       </div>
 
       {/* Feedback Modal */}
       <FeedbackModal state={state} onClose={closeSuccessModal} />
 
       {/* File Name Modal */}
-      {FileNameModalComponent}
+      <FileNameModal {...fileNameModalProps} />
     </div>
   );
 }

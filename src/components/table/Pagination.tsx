@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { useTranslations } from "next-intl";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export type PaginationProps = {
   currentPage: number;
@@ -48,19 +49,7 @@ export function Pagination({
           disabled={!hasPrevious || isDisabled}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline)] rounded-full hover:bg-[var(--surface-container-low)] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-100"
         >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
+          <ChevronLeft className="w-4 h-4" />
           {t("buttons.previous")}
         </button>
 
@@ -70,19 +59,7 @@ export function Pagination({
           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline)] rounded-full hover:bg-[var(--surface-container-low)] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-100"
         >
           {t("buttons.next")}
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
+          <ChevronRight className="w-4 h-4" />
         </button>
       </div>
     </div>

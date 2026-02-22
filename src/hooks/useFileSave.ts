@@ -11,6 +11,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Sheet } from "@/core/sheet-builder";
 import { filesService } from "@/services/filesService";
 import { FileNameModal } from "@/components/ui";
@@ -44,8 +45,16 @@ interface UseFileSaveReturn {
   /** Whether save is in progress */
   isSaving: boolean;
 
-  /** Render this component in your UI */
-  FileNameModalComponent: React.ReactNode;
+  /** Modal properties */
+  fileNameModalProps: {
+    isOpen: boolean;
+    fileType: "OCEAN" | "AIR";
+    effectiveDate: string;
+    defaultName: string;
+    onSave: (data: { fileName: string; clientEmail?: string; notes?: string }) => void;
+    onCancel: () => void;
+    isSaving: boolean;
+  };
 }
 
 /**
@@ -102,8 +111,25 @@ export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
   } = options;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const [pendingSheets, setPendingSheets] = useState<Sheet[]>([]);
+  const queryClient = useQueryClient();
+
+  // Replace manual state with React Query's useMutation
+  const createFileMutation = useMutation({
+    mutationFn: (request: CreateFileRequest) => filesService.createFile(request),
+    onSuccess: (response) => {
+      // Invalidate relevant queries so UI auto-updates
+      queryClient.invalidateQueries({ queryKey: ["files"] });
+
+      setIsModalOpen(false);
+      setPendingSheets([]);
+      onSuccess?.(response.fileId, response.sheetIds);
+    },
+    onError: (error) => {
+      const errorMsg = error instanceof Error ? error.message : "Failed to save file. Please try again.";
+      onError?.(errorMsg);
+    }
+  });
 
   /**
    * Start the save flow
@@ -142,7 +168,7 @@ export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
    * Handle file name confirmation and API call
    */
   const handleFileNameConfirm = useCallback(
-    async (data: { fileName: string; clientEmail?: string; notes?: string }) => {
+    (data: { fileName: string; clientEmail?: string; notes?: string }) => {
       const { fileName, clientEmail, notes } = data;
 
       if (pendingSheets.length === 0) {
@@ -151,74 +177,57 @@ export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
         return;
       }
 
-      setIsSaving(true);
-
-      try {
-        // Prepare sheets data — transform columns to backend format
-        const sheetsData = pendingSheets.map((sheet) => ({
+      // Prepare sheets data — transform columns to backend format
+      const sheetsData = pendingSheets.map((sheet) => ({
+        name: sheet.name,
+        data: {
+          id: sheet.id,
           name: sheet.name,
-          data: {
-            id: sheet.id,
-            name: sheet.name,
-            columns: sheet.columns.map(transformColumn),
-            rows: sheet.rows,
-          },
-        }));
+          columns: sheet.columns.map(transformColumn),
+          rows: sheet.rows,
+        },
+      }));
 
-        // Build the request matching the new CreateFileRequest type
-        const request: CreateFileRequest = {
-          name: fileName,
-          type: fileType,
-          effectiveDate,
-          sheets: sheetsData,
-          clientEmail,
-          notes,
-        };
+      // Build the request matching the new CreateFileRequest type
+      const request: CreateFileRequest = {
+        name: fileName,
+        type: fileType,
+        effectiveDate,
+        sheets: sheetsData,
+        clientEmail,
+        notes,
+      };
 
-        // Call the unified files service
-        const response = await filesService.createFile(request);
-
-        // Success
-        setIsModalOpen(false);
-        setPendingSheets([]);
-        onSuccess?.(response.fileId, response.sheetIds);
-      } catch (error) {
-        const errorMsg =
-          error instanceof Error
-            ? error.message
-            : "Failed to save file. Please try again.";
-        onError?.(errorMsg);
-      } finally {
-        setIsSaving(false);
-      }
+      // Trigger mutation
+      createFileMutation.mutate(request);
     },
-    [pendingSheets, fileType, effectiveDate, onSuccess, onError],
+    [pendingSheets, fileType, effectiveDate, createFileMutation, onError],
   );
 
   /**
    * Handle modal cancel
    */
   const handleModalCancel = useCallback(() => {
-    if (!isSaving) {
+    if (!createFileMutation.isPending) {
       setIsModalOpen(false);
       setPendingSheets([]);
     }
-  }, [isSaving]);
+  }, [createFileMutation.isPending]);
 
-  // Modal component
-  const FileNameModalComponent = React.createElement(FileNameModal, {
+  // Return properties so the consuming component can render the modal
+  const fileNameModalProps = {
     isOpen: isModalOpen,
     fileType: fileType,
     effectiveDate: effectiveDate,
     defaultName: defaultFileName,
     onSave: handleFileNameConfirm,
     onCancel: handleModalCancel,
-    isSaving: isSaving,
-  });
+    isSaving: createFileMutation.isPending,
+  };
 
   return {
     handleSaveFile,
-    isSaving,
-    FileNameModalComponent,
+    isSaving: createFileMutation.isPending,
+    fileNameModalProps,
   };
 }

@@ -9,6 +9,7 @@
 import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { Column } from "@/core/sheet-builder";
+import { X, Plus } from "lucide-react";
 
 interface TableHeaderProps {
   columns: Column[];
@@ -107,20 +108,7 @@ export function TableHeader({
                 type="button"
                 aria-label={`Delete ${column.label} column`}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2.5}
-                  stroke="currentColor"
-                  className="w-3.5 h-3.5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <X className="w-3.5 h-3.5" />
               </button>
             </th>
           );
@@ -147,20 +135,7 @@ export function TableHeader({
             title="Add column"
             type="button"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2.5}
-              stroke="currentColor"
-              className="w-3.5 h-3.5 text-[var(--on-primary)] transition-all duration-200 group-hover:rotate-90"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
+            <Plus className="w-3.5 h-3.5 text-[var(--on-primary)] transition-all duration-200 group-hover:rotate-90" />
             <span>{t("columns.name")}</span>
           </button>
         </th>

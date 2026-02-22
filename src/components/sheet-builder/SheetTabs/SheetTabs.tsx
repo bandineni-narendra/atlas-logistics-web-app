@@ -11,6 +11,7 @@ import { useTranslations } from "next-intl";
 import { Sheet } from "@/core/sheet-builder";
 import { useFeedbackModal } from "@/hooks";
 import { FeedbackModal } from "@/components/ui";
+import { RotateCcw, X, Plus } from "lucide-react";
 interface SheetTabsProps {
   sheets: Sheet[];
   activeSheetId: string;
@@ -129,20 +130,7 @@ export function SheetTabs({
               type="button"
               aria-label={`Reset ${sheet.name}`}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2.5}
-                stroke="currentColor"
-                className="w-3.5 h-3.5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
-                />
-              </svg>
+              <RotateCcw className="w-3.5 h-3.5" />
             </button>
             {sheets.length > 1 && (
               <button
@@ -159,20 +147,7 @@ export function SheetTabs({
                 type="button"
                 aria-label={`Delete ${sheet.name}`}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2.5}
-                  stroke="currentColor"
-                  className="w-3.5 h-3.5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
@@ -186,20 +161,7 @@ export function SheetTabs({
         title={t("tabs.add")}
         type="button"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={2.5}
-          stroke="currentColor"
-          className="w-4 h-4 text-[var(--on-surface-variant)] group-hover:text-[var(--primary)] transition-colors"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 4.5v15m7.5-7.5h-15"
-          />
-        </svg>
+        <Plus className="w-4 h-4 text-[var(--on-surface-variant)] group-hover:text-[var(--primary)] transition-colors" />
         <span>{t("tabs.add")}</span>
       </button>
 

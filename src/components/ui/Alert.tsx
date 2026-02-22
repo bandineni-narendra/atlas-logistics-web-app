@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { X as XIcon } from "lucide-react";
 
 export interface AlertProps {
   variant: "info" | "success" | "warning" | "error";
@@ -81,9 +82,7 @@ export const Alert: React.FC<AlertProps> = ({
           className="flex-shrink-0 text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] rounded-full p-1 hover:bg-[var(--surface-container)]"
           aria-label="Dismiss"
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <XIcon className="w-4 h-4" />
         </button>
       )}
     </div>
