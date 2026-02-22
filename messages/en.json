@@ -212,10 +212,12 @@
   "sheetsView": {
     "table": {
       "name": "Name",
+      "client": "Client",
       "type": "Type",
       "status": "Status",
       "sheets": "Sheets",
-      "updated": "Updated"
+      "updated": "Updated",
+      "actions": "Actions"
     },
     "empty": {
       "title": "No files found",

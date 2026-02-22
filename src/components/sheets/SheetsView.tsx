@@ -1,12 +1,14 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useCallback } from "react";
 import Link from "next/link";
+import { Download, Loader2 } from "lucide-react";
 import { useFilesQuery } from "@/hooks/queries/useFiles";
 import { Pagination } from "@/components/table/Pagination";
 import { FILE_TYPE_CONFIG, FILE_STATUS_CONFIG } from "@/constants";
 import { ROUTES } from "@/constants/routes";
 import { logger } from "@/utils/logger";
+import { downloadFileAsXlsx } from "@/utils/downloadFile";
 import { useTranslations } from "next-intl";
 import type { FileType } from "@/types/api";
 
@@ -21,7 +23,7 @@ export interface SheetsViewProps {
 }
 
 /**
- * Sheets List View — Gmail-style dense list rows
+ * Sheets List View — Gmail-style dense list rows with Actions column
  */
 export function SheetsView({
   filter = "all",
@@ -31,6 +33,9 @@ export function SheetsView({
   endDate,
 }: SheetsViewProps) {
   const t = useTranslations("sheetsView");
+
+  /** Track which file ID is currently being downloaded */
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   // Build query params — omit type when "all", include date range if provided
   const queryParams = useMemo(
@@ -61,6 +66,23 @@ export function SheetsView({
 
   logger.debug(
     `[SheetsView] filter="${filter}", page=${page}, total=${total}, files=${files.length}, loading=${isLoading}`
+  );
+
+  const handleDownload = useCallback(
+    async (e: React.MouseEvent, fileId: string, fileName: string) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (downloadingId) return;
+      setDownloadingId(fileId);
+      try {
+        await downloadFileAsXlsx(fileId, fileName);
+      } catch (err) {
+        logger.error(`[SheetsView] Download failed for file ${fileId}:`, err);
+      } finally {
+        setDownloadingId(null);
+      }
+    },
+    [downloadingId]
   );
 
   // ── Loading ────────────────────────────────────────────
@@ -103,19 +125,25 @@ export function SheetsView({
   // ── List View ──────────────────────────────────────────
   return (
     <div className="border border-border rounded-xl overflow-hidden bg-surface">
-      {/* Table header */}
-      <div className="hidden sm:grid sm:grid-cols-12 gap-4 px-4 py-2 text-xs font-medium text-textSecondary border-b border-border bg-surface">
-        {/* Name + Client as inline sub-headers, no gap between them */}
-        <div className="col-span-6 flex items-center gap-3">
-          <span className="w-8 flex-shrink-0" />{/* spacer for icon */}
-          <div className="flex flex-1">
-            <span className="w-[55%]">Name</span>
-            <span className="w-[45%]">Client</span>
+      {/* Table header — mirrors the exact flex structure of each row */}
+      <div className="hidden sm:flex items-center border-b border-border bg-surface text-xs font-medium text-textSecondary">
+        {/* Matches <Link> in rows exactly: px-4 py-2 gap-4 flex-1 */}
+        <div className="flex-1 flex items-center gap-4 px-3 py-2 min-w-0">
+          {/* Matches row's gap-3 icon + text group */}
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <span className="w-8 flex-shrink-0" />{/* icon spacer */}
+            <div className="flex flex-1 min-w-0">
+              <span className="w-[55%]">Name</span>
+              <span className="w-[45%]">{t("table.client") || "Client"}</span>
+            </div>
           </div>
+          {/* Fixed-width columns matching row divs exactly */}
+          <span className="w-20 flex-shrink-0">{t("table.type")}</span>
+          <span className="w-24 flex-shrink-0">{t("table.status")}</span>
+          <span className="w-24 flex-shrink-0 text-right">{t("table.updated")}</span>
         </div>
-        <span className="col-span-2">{t("table.type")}</span>
-        <span className="col-span-2">{t("table.status")}</span>
-        <span className="col-span-2 text-right">{t("table.updated")}</span>
+        {/* Matches row's w-16 actions cell (outside the px-4 link area) */}
+        <span className="w-16 flex-shrink-0 text-center py-2 px-2">{t("table.actions")}</span>
       </div>
 
       {/* Rows */}
@@ -133,14 +161,20 @@ export function SheetsView({
             return null;
           }
 
+          const isDownloading = downloadingId === file.id;
+
           return (
-            <li key={file.id}>
+            <li
+              key={file.id}
+              className="group flex items-center hover:bg-surface transition-colors duration-100"
+            >
+              {/* Clickable link area — covers all data columns */}
               <Link
                 href={ROUTES.FILE_DETAIL(file.id)}
-                className="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 items-center px-4 py-2.5 hover:bg-surface transition-colors duration-100 group"
+                className="flex-1 flex items-center gap-4 px-3 py-2.5 min-w-0"
               >
                 {/* Name + Client: single left cell, rendered as two inline sub-columns */}
-                <div className="sm:col-span-6 flex items-center gap-3 min-w-0">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
                   <span
                     className={`flex-shrink-0 w-8 h-8 rounded-lg ${typeInfo.color} flex items-center justify-center text-sm`}
                   >
@@ -158,14 +192,14 @@ export function SheetsView({
                 </div>
 
                 {/* Type */}
-                <div className="sm:col-span-2">
+                <div className="w-20 flex-shrink-0">
                   <span className={`text-sm font-medium ${typeInfo.textColor}`}>
                     {typeInfo.label}
                   </span>
                 </div>
 
                 {/* Status badge */}
-                <div className="sm:col-span-2">
+                <div className="w-24 flex-shrink-0">
                   <span
                     className={`inline-flex text-xs px-2 py-0.5 rounded-full font-medium ${statusInfo.color}`}
                   >
@@ -174,10 +208,31 @@ export function SheetsView({
                 </div>
 
                 {/* Updated date */}
-                <div className="sm:col-span-2 text-right text-xs text-textSecondary">
+                <div className="w-24 flex-shrink-0 text-right text-xs text-textSecondary">
                   {new Date(file.updatedAt).toLocaleDateString()}
                 </div>
               </Link>
+
+              {/* Actions cell — outside the Link so clicks don't navigate */}
+              <div className="w-16 flex-shrink-0 flex items-center justify-center px-2 py-2.5">
+                <div className="flex items-center justify-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity duration-200">
+                  {/* Download button */}
+                  <button
+                    onClick={(e) => handleDownload(e, file.id, file.name)}
+                    disabled={isDownloading}
+                    className="p-1.5 text-textSecondary hover:text-primary hover:bg-primary-soft rounded-md transition-all duration-200 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    title="Download as Excel"
+                    type="button"
+                    aria-label={`Download ${file.name} as Excel`}
+                  >
+                    {isDownloading ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Download className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+                </div>
+              </div>
             </li>
           );
         })}
