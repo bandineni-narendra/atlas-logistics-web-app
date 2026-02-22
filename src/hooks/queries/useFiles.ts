@@ -12,6 +12,7 @@ import type {
   CreateFileRequest,
   GetFilesParams,
   UpdateFileRequest,
+  GetSheetRowsParams,
 } from "@/types/api";
 
 /**
@@ -87,5 +88,20 @@ export function useDeleteFile() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["files"] });
     },
+  });
+}
+
+/**
+ * Fetch paginated rows for a sheet
+ */
+export function useSheetRows(
+  fileId: string,
+  sheetId: string,
+  params: GetSheetRowsParams = {},
+) {
+  return useQuery({
+    queryKey: ["files", fileId, "sheets", sheetId, "rows", params],
+    queryFn: () => filesService.getSheetRows(fileId, sheetId, params),
+    enabled: !!fileId && !!sheetId,
   });
 }

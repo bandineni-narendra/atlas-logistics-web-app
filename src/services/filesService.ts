@@ -16,6 +16,8 @@ import type {
     UpdateFileResponse,
     DeleteFileResponse,
     SheetWithData,
+    GetSheetRowsParams,
+    GetSheetRowsResponse,
 } from "@/types/api";
 
 export class FilesService {
@@ -66,6 +68,25 @@ export class FilesService {
      */
     async deleteFile(fileId: string): Promise<DeleteFileResponse> {
         return apiClient.delete<DeleteFileResponse>(`/files/${fileId}`);
+    }
+
+    /**
+     * Get paginated rows for a sheet
+     */
+    async getSheetRows(
+        fileId: string,
+        sheetId: string,
+        params: GetSheetRowsParams = {},
+    ): Promise<GetSheetRowsResponse> {
+        const queryParams: Record<string, string | number> = {};
+
+        if (params.page !== undefined) queryParams.page = params.page;
+        if (params.pageSize !== undefined) queryParams.pageSize = params.pageSize;
+
+        return apiClient.get<GetSheetRowsResponse>(
+            `/files/${fileId}/sheets/${sheetId}/rows`,
+            queryParams,
+        );
     }
 }
 

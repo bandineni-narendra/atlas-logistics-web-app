@@ -61,7 +61,7 @@ export interface SheetData {
     id: string;
     name: string;
     columns: SheetColumn[];
-    rows: SheetRow[];
+    rows?: SheetRow[];
 }
 
 export interface CreateSheet {
@@ -139,6 +139,7 @@ export interface FileDetail {
 export interface SheetWithData {
     id: string;
     name: string;
+    rowCount: number;
     data: SheetData;
 }
 
@@ -156,6 +157,18 @@ export interface UpdateFileResponse {
 export interface DeleteFileResponse {
     success: boolean;
     message: string;
+}
+
+export interface GetSheetRowsParams {
+    page?: number;
+    pageSize?: number;
+}
+
+export interface GetSheetRowsResponse {
+    rows: SheetRow[];
+    total: number;
+    page: number;
+    pageSize: number;
 }
 
 // ============================================

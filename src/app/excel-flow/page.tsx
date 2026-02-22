@@ -91,9 +91,11 @@ export default function OceanPage() {
       <header className="mb-5 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-medium text-[var(--on-surface)] tracking-tight">
-            Excel Flow Processing
+            {t("excelFlow.title")}
           </h1>
-          <p className="mt-0.5 text-sm text-[var(--on-surface-variant)]">Process multi-sheet Excel files with sequential job handling</p>
+          <p className="mt-0.5 text-sm text-[var(--on-surface-variant)]">
+            {t("excelFlow.description")}
+          </p>
         </div>
 
         {/* Compact progress indicator */}
@@ -119,7 +121,7 @@ export default function OceanPage() {
               />
             </svg>
             <span className="text-sm font-medium text-blue-700">
-              {completedCount}/{totalSheets} sheets
+              {t("progress.countOfTotal", { count: completedCount, total: totalSheets })}
             </span>
           </div>
         )}
@@ -137,7 +139,7 @@ export default function OceanPage() {
       </Card>
 
       {error && (
-        <Alert variant="error" title="Processing Error">
+        <Alert variant="error" title={t("excelFlow.processingError")}>
           {error}
         </Alert>
       )}
@@ -151,13 +153,13 @@ export default function OceanPage() {
                 <button
                   key={sheetName}
                   className={`px-4 py-3 text-sm font-medium transition-colors duration-150 border-b-2 -mb-px whitespace-nowrap ${activeTab === idx
-                      ? "border-blue-600 text-blue-700 bg-white"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                    ? "border-blue-600 text-blue-700 bg-white"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                     }`}
                   onClick={() => setActiveTab(idx)}
                   type="button"
                 >
-                  {formatSheetName(sheetName, `Sheet ${idx + 1}`)}
+                  {formatSheetName(sheetName, t("air.sheetFallback", { index: idx + 1 }))}
                 </button>
               ))}
             </div>

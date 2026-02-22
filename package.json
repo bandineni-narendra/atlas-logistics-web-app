@@ -22,7 +22,6 @@
     "@mui/material": "^7.3.8",
     "@mui/material-nextjs": "^7.3.8",
     "@tanstack/react-query": "^5.90.21",
-    "axios": "^1.13.2",
     "brew": "^0.0.8",
     "firebase": "^12.9.0",
     "lucide-react": "^0.575.0",

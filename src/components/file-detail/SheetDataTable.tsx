@@ -1,30 +1,38 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Pagination } from "@/components/table/Pagination";
-import type { SheetData } from "@/types/api";
+import { useSheetRows } from "@/hooks/queries/useFiles";
+import type { SheetColumn } from "@/types/api";
 
-const ROWS_PER_PAGE = 25;
+const ROWS_PER_PAGE = 50; // Increased default for server-side
 
 export interface SheetDataTableProps {
-    data: SheetData;
+    fileId: string;
+    sheetId: string;
+    columns: SheetColumn[];
+    initialTotalRows: number;
 }
 
 /**
- * SheetDataTable — M3 flat read-only table with client-side pagination
+ * SheetDataTable — M3 flat read-only table with server-side pagination
  */
-export function SheetDataTable({ data }: SheetDataTableProps) {
+export function SheetDataTable({
+    fileId,
+    sheetId,
+    columns,
+    initialTotalRows,
+}: SheetDataTableProps) {
     const [page, setPage] = useState(1);
 
-    const { columns, rows } = data;
-    const totalRows = rows.length;
-    const totalPages = Math.max(1, Math.ceil(totalRows / ROWS_PER_PAGE));
+    const { data: rowsData, isLoading } = useSheetRows(fileId, sheetId, {
+        page,
+        pageSize: ROWS_PER_PAGE,
+    });
 
-    // Paginate rows on the client
-    const visibleRows = useMemo(() => {
-        const start = (page - 1) * ROWS_PER_PAGE;
-        return rows.slice(start, start + ROWS_PER_PAGE);
-    }, [rows, page]);
+    const rows = rowsData?.rows ?? [];
+    const totalRows = rowsData?.total ?? initialTotalRows;
+    const totalPages = Math.max(1, Math.ceil(totalRows / ROWS_PER_PAGE));
 
     if (columns.length === 0) {
         return (
@@ -37,14 +45,19 @@ export function SheetDataTable({ data }: SheetDataTableProps) {
     return (
         <div>
             {/* Scrollable table */}
-            <div className="overflow-x-auto border border-[var(--outline-variant)] rounded-xl bg-[var(--surface)] shadow-sm">
+            <div className="overflow-x-auto border border-[var(--outline-variant)] rounded-xl bg-[var(--surface)] shadow-sm min-h-[200px] relative">
+                {isLoading && (
+                    <div className="absolute inset-0 bg-[var(--surface)]/50 flex items-center justify-center z-10 backdrop-blur-[1px]">
+                        <div className="w-6 h-6 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin" />
+                    </div>
+                )}
                 <table className="min-w-full divide-y divide-[var(--outline-variant)] text-sm">
                     <thead>
                         <tr className="bg-[var(--surface-container-low)]">
                             <th className="px-4 py-3 text-left text-[11px] font-bold text-[var(--on-surface-variant)] uppercase tracking-wider w-12">
                                 #
                             </th>
-                            {columns.map((col, idx) => (
+                            {columns.map((col) => (
                                 <th
                                     key={col.id}
                                     className="px-4 py-3 text-left text-[11px] font-bold text-[var(--on-surface-variant)] uppercase tracking-wider whitespace-nowrap"
@@ -55,7 +68,7 @@ export function SheetDataTable({ data }: SheetDataTableProps) {
                         </tr>
                     </thead>
                     <tbody className="bg-[var(--surface)] divide-y divide-[var(--outline-variant)]">
-                        {visibleRows.map((row, idx) => (
+                        {rows.map((row, idx) => (
                             <tr
                                 key={row.id}
                                 className="hover:bg-[var(--primary-container)]/10 hover:text-[var(--primary)] transition-all duration-150 group"
@@ -63,7 +76,7 @@ export function SheetDataTable({ data }: SheetDataTableProps) {
                                 <td className="px-4 py-2.5 text-[var(--on-surface-variant)] text-xs font-medium bg-transparent">
                                     {(page - 1) * ROWS_PER_PAGE + idx + 1}
                                 </td>
-                                {columns.map((col, cIdx) => (
+                                {columns.map((col) => (
                                     <td
                                         key={col.id}
                                         className="px-4 py-2.5 text-[var(--on-surface)] whitespace-nowrap font-medium"
@@ -76,7 +89,7 @@ export function SheetDataTable({ data }: SheetDataTableProps) {
                                 ))}
                             </tr>
                         ))}
-                        {visibleRows.length === 0 && (
+                        {!isLoading && rows.length === 0 && (
                             <tr>
                                 <td
                                     colSpan={columns.length + 1}

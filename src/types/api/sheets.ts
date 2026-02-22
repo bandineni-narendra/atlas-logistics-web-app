@@ -58,3 +58,15 @@ export interface DashboardStats {
 export interface GetDashboardStatsResponse {
   stats: DashboardStats;
 }
+
+export interface GetSheetRowsParams {
+  page?: number;
+  pageSize?: number;
+}
+
+export interface GetSheetRowsResponse {
+  rows: any[];
+  total: number;
+  page: number;
+  pageSize: number;
+}

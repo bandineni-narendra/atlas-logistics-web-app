@@ -165,7 +165,12 @@ export default function FileDetailPage() {
                     {/* Active Sheet Data Table */}
                     <div className="p-1">
                         {activeSheet ? (
-                            <SheetDataTable data={activeSheet.data} />
+                            <SheetDataTable
+                                fileId={fileId}
+                                sheetId={activeSheet.id}
+                                columns={activeSheet.data.columns}
+                                initialTotalRows={activeSheet.rowCount}
+                            />
                         ) : (
                             <p className="text-[var(--on-surface-variant)] text-sm text-center py-12">
                                 Select a sheet tab above.

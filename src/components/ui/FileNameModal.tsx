@@ -19,6 +19,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Input, Modal } from "@/components/ui";
 import { FileType } from "@/types/file";
 
@@ -51,44 +52,7 @@ export interface FileNameModalProps {
   isSaving?: boolean;
 }
 
-/**
- * Validate file name
- */
-function validateFileName(name: string): string | null {
-  const trimmed = name.trim();
-
-  if (!trimmed) {
-    return "File name is required";
-  }
-
-  if (trimmed.length < 3) {
-    return "File name must be at least 3 characters";
-  }
-
-  if (trimmed.length > 100) {
-    return "File name must be less than 100 characters";
-  }
-
-  // Check for invalid characters (optional - adjust based on backend requirements)
-  const invalidChars = /[<>:"/\\|?*]/;
-  if (invalidChars.test(trimmed)) {
-    return "File name contains invalid characters";
-  }
-
-  return null;
-}
-
-/**
- * Validate email
- */
-function validateEmail(email: string): string | null {
-  if (!email) return null; // Optional field
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return "Please enter a valid email address";
-  }
-  return null;
-}
+// Helper functions (removed from top level to access t() inside component or passed as args)
 
 export const FileNameModal: React.FC<FileNameModalProps> = ({
   isOpen,
@@ -99,6 +63,7 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
   onCancel,
   isSaving = false,
 }) => {
+  const t = useTranslations("fileNameModal");
   const [fileName, setFileName] = useState(defaultName);
   const [clientEmail, setClientEmail] = useState("");
   const [notes, setNotes] = useState("");
@@ -119,11 +84,29 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
   // Handle validation
   const validate = (nameValue: string, emailValue: string) => {
     const newErrors: { fileName?: string; clientEmail?: string } = {};
-    const nameErr = validateFileName(nameValue);
-    const emailErr = validateEmail(emailValue);
+    const trimmed = nameValue.trim();
 
-    if (nameErr) newErrors.fileName = nameErr;
-    if (emailErr) newErrors.clientEmail = emailErr;
+    // File Name Validation
+    if (!trimmed) {
+      newErrors.fileName = t("errors.nameRequired");
+    } else if (trimmed.length < 3) {
+      newErrors.fileName = t("errors.nameMinLength");
+    } else if (trimmed.length > 100) {
+      newErrors.fileName = t("errors.nameMaxLength");
+    } else {
+      const invalidChars = /[<>:"/\\|?*]/;
+      if (invalidChars.test(trimmed)) {
+        newErrors.fileName = t("errors.nameInvalidChars");
+      }
+    }
+
+    // Email Validation
+    if (emailValue) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(emailValue)) {
+        newErrors.clientEmail = t("errors.invalidEmail");
+      }
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -164,7 +147,7 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
           id="file-name-modal-title"
           className="text-[var(--on-surface)] font-bold text-xl flex-1"
         >
-          Save {fileType} Freight File
+          {t("title", { type: fileType === "AIR" ? "Air" : "Ocean" })}
         </h2>
       </div>
 
@@ -172,7 +155,7 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
       <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
         {/* Info text */}
         <p className="text-sm text-[var(--on-surface-variant)]">
-          Provide delivery details and notes for this freight session.
+          {t("info")}
         </p>
 
         {/* File metadata display */}
@@ -196,11 +179,11 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
         {/* File name input */}
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-[var(--on-surface-variant)]">
-            File Name <span className="text-[var(--error)]">*</span>
+            {t("fields.fileName")} <span className="text-[var(--error)]">*</span>
           </label>
           <input
             type="text"
-            placeholder="e.g., Atlantic Routes Q1 2024"
+            placeholder={t("placeholders.fileName")}
             value={fileName}
             onChange={(e) => {
               setFileName(e.target.value);
@@ -229,11 +212,11 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
         {/* To Client input */}
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-[var(--on-surface-variant)]">
-            To Client (Email)
+            {t("fields.clientEmail")}
           </label>
           <input
             type="email"
-            placeholder="client@example.com"
+            placeholder={t("placeholders.clientEmail")}
             value={clientEmail}
             onChange={(e) => {
               setClientEmail(e.target.value);
@@ -261,10 +244,10 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
         {/* Notes input */}
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-[var(--on-surface-variant)]">
-            Notes
+            {t("fields.notes")}
           </label>
           <textarea
-            placeholder="Add any additional instructions or context..."
+            placeholder={t("placeholders.notes")}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             disabled={isSaving}
@@ -301,10 +284,10 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
           {isSaving ? (
             <>
               <span className="inline-block w-4 h-4 border-2 border-[var(--on-primary)] border-t-transparent rounded-full animate-spin" />
-              Saving...
+              {t("buttons.saving")}
             </>
           ) : (
-            "Save File"
+            t("buttons.save")
           )}
         </button>
       </div>

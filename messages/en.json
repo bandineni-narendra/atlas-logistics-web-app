@@ -226,5 +226,35 @@
       "showing": "Showing",
       "of": "of"
     }
+  },
+  "excelFlow": {
+    "title": "Excel Flow Processing",
+    "description": "Process multi-sheet Excel files with sequential job handling",
+    "processingError": "Processing Error"
+  },
+  "fileNameModal": {
+    "title": "Save {type} Freight File",
+    "info": "Provide delivery details and notes for this freight session.",
+    "fields": {
+      "fileName": "File Name",
+      "clientEmail": "To Client (Email)",
+      "notes": "Notes"
+    },
+    "placeholders": {
+      "fileName": "e.g., Atlantic Routes Q1 2024",
+      "clientEmail": "client@example.com",
+      "notes": "Add any additional instructions or context..."
+    },
+    "buttons": {
+      "save": "Save File",
+      "saving": "Saving..."
+    },
+    "errors": {
+      "nameRequired": "File name is required",
+      "nameMinLength": "File name must be at least 3 characters",
+      "nameMaxLength": "File name must be less than 100 characters",
+      "nameInvalidChars": "File name contains invalid characters",
+      "invalidEmail": "Please enter a valid email address"
+    }
   }
 }
