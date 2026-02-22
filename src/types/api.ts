@@ -105,6 +105,7 @@ export interface GetFilesParams {
     pageSize?: number;
     startDate?: string;
     endDate?: string;
+    search?: string;
 }
 
 export interface GetFilesResponse {
@@ -147,6 +148,7 @@ export interface UpdateFileRequest {
     name?: string;
     effectiveDate?: string;
     status?: FileStatus;
+    clientEmail?: string;
 }
 
 export interface UpdateFileResponse {

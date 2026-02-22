@@ -105,10 +105,16 @@ export function SheetsView({
     <div className="border border-border rounded-xl overflow-hidden bg-surface">
       {/* Table header */}
       <div className="hidden sm:grid sm:grid-cols-12 gap-4 px-4 py-2 text-xs font-medium text-textSecondary border-b border-border bg-surface">
-        <span className="col-span-5">{t("table.name")}</span>
+        {/* Name + Client as inline sub-headers, no gap between them */}
+        <div className="col-span-6 flex items-center gap-3">
+          <span className="w-8 flex-shrink-0" />{/* spacer for icon */}
+          <div className="flex flex-1">
+            <span className="w-[55%]">Name</span>
+            <span className="w-[45%]">Client</span>
+          </div>
+        </div>
         <span className="col-span-2">{t("table.type")}</span>
         <span className="col-span-2">{t("table.status")}</span>
-        <span className="col-span-1 text-center">{t("table.sheets")}</span>
         <span className="col-span-2 text-right">{t("table.updated")}</span>
       </div>
 
@@ -133,23 +139,27 @@ export function SheetsView({
                 href={ROUTES.FILE_DETAIL(file.id)}
                 className="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 items-center px-4 py-2.5 hover:bg-surface transition-colors duration-100 group"
               >
-                {/* Name + icon */}
-                <div className="sm:col-span-5 flex items-center gap-3 min-w-0">
+                {/* Name + Client: single left cell, rendered as two inline sub-columns */}
+                <div className="sm:col-span-6 flex items-center gap-3 min-w-0">
                   <span
                     className={`flex-shrink-0 w-8 h-8 rounded-lg ${typeInfo.color} flex items-center justify-center text-sm`}
                   >
                     {typeInfo.icon}
                   </span>
-                  <span className="truncate font-medium text-textPrimary text-sm group-hover:text-primary transition-colors duration-100">
-                    {file.name}
-                  </span>
+                  {/* Name takes 55%, Client takes 45% of this cell */}
+                  <div className="flex min-w-0 flex-1">
+                    <span className="w-[55%] truncate font-medium text-textPrimary text-sm group-hover:text-primary transition-colors duration-100 pr-2">
+                      {file.name}
+                    </span>
+                    <span className="w-[45%] truncate text-sm text-textSecondary">
+                      {file.clientEmail || <span className="opacity-30">—</span>}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Type */}
                 <div className="sm:col-span-2">
-                  <span
-                    className={`text-sm font-medium ${typeInfo.textColor}`}
-                  >
+                  <span className={`text-sm font-medium ${typeInfo.textColor}`}>
                     {typeInfo.label}
                   </span>
                 </div>
@@ -161,11 +171,6 @@ export function SheetsView({
                   >
                     {statusInfo.label}
                   </span>
-                </div>
-
-                {/* Sheet count */}
-                <div className="sm:col-span-1 text-center text-sm text-textPrimary font-medium">
-                  {file.sheetCount}
                 </div>
 
                 {/* Updated date */}

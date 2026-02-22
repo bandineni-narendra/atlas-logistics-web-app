@@ -50,6 +50,7 @@ export interface UpdateFileRequest {
   name?: string;
   effectiveDate?: string;
   status?: FileStatus;
+  clientEmail?: string;
 }
 
 /**
@@ -71,6 +72,7 @@ export interface GetFilesRequest {
   status?: FileStatus;
   startDate?: string; // ISO date (YYYY-MM-DD)
   endDate?: string; // ISO date (YYYY-MM-DD)
+  search?: string;
 }
 
 /**

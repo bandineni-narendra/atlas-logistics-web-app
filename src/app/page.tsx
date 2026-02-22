@@ -1,6 +1,5 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   LoadingState,
@@ -8,34 +7,30 @@ import {
   DashboardStatsSection,
   SheetsSection,
 } from "@/components/home";
-import Head from "next/head";
 import { useUI } from "@/contexts/UIContext";
+import { SearchBar } from "@/components/ui/SearchBar";
 
 export default function Home() {
-  const t = useTranslations();
   const { isAuthenticated, isLoading } = useAuth();
   const { isSidebarCollapsed } = useUI();
 
-  // Show loading state
   if (isLoading) {
     return <LoadingState />;
   }
 
-  // Show login prompt if not authenticated
   if (!isAuthenticated) {
     return <LoginPrompt />;
   }
 
   return (
     <main className={`transition-all duration-300 mx-auto flex flex-col w-full h-full ${isSidebarCollapsed ? "max-w-[98%] px-2 py-4" : "px-6 py-5 max-w-7xl"}`}>
-      <header className="mb-5">
-        <h1 className="text-xl font-medium text-textPrimary tracking-tight">
-          {t("home.title")}
-        </h1>
-        <p className="mt-0.5 text-sm text-textSecondary">
-          {t("home.description")}
-        </p>
-      </header>
+      {/* Top bar: Dashboard title left, Search right */}
+      <div className="flex items-center justify-between pt-1 pb-4">
+        <h1 className="text-xl font-semibold text-textPrimary tracking-tight">Dashboard</h1>
+        <div className="w-72">
+          <SearchBar />
+        </div>
+      </div>
 
       {/* Dashboard Stats */}
       <DashboardStatsSection />

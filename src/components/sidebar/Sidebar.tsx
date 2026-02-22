@@ -9,6 +9,7 @@ import { useUI } from "@/contexts/UIContext";
 import Link from "next/link";
 import Switch from "@mui/material/Switch";
 import { Home, Plane, Ship, Menu, ChevronDown, User, Moon, Sun, LogOut } from "lucide-react";
+import { SearchBar } from "@/components/ui/SearchBar";
 
 export type SidebarProps = {
   currentPath: string;

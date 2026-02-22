@@ -11,6 +11,7 @@ import { filesService } from "@/services/filesService";
 import type {
   CreateFileRequest,
   GetFilesParams,
+  GetFilesResponse,
   UpdateFileRequest,
   GetSheetRowsParams,
 } from "@/types/api";
@@ -18,10 +19,11 @@ import type {
 /**
  * Fetch paginated files with optional filters
  */
-export function useFilesQuery(params: GetFilesParams = {}) {
-  return useQuery({
+export function useFilesQuery(params: GetFilesParams = {}, options: any = {}) {
+  return useQuery<GetFilesResponse>({
     queryKey: ["files", params],
     queryFn: () => filesService.getFiles(params),
+    ...options,
   });
 }
 

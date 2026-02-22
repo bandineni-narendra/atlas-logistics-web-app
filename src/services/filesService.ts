@@ -38,6 +38,7 @@ export class FilesService {
         if (params.page !== undefined) queryParams.page = params.page;
         if (params.pageSize !== undefined) queryParams.pageSize = params.pageSize;
         if (params.status) queryParams.status = params.status;
+        if (params.search) queryParams.search = params.search;
 
         return apiClient.get<GetFilesResponse>("/files", queryParams);
     }
@@ -87,6 +88,10 @@ export class FilesService {
             `/files/${fileId}/sheets/${sheetId}/rows`,
             queryParams,
         );
+    }
+
+    async syncSearchTerms() {
+        return apiClient.post<{ updatedCount: number }>('/files/sync-search');
     }
 }
 
