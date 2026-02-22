@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useFileDetail, useFileSheets } from "@/hooks/queries/useFiles";
 import { SheetTabs, SheetDataTable } from "@/components/file-detail";
 import { useUI } from "@/contexts/UIContext";
+import { FILE_TYPE_CONFIG, FILE_STATUS_CONFIG } from "@/constants";
 
 /**
  * File Detail Page
@@ -89,27 +90,39 @@ export default function FileDetailPage() {
                             </h1>
                             <div className="mt-2 flex flex-wrap items-center gap-3">
                                 <span
-                                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${file.type === "OCEAN"
-                                        ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-                                        : "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300"
+                                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${FILE_TYPE_CONFIG[file.type.toLowerCase() as keyof typeof FILE_TYPE_CONFIG]?.color || ""
+                                        } ${FILE_TYPE_CONFIG[file.type.toLowerCase() as keyof typeof FILE_TYPE_CONFIG]?.textColor || ""
                                         }`}
                                 >
                                     {file.type}
                                 </span>
                                 <span
-                                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${file.status === "saved"
-                                        ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
-                                        : "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
+                                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${FILE_STATUS_CONFIG[file.status as keyof typeof FILE_STATUS_CONFIG]?.color || ""
                                         }`}
                                 >
                                     {file.status}
                                 </span>
                                 <div className="h-4 w-px bg-[var(--outline-variant)] mx-1" />
-                                <div className="flex items-center gap-1.5 text-sm text-[var(--on-surface-variant)]">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-18 0h18" />
-                                    </svg>
-                                    <span>Effective: {file.effectiveDate}</span>
+
+                                <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-1.5 text-sm text-[var(--on-surface-variant)]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-18 0h18" />
+                                        </svg>
+                                        <span>Effective: {file.effectiveDate}</span>
+                                    </div>
+
+                                    {file.clientEmail && (
+                                        <>
+                                            <div className="h-4 w-px bg-[var(--outline-variant)] mx-1" />
+                                            <div className="flex items-center gap-1.5 text-sm text-[var(--on-surface-variant)]">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                                                </svg>
+                                                <span>To: {file.clientEmail}</span>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -119,6 +132,25 @@ export default function FileDetailPage() {
                         </div>
                     </div>
                 </div>
+
+                {/* Notes Section */}
+                {file.notes && (
+                    <div className="mt-4 bg-[var(--secondary-container)] text-[var(--on-secondary-container)] p-4 rounded-2xl border border-[var(--outline-variant)] shadow-sm">
+                        <div className="flex items-start gap-3">
+                            <div className="mt-0.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 opacity-70">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                                </svg>
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-sm font-bold uppercase tracking-wider opacity-70 mb-1">Session Notes</h3>
+                                <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                                    {file.notes}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Sheet Tabs */}

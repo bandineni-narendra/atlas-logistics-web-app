@@ -14,7 +14,7 @@ import React, { useState, useCallback } from "react";
 import { Sheet } from "@/core/sheet-builder";
 import { filesService } from "@/services/filesService";
 import { FileNameModal } from "@/components/ui";
-import { ValidationResult } from "@/core/feedback";
+import { ValidationResult, ValidationIssue } from "@/core/feedback";
 import type { FileType, SheetColumn, CreateFileRequest } from "@/types/api";
 
 export interface UseFileSaveOptions {
@@ -34,7 +34,7 @@ export interface UseFileSaveOptions {
   onSuccess?: (fileId: string, sheetIds: string[]) => void;
 
   /** Called when there's an error */
-  onError?: (error: string) => void;
+  onError?: (error: string, issues?: ValidationIssue[]) => void;
 }
 
 interface UseFileSaveReturn {
@@ -120,7 +120,7 @@ export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
               ? `Validation failed: ${validationResult.issues.length} issue(s) found`
               : "No data to save. Please add at least one complete row.";
 
-          onError?.(errorMsg);
+          onError?.(errorMsg, validationResult.issues);
           return;
         }
       }
@@ -142,7 +142,9 @@ export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
    * Handle file name confirmation and API call
    */
   const handleFileNameConfirm = useCallback(
-    async (fileName: string) => {
+    async (data: { fileName: string; clientEmail?: string; notes?: string }) => {
+      const { fileName, clientEmail, notes } = data;
+
       if (pendingSheets.length === 0) {
         onError?.("No sheets to save");
         setIsModalOpen(false);
@@ -169,6 +171,8 @@ export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
           type: fileType,
           effectiveDate,
           sheets: sheetsData,
+          clientEmail,
+          notes,
         };
 
         // Call the unified files service

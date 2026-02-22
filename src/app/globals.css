@@ -3,6 +3,7 @@
 
 /* ── M3 / Google Workspace Design Tokens ──────────────────────── */
 :root {
+  color-scheme: light;
   /* Primary (Google Blue) */
   --primary: #1a73e8;
   --primary-hover: #1765cc;
@@ -12,7 +13,11 @@
 
   /* Secondary */
   --secondary-container: #e8f0fe;
-  --on-secondary-container: #1a73e8;
+  --on-secondary-container: #0b57d0;
+
+  /* Tertiary */
+  --tertiary-container: #f3e8fd;
+  --on-tertiary-container: #21005d;
 
   /* Surface system */
   --surface: #ffffff;
@@ -98,6 +103,7 @@
 }
 
 [data-theme='dark'] {
+  color-scheme: dark;
   /* Primary (Dark) */
   --primary: #8ab4f8;
   --primary-hover: #aecbfa;
@@ -107,7 +113,11 @@
 
   /* Secondary (Dark) */
   --secondary-container: #3c4043;
-  --on-secondary-container: #8ab4f8;
+  --on-secondary-container: #c2e7ff;
+
+  /* Tertiary (Dark) */
+  --tertiary-container: #4f378b;
+  --on-tertiary-container: #eaddff;
 
   /* Surface system (Dark) */
   --surface: #2d2e30;
@@ -154,6 +164,14 @@
   --color-primary-container: var(--primary-container);
   --color-on-primary: var(--on-primary);
   --color-on-primary-container: var(--on-primary-container);
+
+  /* Secondary */
+  --color-secondary-container: var(--secondary-container);
+  --color-on-secondary-container: var(--on-secondary-container);
+
+  /* Tertiary */
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary-container: var(--on-tertiary-container);
 
   /* Surface */
   --color-surface: var(--surface);
@@ -208,7 +226,7 @@
 }
 
 html {
-  color-scheme: light dark;
+  /* color-scheme is managed per-theme in :root and [data-theme='dark'] */
 }
 
 body {

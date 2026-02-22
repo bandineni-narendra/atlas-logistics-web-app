@@ -58,8 +58,8 @@ export default function CreateAirSheet() {
         `File saved successfully with ${sheetIds.length} sheet${sheetIds.length > 1 ? "s" : ""} and ${rates.length} air freight rate${rates.length > 1 ? "s" : ""}!`,
       );
     },
-    onError: (error) => {
-      openErrorModal("Validation Error", error);
+    onError: (error, issues) => {
+      openErrorModal("Validation Error", error, issues);
     },
   });
 

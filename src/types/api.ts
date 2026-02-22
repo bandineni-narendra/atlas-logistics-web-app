@@ -74,6 +74,8 @@ export interface CreateFileRequest {
     type: FileType;
     effectiveDate: string;
     sheets: CreateSheet[];
+    clientEmail?: string;
+    notes?: string;
 }
 
 export interface CreateFileResponse {
@@ -92,6 +94,8 @@ export interface FileSummary {
     updatedAt: string;
     sheetCount: number;
     createdBy: string;
+    clientEmail?: string;
+    notes?: string;
 }
 
 export interface GetFilesParams {
@@ -128,6 +132,8 @@ export interface FileDetail {
     updatedAt: string;
     createdBy: string;
     sheets: SheetSummary[];
+    clientEmail?: string;
+    notes?: string;
 }
 
 export interface SheetWithData {

@@ -27,6 +27,7 @@ export interface AirRate {
   currency: string;
   validFrom: string;
   validTo: string;
+  airlineCode?: string;
   transitTime?: string;
   remarks?: string;
 }
@@ -56,9 +57,10 @@ export function mapToAirRate(rowData: Record<string, any>): AirRate | null {
       amsSurcharge: parseFloat(rowData.amsSurcharge) || 0,
       cartageSurcharge: parseFloat(rowData.cartageSurcharge) || 0,
       miscSurcharge: parseFloat(rowData.miscSurcharge) || 0,
-      currency: rowData.currency || "USD",
+      currency: rowData.currency || "",
       validFrom: rowData.validFrom || "",
       validTo: rowData.validTo || "",
+      airlineCode: rowData.airlineCode || undefined,
       transitTime: rowData.transitTime || undefined,
       remarks: rowData.remarks || undefined,
     };

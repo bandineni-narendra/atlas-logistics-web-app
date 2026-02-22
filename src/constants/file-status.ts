@@ -4,17 +4,17 @@
  */
 
 export const FILE_STATUS_CONFIG = {
-  draft: { 
-    label: "Draft", 
-    color: "bg-amber-100 text-amber-800" 
+  draft: {
+    label: "Draft",
+    color: "bg-[var(--warning-container)] text-[var(--on-warning-container)]"
   },
-  saved: { 
-    label: "Saved", 
-    color: "bg-emerald-100 text-emerald-800" 
+  saved: {
+    label: "Saved",
+    color: "bg-[var(--success-container)] text-[var(--on-success-container)]"
   },
-  archived: { 
-    label: "Archived", 
-    color: "bg-gray-100 text-gray-800" 
+  archived: {
+    label: "Archived",
+    color: "bg-[var(--surface-container-high)] text-[var(--on-surface-variant)]"
   },
 } as const;
 

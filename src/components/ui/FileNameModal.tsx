@@ -22,6 +22,12 @@ import React, { useState, useEffect } from "react";
 import { Input, Modal } from "@/components/ui";
 import { FileType } from "@/types/file";
 
+export interface FileNameModalPayload {
+  fileName: string;
+  clientEmail?: string;
+  notes?: string;
+}
+
 export interface FileNameModalProps {
   /** Whether the modal is visible */
   isOpen: boolean;
@@ -35,8 +41,8 @@ export interface FileNameModalProps {
   /** Default file name (optional) */
   defaultName?: string;
 
-  /** Called when user confirms with valid file name */
-  onSave: (fileName: string) => void;
+  /** Called when user confirms with valid data */
+  onSave: (data: FileNameModalPayload) => void;
 
   /** Called when user cancels */
   onCancel: () => void;
@@ -72,6 +78,18 @@ function validateFileName(name: string): string | null {
   return null;
 }
 
+/**
+ * Validate email
+ */
+function validateEmail(email: string): string | null {
+  if (!email) return null; // Optional field
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return "Please enter a valid email address";
+  }
+  return null;
+}
+
 export const FileNameModal: React.FC<FileNameModalProps> = ({
   isOpen,
   fileType,
@@ -82,41 +100,51 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
   isSaving = false,
 }) => {
   const [fileName, setFileName] = useState(defaultName);
-  const [error, setError] = useState<string | null>(null);
-  const [touched, setTouched] = useState(false);
+  const [clientEmail, setClientEmail] = useState("");
+  const [notes, setNotes] = useState("");
+  const [errors, setErrors] = useState<{ fileName?: string; clientEmail?: string }>({});
+  const [touched, setTouched] = useState<{ fileName?: boolean; clientEmail?: boolean }>({});
 
   // Reset when modal opens
   useEffect(() => {
     if (isOpen) {
       setFileName(defaultName);
-      setError(null);
-      setTouched(false);
+      setClientEmail("");
+      setNotes("");
+      setErrors({});
+      setTouched({});
     }
   }, [isOpen, defaultName]);
 
-  // Validate on blur
-  const handleBlur = () => {
-    setTouched(true);
-    const validationError = validateFileName(fileName);
-    setError(validationError);
+  // Handle validation
+  const validate = (nameValue: string, emailValue: string) => {
+    const newErrors: { fileName?: string; clientEmail?: string } = {};
+    const nameErr = validateFileName(nameValue);
+    const emailErr = validateEmail(emailValue);
+
+    if (nameErr) newErrors.fileName = nameErr;
+    if (emailErr) newErrors.clientEmail = emailErr;
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   // Handle save
   const handleSave = () => {
-    const validationError = validateFileName(fileName);
-
-    if (validationError) {
-      setError(validationError);
-      setTouched(true);
-      return;
+    setTouched({ fileName: true, clientEmail: true });
+    if (validate(fileName, clientEmail)) {
+      onSave({
+        fileName: fileName.trim(),
+        clientEmail: clientEmail.trim() || undefined,
+        notes: notes.trim() || undefined,
+      });
     }
-
-    onSave(fileName.trim());
   };
 
   // Handle enter key
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !isSaving) {
+    if (e.key === "Enter" && !isSaving && e.target instanceof HTMLInputElement) {
+      // Don't submit on Enter if in textarea
       e.preventDefault();
       handleSave();
     } else if (e.key === "Escape" && !isSaving) {
@@ -141,11 +169,10 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
       </div>
 
       {/* Body */}
-      <div className="p-6 space-y-4">
+      <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
         {/* Info text */}
         <p className="text-sm text-[var(--on-surface-variant)]">
-          Enter a name for this file. All sheets in the current session will
-          be saved together.
+          Provide delivery details and notes for this freight session.
         </p>
 
         {/* File metadata display */}
@@ -169,7 +196,7 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
         {/* File name input */}
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-[var(--on-surface-variant)]">
-            File Name
+            File Name <span className="text-[var(--error)]">*</span>
           </label>
           <input
             type="text"
@@ -177,29 +204,82 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
             value={fileName}
             onChange={(e) => {
               setFileName(e.target.value);
-              if (touched) {
-                setError(validateFileName(e.target.value));
-              }
+              if (touched.fileName) validate(e.target.value, clientEmail);
             }}
-            onBlur={handleBlur}
+            onBlur={() => setTouched(prev => ({ ...prev, fileName: true }))}
             onKeyDown={handleKeyDown}
             disabled={isSaving}
             autoFocus
             className={`
-                        w-full px-3 py-2 
-                        bg-[var(--surface-container-lowest)] 
-                        border rounded-md 
-                        text-[var(--on-surface)] 
-                        placeholder-[var(--on-surface-variant)]
-                        focus:outline-none focus:ring-2 focus:ring-[var(--primary)]
-                        disabled:opacity-50
-                        ${touched && error ? 'border-[var(--error)] focus:ring-[var(--error)]' : 'border-[var(--outline)]'}
-                    `}
+              w-full px-3 py-2 
+              bg-[var(--surface-container-lowest)] 
+              border rounded-md 
+              text-[var(--on-surface)] 
+              placeholder-[var(--on-surface-variant)]
+              focus:outline-none focus:ring-2 focus:ring-[var(--primary)]
+              disabled:opacity-50
+              ${touched.fileName && errors.fileName ? 'border-[var(--error)] focus:ring-[var(--error)]' : 'border-[var(--outline)]'}
+            `}
           />
-
-          {touched && error && (
-            <p className="text-xs text-[var(--error)] mt-1">{error}</p>
+          {touched.fileName && errors.fileName && (
+            <p className="text-xs text-[var(--error)] mt-1">{errors.fileName}</p>
           )}
+        </div>
+
+        {/* To Client input */}
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-[var(--on-surface-variant)]">
+            To Client (Email)
+          </label>
+          <input
+            type="email"
+            placeholder="client@example.com"
+            value={clientEmail}
+            onChange={(e) => {
+              setClientEmail(e.target.value);
+              if (touched.clientEmail) validate(fileName, e.target.value);
+            }}
+            onBlur={() => setTouched(prev => ({ ...prev, clientEmail: true }))}
+            onKeyDown={handleKeyDown}
+            disabled={isSaving}
+            className={`
+              w-full px-3 py-2 
+              bg-[var(--surface-container-lowest)] 
+              border rounded-md 
+              text-[var(--on-surface)] 
+              placeholder-[var(--on-surface-variant)]
+              focus:outline-none focus:ring-2 focus:ring-[var(--primary)]
+              disabled:opacity-50
+              ${touched.clientEmail && errors.clientEmail ? 'border-[var(--error)] focus:ring-[var(--error)]' : 'border-[var(--outline)]'}
+            `}
+          />
+          {touched.clientEmail && errors.clientEmail && (
+            <p className="text-xs text-[var(--error)] mt-1">{errors.clientEmail}</p>
+          )}
+        </div>
+
+        {/* Notes input */}
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-[var(--on-surface-variant)]">
+            Notes
+          </label>
+          <textarea
+            placeholder="Add any additional instructions or context..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            disabled={isSaving}
+            rows={3}
+            className="
+              w-full px-3 py-2 
+              bg-[var(--surface-container-lowest)] 
+              border border-[var(--outline)] rounded-md 
+              text-[var(--on-surface)] 
+              placeholder-[var(--on-surface-variant)]
+              focus:outline-none focus:ring-2 focus:ring-[var(--primary)]
+              disabled:opacity-50
+              resize-none
+            "
+          />
         </div>
 
       </div>
@@ -215,7 +295,7 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
         </button>
         <button
           onClick={handleSave}
-          disabled={isSaving || !!error}
+          disabled={isSaving || Object.keys(errors).length > 0}
           className="px-6 py-2 rounded-full font-medium text-[var(--on-primary)] bg-[var(--primary)] hover:bg-[var(--primary-hover)] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           {isSaving ? (

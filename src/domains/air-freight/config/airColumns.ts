@@ -33,6 +33,13 @@ export const airFreightColumns: Column[] = [
     width: 150,
   }),
   createColumn({
+    id: "airlineCode",
+    label: "Airline Code",
+    type: ColumnType.TEXT,
+    placeholder: "e.g., EK",
+    width: 120,
+  }),
+  createColumn({
     id: "serviceLevel",
     label: "Service Level",
     type: ColumnType.SELECT,
@@ -48,7 +55,6 @@ export const airFreightColumns: Column[] = [
     id: "minRate",
     label: "Min Rate",
     type: ColumnType.NUMBER,
-    required: true,
     width: 120,
   }),
   createColumn({
@@ -67,14 +73,12 @@ export const airFreightColumns: Column[] = [
     id: "rate45",
     label: "+45kg",
     type: ColumnType.NUMBER,
-    required: true,
     width: 120,
   }),
   createColumn({
     id: "rate100",
     label: "+100kg",
     type: ColumnType.NUMBER,
-    required: true,
     width: 120,
   }),
   createColumn({

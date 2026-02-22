@@ -97,22 +97,30 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
             >
               {t("feedback.issuesFound")}
             </div>
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-              {state.issues.map((issue, idx) => (
+            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+              {Object.entries(
+                state.issues.reduce((acc, issue) => {
+                  const key = `${issue.sheetName}|${issue.rowIndex}`;
+                  if (!acc[key]) acc[key] = { sheetName: issue.sheetName, rowIndex: issue.rowIndex, columns: [] };
+                  acc[key].columns.push(issue.columnLabel);
+                  return acc;
+                }, {} as Record<string, { sheetName: string; rowIndex: number; columns: string[] }>)
+              ).map(([key, group]) => (
                 <div
-                  key={idx}
-                  className={`text-sm p-3 rounded border-l-4 ${styles.borderColor} bg-[var(--surface-container-lowest)]`}
+                  key={key}
+                  className={`text-sm p-4 rounded-xl border border-[var(--outline-variant)] bg-[var(--surface-container-low)] shadow-sm`}
                 >
-                  <div className={`font-medium ${styles.titleColor}`}>
-                    {issue.sheetName} • {t("feedback.row")} {issue.rowIndex}
+                  <div className={`font-bold text-base mb-2 flex items-center gap-2 ${styles.titleColor}`}>
+                    <span className="w-1.5 h-6 bg-[var(--primary)] rounded-full mr-1"></span>
+                    {group.sheetName} • {t("feedback.row")} {group.rowIndex}
                   </div>
-                  <div
-                    className={`text-xs mt-1 ${styles.textColor} opacity-85`}
-                  >
-                    <span className="font-semibold">
-                      {issue.columnLabel}:
-                    </span>{" "}
-                    {issue.message}
+                  <div className={`text-sm ${styles.textColor} leading-relaxed pl-4`}>
+                    <span className="font-semibold text-[var(--primary)] mr-2">
+                      Missing:
+                    </span>
+                    <span className="opacity-90 italic">
+                      {group.columns.join(", ")}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -120,6 +128,24 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
           </div>
         )}
       </div>
+
+      {/* Custom scrollbar styles */}
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: var(--surface-container-low);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: var(--outline-variant);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: var(--outline);
+        }
+      `}</style>
 
       {/* Footer */}
       <div className="flex gap-3 p-6 border-t border-[var(--outline-variant)] justify-end bg-inherit rounded-b-[calc(0.75rem-2px)] sticky bottom-0">

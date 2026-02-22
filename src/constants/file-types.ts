@@ -6,14 +6,14 @@
 export const FILE_TYPE_CONFIG = {
   ocean: {
     icon: "🚢",
-    color: "bg-blue-50",
-    textColor: "text-blue-700",
+    color: "bg-[var(--primary-container)]",
+    textColor: "text-[var(--on-primary-container)]",
     label: "Ocean Freight",
   },
   air: {
     icon: "✈️",
-    color: "bg-emerald-50",
-    textColor: "text-emerald-700",
+    color: "bg-[var(--tertiary-container)]",
+    textColor: "text-[var(--on-tertiary-container)]",
     label: "Air Freight",
   },
 } as const;

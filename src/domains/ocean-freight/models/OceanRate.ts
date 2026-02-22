@@ -39,7 +39,7 @@ export function mapToOceanRate(rowData: Record<string, any>): OceanRate | null {
       container45HC: rowData.container45HC
         ? parseFloat(rowData.container45HC)
         : undefined,
-      currency: rowData.currency || "USD",
+      currency: rowData.currency || "",
       validFrom: rowData.validFrom || "",
       validTo: rowData.validTo || "",
       transitTime: rowData.transitTime || undefined,

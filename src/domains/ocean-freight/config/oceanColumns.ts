@@ -48,21 +48,18 @@ export const oceanFreightColumns: Column[] = [
     id: "container20",
     label: "20'",
     type: ColumnType.NUMBER,
-    required: true,
     width: 130,
   }),
   createColumn({
     id: "container40",
     label: "40'",
     type: ColumnType.NUMBER,
-    required: true,
     width: 130,
   }),
   createColumn({
     id: "container40HC",
     label: "40' HC",
     type: ColumnType.NUMBER,
-    required: true,
     width: 130,
   }),
   createColumn({
