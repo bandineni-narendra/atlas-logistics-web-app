@@ -259,7 +259,7 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             disabled={isSaving}
-            rows={3}
+            rows={6}
             className="
               w-full px-3 py-2 
               bg-background 

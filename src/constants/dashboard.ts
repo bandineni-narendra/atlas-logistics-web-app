@@ -5,15 +5,13 @@
  */
 
 export const DASHBOARD_LABELS = {
-  OVERVIEW_TITLE: 'Dashboard Overview',
+  OVERVIEW_TITLE: 'Overview',
   TOTAL_SHEETS: 'Total Sheets',
   TOTAL_SHEETS_SUBLABEL: 'All saved sheets',
   OCEAN_SHEETS: 'Ocean Sheets',
   OCEAN_SHEETS_SUBLABEL: 'Freight rates',
   AIR_SHEETS: 'Air Sheets',
   AIR_SHEETS_SUBLABEL: 'Freight rates',
-  TOTAL_ROWS: 'Total Rows',
-  TOTAL_ROWS_SUBLABEL: 'Data entries',
   LOADING_PLACEHOLDER: '—',
 } as const;
 

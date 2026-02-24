@@ -70,11 +70,6 @@ export function DashboardStatsSection() {
           sublabel={DASHBOARD_LABELS.AIR_SHEETS_SUBLABEL}
           color="emerald"
         />
-        <StatCard
-          label={DASHBOARD_LABELS.TOTAL_ROWS}
-          value={formatValue(stats?.totalRows)}
-          sublabel={DASHBOARD_LABELS.TOTAL_ROWS_SUBLABEL}
-        />
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useFileDetail, useFileSheets } from "@/hooks/queries/useFiles";
-import { SheetTabs, SheetDataTable, FileDetailHeader, FileNotesSection, BackButton } from "@/components/file-detail";
+import { SheetTabs, SheetDataTable, FileDetailHeader, BackButton } from "@/components/file-detail";
 import { useUI } from "@/contexts/UIContext";
 import { FILE_TYPE_CONFIG, FILE_STATUS_CONFIG } from "@/constants";
 import { FileQuestion } from "lucide-react";
@@ -63,7 +63,6 @@ export default function FileDetailPage() {
             <div className="mb-6 flex flex-col gap-4">
                 <BackButton />
                 <FileDetailHeader file={file} />
-                <FileNotesSection notes={file.notes} />
             </div>
 
             {/* Sheet Tabs */}

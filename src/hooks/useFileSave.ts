@@ -28,6 +28,9 @@ export interface UseFileSaveOptions {
   /** Default file name suggestion */
   defaultFileName?: string;
 
+  /** Default notes/terms */
+  defaultNotes?: string;
+
   /** Custom validation function for sheets */
   validateSheets?: (sheets: Sheet[]) => ValidationResult;
 
@@ -100,15 +103,39 @@ function transformColumn(column: Sheet["columns"][number]): SheetColumn {
   return result;
 }
 
+const DEFAULT_AIR_NOTES = `NOTE:
+1) THE ABOVE RATES ARE ABSOLUTE NET/NET & QUOTED ON AIRPORT TO AIRPORT BASIS.
+2) FOR MINIMUM SHIPMENTS, SURCHARGES OF USD 7.00/KG IS APPLICABLE.
+3) THE ABOVE RATES ARE PREVAILING RATES AND SUBJECT TO CHANGE BY AIRLINES WITHOUT PRIOR NOTICE
+4) FSC & SCC SURCHARGES ARE PREVAILING CHARGES & ARE APPLICABLE AT ACTUALS AT THE TIME OF SHIPMENT
+5) THE ABOVE RATES ARE VALID TILL
+6) AMS USD 15/per hawb and per mawb is charged by the carrier
+7) RATES & TRANSIT TIMES ARE SUBJECT TO SPACE CONFIRMATION AND ARE TENTATIVE
+8) THE ABOVE RATES ARE SUBJECT TO CHANGE BY THE AIRLINES.`;
+
+const DEFAULT_OCEAN_NOTES = `NOTE:
+1) THE ABOVE RATES ARE NET/NET & ARE QUOTED ON PORT TO PORT BASIS.
+2) RATES ARE VALID TILL
+3) THE ABOVE RATES ARE FOR GENERAL CARGO ONLY Sub to equipment/space availability. Rates are subject to future GRI if applicable at time of shipment.
+4) This does not include any detention charges
+5) This is applicable for the normal weight 14.0 TONS and not for Over dimenion or heavy weight shipment
+6) INLAND HAULAGE QUOTED FOR MAX OF 14 tons for 40'
+7) RATES QUOTED BASED ON CFS / FACTORY STUFFING subject to availability of permission with the shipper.`;
+
 export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
   const {
     fileType,
     effectiveDate = new Date().toISOString().split("T")[0],
     defaultFileName = "",
+    defaultNotes,
     validateSheets,
     onSuccess,
     onError,
   } = options;
+
+  const resolvedDefaultNotes = defaultNotes !== undefined
+    ? defaultNotes
+    : (fileType === "AIR" ? DEFAULT_AIR_NOTES : DEFAULT_OCEAN_NOTES);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pendingSheets, setPendingSheets] = useState<Sheet[]>([]);
@@ -220,6 +247,7 @@ export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
     fileType: fileType,
     effectiveDate: effectiveDate,
     defaultName: defaultFileName,
+    defaultNotes: resolvedDefaultNotes,
     onSave: handleFileNameConfirm,
     onCancel: handleModalCancel,
     isSaving: createFileMutation.isPending,
