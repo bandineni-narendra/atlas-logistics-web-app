@@ -21,7 +21,7 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { Column, createSheet } from "./models";
 import { useSheetManager } from "@/hooks/sheet-builder";
 import { SheetTabs, SheetTable } from "@/components/sheet-builder";
@@ -88,7 +88,7 @@ export function SheetBuilder({
     return <div className="p-8 text-center text-textSecondary">No active sheet</div>;
   }
 
-  const handleCellChange = (rowId: string, columnId: string, value: any) => {
+  const handleCellChange = useCallback((rowId: string, columnId: string, value: any) => {
     updateSheet(activeSheetId, (sheet) => {
       const updatedRows = sheet.rows.map((row) => {
         if (row.id !== rowId) return row;
@@ -102,9 +102,9 @@ export function SheetBuilder({
       });
       return { ...sheet, rows: updatedRows };
     });
-  };
+  }, [activeSheetId, updateSheet]);
 
-  const handleAddRow = () => {
+  const handleAddRow = useCallback(() => {
     updateSheet(activeSheetId, (sheet) => {
       const newRowId = `row-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
       const cells: Record<string, string | number | boolean | null> = {};
@@ -116,16 +116,16 @@ export function SheetBuilder({
         rows: [...sheet.rows, { id: newRowId, cells }],
       };
     });
-  };
+  }, [activeSheetId, updateSheet]);
 
-  const handleDeleteRow = (rowId: string) => {
+  const handleDeleteRow = useCallback((rowId: string) => {
     updateSheet(activeSheetId, (sheet) => ({
       ...sheet,
       rows: sheet.rows.filter((r) => r.id !== rowId),
     }));
-  };
+  }, [activeSheetId, updateSheet]);
 
-  const handleCopyRow = (rowId: string) => {
+  const handleCopyRow = useCallback((rowId: string) => {
     updateSheet(activeSheetId, (sheet) => {
       const rowIndex = sheet.rows.findIndex((r) => r.id === rowId);
       if (rowIndex === -1) return sheet;
@@ -145,9 +145,9 @@ export function SheetBuilder({
         rows: updatedRows,
       };
     });
-  };
+  }, [activeSheetId, updateSheet]);
 
-  const handleAddColumn = (column: Column) => {
+  const handleAddColumn = useCallback((column: Column) => {
     updateSheet(activeSheetId, (sheet) => {
       const updatedRows = sheet.rows.map((row) => ({
         ...row,
@@ -162,9 +162,9 @@ export function SheetBuilder({
         rows: updatedRows,
       };
     });
-  };
+  }, [activeSheetId, updateSheet]);
 
-  const handleDeleteColumn = (columnId: string) => {
+  const handleDeleteColumn = useCallback((columnId: string) => {
     updateSheet(activeSheetId, (sheet) => {
       const updatedRows = sheet.rows.map((row) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -180,16 +180,28 @@ export function SheetBuilder({
         rows: updatedRows,
       };
     });
-  };
+  }, [activeSheetId, updateSheet]);
 
-  const handleUpdateColumnName = (columnId: string, newName: string) => {
+  const handleUpdateColumnName = useCallback((columnId: string, newName: string) => {
     updateSheet(activeSheetId, (sheet) => ({
       ...sheet,
       columns: sheet.columns.map((col) =>
         col.id === columnId ? { ...col, label: newName } : col,
       ),
     }));
-  };
+  }, [activeSheetId, updateSheet]);
+
+  const handleReorderColumns = useCallback((oldIndex: number, newIndex: number) => {
+    updateSheet(activeSheetId, (sheet) => {
+      const newColumns = Array.from(sheet.columns);
+      const [removed] = newColumns.splice(oldIndex, 1);
+      newColumns.splice(newIndex, 0, removed);
+      return {
+        ...sheet,
+        columns: newColumns,
+      };
+    });
+  }, [activeSheetId, updateSheet]);
 
   return (
     <div className="flex flex-col h-full bg-surface rounded-lg shadow-sm border border-border overflow-hidden">
@@ -217,6 +229,7 @@ export function SheetBuilder({
           onAddColumn={handleAddColumn}
           onDeleteColumn={handleDeleteColumn}
           onUpdateColumnName={handleUpdateColumnName}
+          onReorderColumn={handleReorderColumns}
         />
       </div>
     </div>

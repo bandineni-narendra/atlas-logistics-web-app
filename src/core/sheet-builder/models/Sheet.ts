@@ -105,3 +105,18 @@ export function updateCellValue(
     rows: updatedRows,
   };
 }
+
+export function reorderColumnsInSheet(
+  sheet: Sheet,
+  oldIndex: number,
+  newIndex: number,
+): Sheet {
+  const newColumns = Array.from(sheet.columns);
+  const [removed] = newColumns.splice(oldIndex, 1);
+  newColumns.splice(newIndex, 0, removed);
+
+  return {
+    ...sheet,
+    columns: newColumns,
+  };
+}
