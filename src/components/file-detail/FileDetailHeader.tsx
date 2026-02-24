@@ -2,7 +2,8 @@
 
 import { FILE_TYPE_CONFIG, FILE_STATUS_CONFIG } from "@/constants";
 import type { FileDetail } from "@/types/api";
-import { Calendar, Mail } from "lucide-react";
+import { Calendar, Mail, Edit2 } from "lucide-react";
+import Link from "next/link";
 
 interface FileDetailHeaderProps {
     file: FileDetail;
@@ -50,9 +51,19 @@ export function FileDetailHeader({ file }: FileDetailHeaderProps) {
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center gap-2 bg-surface px-4 py-2 rounded-xl border border-border">
-                    <span className="text-xl font-bold text-primary">{file.sheets?.length ?? 0}</span>
-                    <span className="text-sm font-medium text-textSecondary">Sheets</span>
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 bg-surface px-4 py-2 rounded-xl border border-border">
+                        <span className="text-xl font-bold text-primary">{file.sheets?.length ?? 0}</span>
+                        <span className="text-sm font-medium text-textSecondary">Sheets</span>
+                    </div>
+                    <Link
+                        href={`/files/${file.id}/edit`}
+                        className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-border hover:bg-surface hover:text-primary transition-colors duration-150"
+                        title="Edit File"
+                    >
+                        <Edit2 className="w-4 h-4" />
+                        <span className="text-sm font-medium">Edit</span>
+                    </Link>
                 </div>
             </div>
         </div>

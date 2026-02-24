@@ -25,10 +25,13 @@ export default function FileDetailPage() {
 
     const [activeSheetId, setActiveSheetId] = useState<string>("");
 
-    // Set the first sheet as active once data arrives
+    // Set the first sheet as active once data arrives or if the current active sheet is no longer valid
     useEffect(() => {
-        if (sheetsData?.sheets?.length && !activeSheetId) {
-            setActiveSheetId(sheetsData.sheets[0].id);
+        if (sheetsData?.sheets?.length) {
+            const isValidActiveSheet = sheetsData.sheets.some(s => s.id === activeSheetId);
+            if (!activeSheetId || !isValidActiveSheet) {
+                setActiveSheetId(sheetsData.sheets[0].id);
+            }
         }
     }, [sheetsData, activeSheetId]);
 

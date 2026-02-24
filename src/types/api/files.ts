@@ -51,6 +51,10 @@ export interface UpdateFileRequest {
   effectiveDate?: string;
   status?: FileStatus;
   clientEmail?: string;
+  sheets?: Array<{
+    name: string;
+    data: Sheet;
+  }>;
 }
 
 /**

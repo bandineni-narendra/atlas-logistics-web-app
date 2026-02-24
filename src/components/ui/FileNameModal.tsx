@@ -42,6 +42,12 @@ export interface FileNameModalProps {
   /** Default file name (optional) */
   defaultName?: string;
 
+  /** Default client email (optional) */
+  defaultClientEmail?: string;
+
+  /** Default notes (optional) */
+  defaultNotes?: string;
+
   /** Called when user confirms with valid data */
   onSave: (data: FileNameModalPayload) => void;
 
@@ -59,14 +65,16 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
   fileType,
   effectiveDate,
   defaultName = "",
+  defaultClientEmail = "",
+  defaultNotes = "",
   onSave,
   onCancel,
   isSaving = false,
 }) => {
   const t = useTranslations("fileNameModal");
   const [fileName, setFileName] = useState(defaultName);
-  const [clientEmail, setClientEmail] = useState("");
-  const [notes, setNotes] = useState("");
+  const [clientEmail, setClientEmail] = useState(defaultClientEmail);
+  const [notes, setNotes] = useState(defaultNotes);
   const [errors, setErrors] = useState<{ fileName?: string; clientEmail?: string }>({});
   const [touched, setTouched] = useState<{ fileName?: boolean; clientEmail?: boolean }>({});
 
@@ -74,12 +82,12 @@ export const FileNameModal: React.FC<FileNameModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       setFileName(defaultName);
-      setClientEmail("");
-      setNotes("");
+      setClientEmail(defaultClientEmail);
+      setNotes(defaultNotes);
       setErrors({});
       setTouched({});
     }
-  }, [isOpen, defaultName]);
+  }, [isOpen, defaultName, defaultClientEmail, defaultNotes]);
 
   // Handle validation
   const validate = (nameValue: string, emailValue: string) => {

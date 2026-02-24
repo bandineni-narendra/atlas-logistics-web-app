@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useCallback } from "react";
 import Link from "next/link";
-import { Download, Loader2 } from "lucide-react";
+import { Download, Loader2, Edit2 } from "lucide-react";
 import { useFilesQuery } from "@/hooks/queries/useFiles";
 import { Pagination } from "@/components/table/Pagination";
 import { FILE_TYPE_CONFIG, FILE_STATUS_CONFIG } from "@/constants";
@@ -142,8 +142,8 @@ export function SheetsView({
           <span className="w-24 flex-shrink-0">{t("table.status")}</span>
           <span className="w-24 flex-shrink-0 text-right">{t("table.updated")}</span>
         </div>
-        {/* Matches row's w-16 actions cell (outside the px-4 link area) */}
-        <span className="w-16 flex-shrink-0 text-center py-2 px-2">{t("table.actions")}</span>
+        {/* Matches row's w-20 actions cell (outside the px-4 link area) */}
+        <span className="w-20 flex-shrink-0 text-center py-2 px-2">{t("table.actions")}</span>
       </div>
 
       {/* Rows */}
@@ -214,8 +214,17 @@ export function SheetsView({
               </Link>
 
               {/* Actions cell — outside the Link so clicks don't navigate */}
-              <div className="w-16 flex-shrink-0 flex items-center justify-center px-2 py-2.5">
+              <div className="w-20 flex-shrink-0 flex items-center justify-center px-2 py-2.5">
                 <div className="flex items-center justify-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity duration-200">
+                  {/* Edit button */}
+                  <Link
+                    href={`/files/${file.id}/edit`}
+                    className="p-1.5 text-textSecondary hover:text-primary hover:bg-primary-soft rounded-md transition-all duration-200 hover:scale-110 flex items-center justify-center"
+                    title="Edit File"
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                  </Link>
+
                   {/* Download button */}
                   <button
                     onClick={(e) => handleDownload(e, file.id, file.name)}

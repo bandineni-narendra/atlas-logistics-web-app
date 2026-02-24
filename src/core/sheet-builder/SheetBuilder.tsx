@@ -34,6 +34,12 @@ export interface SheetBuilderProps {
   initialColumns?: Column[];
 
   /**
+   * Initial full sheets.
+   * Useful when editing an existing file.
+   */
+  initialSheets?: any[];
+
+  /**
    * Callback when sheet data changes.
    * Returns all sheets for export/validation.
    */
@@ -54,6 +60,7 @@ export interface SheetBuilderProps {
 
 export function SheetBuilder({
   initialColumns = [],
+  initialSheets,
   onChange,
   multiSheet = true,
   storageKey,
@@ -68,14 +75,19 @@ export function SheetBuilder({
     updateSheet,
     updateSheetName,
     resetSheet,
-  } = useSheetManager([
-    createSheet({
-      id: "1",
-      name: "Sheet 1",
-      columns: initialColumns,
-      rows: [],
-    }),
-  ], storageKey);
+  } = useSheetManager(
+    initialSheets && initialSheets.length > 0
+      ? initialSheets
+      : [
+        createSheet({
+          id: "1",
+          name: "Sheet 1",
+          columns: initialColumns,
+          rows: [],
+        }),
+      ],
+    storageKey
+  );
 
   // Notify parent of changes
   useEffect(() => {

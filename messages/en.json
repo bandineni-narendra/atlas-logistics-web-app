@@ -12,7 +12,8 @@
     "lightMode": "Light Mode",
     "cancel": "Cancel",
     "confirm": "Confirm",
-    "ok": "OK"
+    "ok": "OK",
+    "save": "Save"
   },
   "navigation": {
     "home": "Home",

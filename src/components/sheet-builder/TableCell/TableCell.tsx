@@ -88,15 +88,19 @@ export const TableCell = memo(function TableCell({
             <option value="" className="text-textSecondary">
               Select...
             </option>
-            {column.options?.map((opt) => (
-              <option
-                key={opt.value}
-                value={opt.value}
-                className="text-textPrimary bg-surface"
-              >
-                {opt.label}
-              </option>
-            ))}
+            {column.options?.map((opt, i) => {
+              const optVal = typeof opt === 'string' ? opt : (opt.value || opt.label);
+              const optLabel = typeof opt === 'string' ? opt : opt.label;
+              return (
+                <option
+                  key={`${optVal}-${i}`}
+                  value={optVal}
+                  className="text-textPrimary bg-surface"
+                >
+                  {optLabel}
+                </option>
+              );
+            })}
           </select>
         );
 
