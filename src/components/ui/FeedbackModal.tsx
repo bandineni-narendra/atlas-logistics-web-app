@@ -12,38 +12,38 @@ export interface FeedbackModalProps {
 
 const modalStyles = {
   success: {
-    bgColor: "bg-success",
-    borderColor: "border-success",
-    iconBg: "bg-success",
-    iconColor: "text-white",
-    titleColor: "text-white",
-    textColor: "text-white",
-    buttonBg: "bg-success hover:brightness-110 text-white",
+    bgColor: "bg-surface",
+    borderColor: "border-success/30",
+    iconBg: "bg-success/15",
+    iconColor: "text-success",
+    titleColor: "text-success",
+    textColor: "text-textSecondary",
+    buttonBg: "bg-success hover:bg-success/90 text-white",
     icon: "✓",
   },
   error: {
-    bgColor: "bg-error",
-    borderColor: "border-error",
-    iconBg: "bg-error",
-    iconColor: "text-white",
-    titleColor: "text-white",
-    textColor: "text-white",
-    buttonBg: "bg-error hover:brightness-110 text-white",
+    bgColor: "bg-surface",
+    borderColor: "border-error/30",
+    iconBg: "bg-error/15",
+    iconColor: "text-error",
+    titleColor: "text-error",
+    textColor: "text-textSecondary",
+    buttonBg: "bg-error hover:bg-error/90 text-white",
     icon: "✕",
   },
   warning: {
-    bgColor: "bg-warning",
-    borderColor: "border-warning",
-    iconBg: "bg-warning",
-    iconColor: "text-white",
-    titleColor: "text-white",
-    textColor: "text-white",
-    buttonBg: "bg-warning hover:brightness-110 text-white", // Warning usually needs dark text
+    bgColor: "bg-surface",
+    borderColor: "border-warning/30",
+    iconBg: "bg-warning/15",
+    iconColor: "text-warning",
+    titleColor: "text-warning",
+    textColor: "text-textSecondary",
+    buttonBg: "bg-warning hover:bg-warning/90 text-white",
     icon: "⚠",
   },
   info: {
     bgColor: "bg-surface",
-    borderColor: "border-primary",
+    borderColor: "border-primary/30",
     iconBg: "bg-primary-soft",
     iconColor: "text-primary",
     titleColor: "text-textPrimary",
@@ -64,11 +64,17 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
 
 
   const styles = modalStyles[state.type];
+  const isSpecial = state.type !== "info";
 
   return (
-    <Modal isOpen={state.isOpen} onClose={onClose} maxWidth="max-w-2xl">
+    <Modal
+      isOpen={state.isOpen}
+      onClose={onClose}
+      maxWidth="max-w-2xl"
+      className="bg-surface"
+    >
       {/* Header with Icon */}
-      <div className="flex items-center gap-3 p-6 border-b border-border sticky top-0 bg-inherit rounded-t-[calc(0.75rem-2px)]">
+      <div className={`flex items-center gap-3 p-6 border-b border-border/20 sticky top-0 bg-inherit rounded-t-[calc(0.75rem-2px)]`}>
         <div className={`${styles.iconBg} rounded-full p-2 flex-shrink-0`}>
           <span className={`${styles.iconColor} text-lg font-bold flex items-center justify-center w-6 h-6`}>
             {styles.icon}
@@ -108,7 +114,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
               ).map(([key, group]) => (
                 <div
                   key={key}
-                  className={`text-sm p-4 rounded-xl border border-border bg-surface shadow-sm`}
+                  className={`text-sm p-4 rounded-xl border border-border bg-background shadow-sm`}
                 >
                   <div className={`font-bold text-base mb-2 flex items-center gap-2 ${styles.titleColor}`}>
                     <span className="w-1.5 h-6 bg-primary rounded-full mr-1"></span>

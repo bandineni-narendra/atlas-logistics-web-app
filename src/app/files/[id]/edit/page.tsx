@@ -6,10 +6,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 
-import { SheetBuilder, Sheet, Column } from "@/core/sheet-builder";
+import { SheetBuilder, Sheet, Column, ColumnType } from "@/core/sheet-builder";
 import { useFileUpdate, useFeedbackModal } from "@/hooks";
 import { filesService } from "@/services/filesService";
 import { Alert, Card, Button, FileNameModal } from "@/components/ui";
+import { airFreightColumns } from "@/domains/air-freight/config";
+import { oceanFreightColumns } from "@/domains/ocean-freight/config";
 
 /**
  * File Edit Page
@@ -31,6 +33,13 @@ export default function FileEditPage() {
         enabled: !!fileId,
     });
 
+    const fileDetail = fileData?.file;
+
+    const domainColumns = useMemo(() => {
+        if (!fileDetail?.type) return [];
+        return fileDetail.type === "AIR" ? airFreightColumns : oceanFreightColumns;
+    }, [fileDetail?.type]);
+
     // 2. Fetch File Sheets Data
     const { data: sheetsData, isLoading: sheetsLoading, error: sheetsError } = useQuery({
         queryKey: ["files", fileId, "sheets"],
@@ -47,15 +56,25 @@ export default function FileEditPage() {
             const extracted: Sheet[] = sheetsData.sheets.map((s) => {
                 // Cast SheetColumn to proper builder Column
                 const builderColumns = s.data.columns.map((col) => {
-                    let castedType: "text" | "number" | "select" | "date" | "boolean" = "text";
-                    if (col.type === "number") castedType = "number";
-                    else if (col.type === "select") castedType = "select";
+                    const typeStr = col.type as string;
+                    let castedType = ColumnType.TEXT;
+
+                    if (typeStr === "number") castedType = ColumnType.NUMBER;
+                    else if (typeStr === "select") castedType = ColumnType.SELECT;
+                    else if (typeStr === "date") castedType = ColumnType.DATE;
+                    else if (typeStr === "boolean") castedType = ColumnType.BOOLEAN;
+
+                    // Sync with domain configuration if available
+                    const domainCol = domainColumns.find((dc: Column) => dc.id === col.id);
 
                     return {
                         id: col.id,
                         label: col.label,
-                        type: castedType,
-                        options: col.options,
+                        type: domainCol?.type || castedType,
+                        options: domainCol?.options || col.options,
+                        required: domainCol?.required ?? false,
+                        placeholder: domainCol?.placeholder || (col as any).placeholder,
+                        width: domainCol?.width || (col as any).width,
                     } as Column;
                 });
 
@@ -68,9 +87,7 @@ export default function FileEditPage() {
             });
             setLocalSheets(extracted);
         }
-    }, [sheetsData]);
-
-    const fileDetail = fileData?.file;
+    }, [sheetsData, domainColumns]);
 
     // Setup the Update Hook
     const { handleUpdateFile, isUpdating, fileNameModalProps } = useFileUpdate({

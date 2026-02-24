@@ -63,7 +63,7 @@ export function TableRow({
           {/* Delete button */}
           <button
             onClick={onDelete}
-            className="p-1.5 text-textSecondary hover:text-error hover:bg-error rounded-md transition-all duration-200 hover:scale-110"
+            className="p-1.5 text-textSecondary hover:text-white hover:bg-error rounded-md transition-all duration-200 hover:scale-110"
             title={t("columns.delete")}
             type="button"
             aria-label={`Delete row ${rowIndex + 1}`}

@@ -9,6 +9,8 @@ export interface ModalProps {
     children: React.ReactNode;
     /** Maximum width of the modal container (e.g., max-w-md, max-w-2xl) */
     maxWidth?: string;
+    /** Custom class for the modal content container */
+    className?: string;
     /** Prevent clicking the backdrop from closing the modal (useful for forcing actions) */
     preventBackdropClose?: boolean;
 }
@@ -22,6 +24,7 @@ export const Modal: React.FC<ModalProps> = ({
     onClose,
     children,
     maxWidth = "max-w-md",
+    className = "bg-surface",
     preventBackdropClose = false,
 }) => {
     const [mounted, setMounted] = useState(false);
@@ -60,14 +63,14 @@ export const Modal: React.FC<ModalProps> = ({
     return createPortal(
         <>
             <div
-                className="fixed inset-0 backdrop-blur-sm z-40 transition-opacity duration-200"
+                className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-40 transition-opacity duration-200"
                 onClick={preventBackdropClose ? undefined : onClose}
                 role="presentation"
             />
 
             <div className="fixed inset-0 flex items-center justify-center z-50 p-4 pointer-events-none">
                 <div
-                    className={`bg-surface border-2 border-border rounded-xl shadow-lg ${maxWidth} w-full max-h-[90vh] overflow-y-auto pointer-events-auto animate-in fade-in zoom-in duration-200`}
+                    className={`${className} border border-border rounded-xl shadow-2xl ${maxWidth} w-full max-h-[90vh] overflow-y-auto pointer-events-auto animate-in fade-in zoom-in duration-200`}
                     role="dialog"
                     aria-modal="true"
                 >

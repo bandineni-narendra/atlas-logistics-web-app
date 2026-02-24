@@ -123,7 +123,7 @@ export function SheetTabs({
               onClick={(e) => handleReset(sheet.id, sheet.name, e)}
               className={`
                 opacity-0 group-hover:opacity-100
-                text-textSecondary hover:text-warning hover:bg-warning 
+                text-textSecondary hover:text-white hover:bg-warning 
                 rounded p-0.5 transition-all duration-150
               `}
               title="Reset sheet data"
@@ -140,7 +140,7 @@ export function SheetTabs({
                 }}
                 className={`
                   opacity-0 group-hover:opacity-100
-                  text-textSecondary hover:text-error hover:bg-error 
+                  text-textSecondary hover:text-white hover:bg-error 
                   rounded p-0.5 transition-all duration-150
                 `}
                 title="Delete sheet"

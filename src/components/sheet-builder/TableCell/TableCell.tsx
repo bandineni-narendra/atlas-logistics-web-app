@@ -19,7 +19,6 @@ const BASE_INPUT_CLASSES = `
   border-0 outline-none
   focus:ring-0 focus:outline-none focus:border-0 focus:shadow-none
   cursor-text
-  [color-scheme:light] dark:[color-scheme:dark]
 `;
 
 interface TableCellProps {
@@ -69,7 +68,7 @@ export const TableCell = memo(function TableCell({
             type="date"
             value={value !== null ? String(value) : ""}
             onChange={handleChange}
-            className={`${BASE_INPUT_CLASSES} [&::-webkit-calendar-picker-indicator]:cursor-pointer dark:[&::-webkit-calendar-picker-indicator]:invert`}
+            className={`${BASE_INPUT_CLASSES} [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
           />
         );
 

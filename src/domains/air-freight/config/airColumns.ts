@@ -48,7 +48,9 @@ export const airFreightColumns: Column[] = [
     options: [
       { label: "Express", value: "express" },
       { label: "Standard", value: "standard" },
-      { label: "Economy", value: "economy" },
+      { label: "Temp", value: "temp" },
+      { label: "DG", value: "dg" },
+      { label: "DG-Temp", value: "dg-temp" },
     ],
   }),
   createColumn({
