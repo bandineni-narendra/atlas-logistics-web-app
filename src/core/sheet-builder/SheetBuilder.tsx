@@ -25,6 +25,7 @@ import { useEffect, useCallback } from "react";
 import { Column, createSheet } from "./models";
 import { useSheetManager } from "@/hooks/sheet-builder";
 import { SheetTabs, SheetTable } from "@/components/sheet-builder";
+import { getAirlineByCode, getAirlineByName } from "@/constants/airlines";
 
 export interface SheetBuilderProps {
   /**
@@ -121,6 +122,26 @@ export function SheetBuilder({
 
   const handleCellChange = useCallback((rowId: string, columnId: string, value: any) => {
     updateSheet(activeSheetId, (sheet) => {
+      // Resolve linked airline column auto-fill
+      const changedCol = sheet.columns.find((c) => c.id === columnId);
+      const linkedCells: Record<string, string | null> = {};
+
+      if (changedCol?.linkedColumn && changedCol.linkedField && value) {
+        const strVal = String(value);
+        if (changedCol.linkedField === "name") {
+          // This column stores the airline name → fill linked column with code
+          const airline = getAirlineByName(strVal);
+          if (airline) linkedCells[changedCol.linkedColumn] = airline.code;
+        } else {
+          // This column stores the IATA code → fill linked column with name
+          const airline = getAirlineByCode(strVal);
+          if (airline) linkedCells[changedCol.linkedColumn] = airline.name;
+        }
+      } else if (changedCol?.linkedColumn && !value) {
+        // Cleared → also clear the linked column
+        linkedCells[changedCol.linkedColumn] = null;
+      }
+
       const updatedRows = sheet.rows.map((row) => {
         if (row.id !== rowId) return row;
         return {
@@ -128,6 +149,7 @@ export function SheetBuilder({
           cells: {
             ...row.cells,
             [columnId]: value,
+            ...linkedCells,
           },
         };
       });

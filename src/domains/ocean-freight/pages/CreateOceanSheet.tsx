@@ -7,7 +7,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SheetBuilder, Sheet } from "@/core/sheet-builder";
 import { oceanFreightColumns } from "../config";
 import { mapToOceanRate, OceanRate } from "../models";
@@ -21,6 +21,32 @@ export default function CreateOceanSheet() {
   const t = useTranslations("ocean");
   const { isSidebarCollapsed } = useUI();
   const [sheets, setSheets] = useState<Sheet[]>([]);
+
+  // ── Copy Draft ────────────────────────────────────────
+  const [copySheets] = useState<Sheet[] | null>(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      const raw = sessionStorage.getItem("atlas-copy-draft");
+      if (!raw) return null;
+      const draft = JSON.parse(raw) as { fileType: string; sheets: { id: string; name: string; rows: Sheet["rows"] }[] };
+      if (draft.fileType !== "OCEAN") return null;
+      return draft.sheets.map((s) => ({
+        id: s.id,
+        name: s.name,
+        columns: oceanFreightColumns,
+        rows: s.rows ?? [],
+      }));
+    } catch {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    if (copySheets) {
+      sessionStorage.removeItem("atlas-copy-draft");
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const {
     state,
     openSuccessModal,
@@ -84,9 +110,10 @@ export default function CreateOceanSheet() {
       <div className="mb-6">
         <SheetBuilder
           initialColumns={oceanFreightColumns}
+          initialSheets={copySheets ?? undefined}
           onChange={handleSheetChange}
           multiSheet={true}
-          storageKey="ocean-freight-sheets"
+          storageKey={copySheets ? undefined : "ocean-freight-sheets"}
         />
       </div>
 

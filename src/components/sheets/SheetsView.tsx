@@ -2,13 +2,16 @@
 
 import { useMemo, useState, useCallback } from "react";
 import Link from "next/link";
-import { Download, Loader2, Edit2 } from "lucide-react";
-import { useFilesQuery } from "@/hooks/queries/useFiles";
+import { useRouter } from "next/navigation";
+import { Download, Loader2, Edit2, Copy, Trash2, AlertTriangle } from "lucide-react";
+import { useFilesQuery, useDeleteFile } from "@/hooks/queries/useFiles";
 import { Pagination } from "@/components/table/Pagination";
 import { FILE_TYPE_CONFIG, FILE_STATUS_CONFIG } from "@/constants";
 import { ROUTES } from "@/constants/routes";
 import { logger } from "@/utils/logger";
 import { downloadFileAsXlsx } from "@/utils/downloadFile";
+import { filesService } from "@/services/filesService";
+import { Modal, Button } from "@/components/ui";
 import { useTranslations } from "next-intl";
 import type { FileType } from "@/types/api";
 
@@ -33,9 +36,17 @@ export function SheetsView({
   endDate,
 }: SheetsViewProps) {
   const t = useTranslations("sheetsView");
+  const router = useRouter();
 
   /** Track which file ID is currently being downloaded */
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  /** Track which file ID is currently being copied */
+  const [copyingId, setCopyingId] = useState<string | null>(null);
+  /** File ID queued for deletion */
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [pendingDeleteName, setPendingDeleteName] = useState<string>("");
+
+  const { mutate: deleteFile, isPending: isDeleting } = useDeleteFile();
 
   // Build query params — omit type when "all", include date range if provided
   const queryParams = useMemo(
@@ -84,6 +95,71 @@ export function SheetsView({
     },
     [downloadingId]
   );
+
+  const handleCopy = useCallback(
+    async (e: React.MouseEvent, fileId: string, fileType: FileType) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (copyingId) return;
+      setCopyingId(fileId);
+      try {
+        // Fetch sheets AND file detail in parallel — detail carries shipmentDetails
+        const [{ sheets }, { file }] = await Promise.all([
+          filesService.getFileSheets(fileId),
+          filesService.getFileDetail(fileId),
+        ]);
+        // Store copy payload in sessionStorage; target page reads & consumes it
+        sessionStorage.setItem(
+          "atlas-copy-draft",
+          JSON.stringify({
+            fileType,
+            shipmentDetails: file.shipmentDetails ?? null,
+            sheets: sheets.map((s, i) => ({
+              id: `copy-${Date.now()}-${i}`,
+              name: s.name,
+              rows: s.data.rows ?? [],
+            })),
+          })
+        );
+        router.push(fileType === "AIR" ? "/air-freight-sheet" : "/ocean-freight-sheet");
+      } catch (err) {
+        logger.error(`[SheetsView] Copy failed for file ${fileId}:`, err);
+      } finally {
+        setCopyingId(null);
+      }
+    },
+    [copyingId, router]
+  );
+
+  const handleDeleteRequest = useCallback(
+    (e: React.MouseEvent, fileId: string, fileName: string) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setPendingDeleteId(fileId);
+      setPendingDeleteName(fileName);
+    },
+    []
+  );
+
+  const handleDeleteConfirm = useCallback(() => {
+    if (!pendingDeleteId) return;
+    deleteFile(pendingDeleteId, {
+      onSuccess: () => {
+        setPendingDeleteId(null);
+        setPendingDeleteName("");
+      },
+      onError: (err) => {
+        logger.error(`[SheetsView] Delete failed for file ${pendingDeleteId}:`, err);
+        setPendingDeleteId(null);
+        setPendingDeleteName("");
+      },
+    });
+  }, [pendingDeleteId, deleteFile]);
+
+  const handleDeleteCancel = useCallback(() => {
+    setPendingDeleteId(null);
+    setPendingDeleteName("");
+  }, []);
 
   // ── Loading ────────────────────────────────────────────
   if (isLoading) {
@@ -142,8 +218,8 @@ export function SheetsView({
           <span className="w-24 flex-shrink-0">{t("table.status")}</span>
           <span className="w-24 flex-shrink-0 text-right">{t("table.updated")}</span>
         </div>
-        {/* Matches row's w-20 actions cell (outside the px-4 link area) */}
-        <span className="w-20 flex-shrink-0 text-center py-2 px-2">{t("table.actions")}</span>
+        {/* Matches row's w-36 actions cell (outside the px-4 link area) */}
+        <span className="w-36 flex-shrink-0 text-center py-2 px-2">{t("table.actions")}</span>
       </div>
 
       {/* Rows */}
@@ -162,6 +238,7 @@ export function SheetsView({
           }
 
           const isDownloading = downloadingId === file.id;
+          const isCopying = copyingId === file.id;
 
           return (
             <li
@@ -214,7 +291,7 @@ export function SheetsView({
               </Link>
 
               {/* Actions cell — outside the Link so clicks don't navigate */}
-              <div className="w-20 flex-shrink-0 flex items-center justify-center px-2 py-2.5">
+              <div className="w-36 flex-shrink-0 flex items-center justify-center px-2 py-2.5">
                 <div className="flex items-center justify-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity duration-200">
                   {/* Edit button */}
                   <Link
@@ -239,6 +316,33 @@ export function SheetsView({
                     ) : (
                       <Download className="w-3.5 h-3.5" />
                     )}
+                  </button>
+
+                  {/* Copy button */}
+                  <button
+                    onClick={(e) => handleCopy(e, file.id, file.type)}
+                    disabled={!!copyingId}
+                    className="p-1.5 text-textSecondary hover:text-primary hover:bg-primary-soft rounded-md transition-all duration-200 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    title="Copy as new file"
+                    type="button"
+                    aria-label={`Copy ${file.name}`}
+                  >
+                    {isCopying ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+
+                  {/* Delete button */}
+                  <button
+                    onClick={(e) => handleDeleteRequest(e, file.id, file.name)}
+                    className="p-1.5 text-textSecondary hover:text-error hover:bg-error/10 rounded-md transition-all duration-200 hover:scale-110"
+                    title="Delete file"
+                    type="button"
+                    aria-label={`Delete ${file.name}`}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -269,6 +373,55 @@ export function SheetsView({
           onPageChange={onPageChange}
         />
       </div>
+
+      {/* ── Delete Confirm Modal ─────────────────────────── */}
+      <Modal
+        isOpen={!!pendingDeleteId}
+        onClose={handleDeleteCancel}
+        maxWidth="max-w-sm"
+        preventBackdropClose={isDeleting}
+      >
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-error/10 flex items-center justify-center">
+              <AlertTriangle className="w-5 h-5 text-error" />
+            </div>
+            <div>
+              <h3 className="text-base font-semibold text-textPrimary">Delete File</h3>
+              <p className="text-xs text-textSecondary mt-0.5">This action cannot be undone.</p>
+            </div>
+          </div>
+          <p className="text-sm text-textSecondary mb-6">
+            Are you sure you want to delete{" "}
+            <span className="font-medium text-textPrimary">&ldquo;{pendingDeleteName}&rdquo;</span>?
+            All sheets and rows will be permanently removed.
+          </p>
+          <div className="flex items-center justify-end gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleDeleteCancel}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={handleDeleteConfirm}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <span className="flex items-center gap-1.5">
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" /> Deleting…
+                </span>
+              ) : (
+                "Delete"
+              )}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

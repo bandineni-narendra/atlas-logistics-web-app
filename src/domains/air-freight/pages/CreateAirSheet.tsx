@@ -7,7 +7,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SheetBuilder, Sheet } from "@/core/sheet-builder";
 import { airFreightColumns } from "../config";
 import { mapToAirRate, AirRate } from "../models";
@@ -25,6 +25,43 @@ export default function CreateAirSheet() {
   const t = useTranslations("air");
   const { isSidebarCollapsed } = useUI();
   const [sheets, setSheets] = useState<Sheet[]>([]);
+
+  // ── Copy Draft ────────────────────────────────────────
+  // When the user clicks "copy" in the home table, the source file's sheets +
+  // shipmentDetails are serialised into sessionStorage under "atlas-copy-draft".
+  // We read them ONCE synchronously here (lazy-initializer runs before first paint).
+  const [copyDraft] = useState<{ sheets: Sheet[]; shipment: ShipmentData | null } | null>(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      const raw = sessionStorage.getItem("atlas-copy-draft");
+      if (!raw) return null;
+      const draft = JSON.parse(raw) as {
+        fileType: string;
+        shipmentDetails?: ShipmentData | null;
+        sheets: { id: string; name: string; rows: Sheet["rows"] }[];
+      };
+      if (draft.fileType !== "AIR") return null;
+      return {
+        sheets: draft.sheets.map((s) => ({
+          id: s.id,
+          name: s.name,
+          columns: airFreightColumns,
+          rows: s.rows ?? [],
+        })),
+        shipment: draft.shipmentDetails ?? null,
+      };
+    } catch {
+      return null;
+    }
+  });
+
+  // Clear sessionStorage once consumed so refreshing doesn't re-apply it
+  useEffect(() => {
+    if (copyDraft) {
+      sessionStorage.removeItem("atlas-copy-draft");
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [shipmentData, setShipmentData] = useState<ShipmentData | undefined>();
   const [originChargesData, setOriginChargesData] = useState<OriginChargesData | undefined>();
   const [airfreightData, setAirfreightData] = useState<AirfreightData | undefined>();
@@ -92,7 +129,7 @@ export default function CreateAirSheet() {
       </div>
 
       {/* Shipment Details Metadata */}
-      <ShipmentDetails onChange={setShipmentData} />
+      <ShipmentDetails onChange={setShipmentData} initialData={copyDraft?.shipment ?? undefined} />
 
       {/* Origin Charges */}
       {/* 
@@ -140,9 +177,10 @@ export default function CreateAirSheet() {
       <div className="mb-6">
         <SheetBuilder
           initialColumns={airFreightColumns}
+          initialSheets={copyDraft?.sheets ?? undefined}
           onChange={handleSheetChange}
           multiSheet={true}
-          storageKey="air-freight-sheets"
+          storageKey={copyDraft ? undefined : "air-freight-sheets"}
         />
       </div>
 

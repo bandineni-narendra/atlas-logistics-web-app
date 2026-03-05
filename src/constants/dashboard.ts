@@ -6,11 +6,11 @@
 
 export const DASHBOARD_LABELS = {
   OVERVIEW_TITLE: 'Overview',
-  TOTAL_SHEETS: 'Total Sheets',
-  TOTAL_SHEETS_SUBLABEL: 'All saved sheets',
-  OCEAN_SHEETS: 'Ocean Sheets',
+  TOTAL_SHEETS: 'Total Files',
+  TOTAL_SHEETS_SUBLABEL: 'All saved files',
+  OCEAN_SHEETS: 'Ocean Files',
   OCEAN_SHEETS_SUBLABEL: 'Freight rates',
-  AIR_SHEETS: 'Air Sheets',
+  AIR_SHEETS: 'Air Files',
   AIR_SHEETS_SUBLABEL: 'Freight rates',
   LOADING_PLACEHOLDER: '—',
 } as const;

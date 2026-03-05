@@ -8,3 +8,4 @@ export * from "./file-status";
 export * from "./pagination";
 export * from "./routes";
 export * from "./dashboard";
+export * from "./airlines";

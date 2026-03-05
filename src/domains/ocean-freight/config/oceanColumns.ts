@@ -75,6 +75,7 @@ export const oceanFreightColumns: Column[] = [
     required: true,
     width: 100,
     options: [
+      { label: "AED", value: "AED" },
       { label: "USD", value: "USD" },
       { label: "EUR", value: "EUR" },
       { label: "GBP", value: "GBP" },

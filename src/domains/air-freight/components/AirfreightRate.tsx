@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { AirlineCombobox } from "@/components/sheet-builder/AirlineCombobox";
 
 export interface AirfreightData {
     airline: string;
@@ -42,15 +43,16 @@ export function AirfreightRate({
             </div>
 
             <div className="p-5 flex flex-wrap gap-6 items-end">
-                <div className="flex flex-col gap-1.5 min-w-[200px]">
+                <div className="flex flex-col gap-1.5 min-w-[220px]">
                     <label className="text-xs font-bold text-textSecondary uppercase tracking-wider">Airline</label>
-                    <input
-                        type="text"
-                        value={airline}
-                        onChange={(e) => setAirline(e.target.value)}
-                        placeholder="e.g. Emirates"
-                        className="w-full h-10 px-3 py-2 text-sm bg-surface border border-border rounded-md text-textPrimary placeholder:text-textMuted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-                    />
+                    <div className="w-full h-10 bg-surface border border-border rounded-md text-textPrimary focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-colors overflow-visible">
+                        <AirlineCombobox
+                            value={airline || null}
+                            onChange={(val) => setAirline(val ?? "")}
+                            displayField="name"
+                            placeholder="Search airline…"
+                        />
+                    </div>
                 </div>
 
                 <div className="flex flex-col gap-1.5 w-32">

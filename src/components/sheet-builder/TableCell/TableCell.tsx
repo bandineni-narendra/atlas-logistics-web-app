@@ -9,6 +9,7 @@
 
 import { useCallback, memo } from "react";
 import { ColumnType, CellValue, Column } from "@/core/sheet-builder";
+import { AirlineCombobox } from "../AirlineCombobox";
 
 // Modern minimalistic input styles
 const BASE_INPUT_CLASSES = `
@@ -133,6 +134,16 @@ export const TableCell = memo(function TableCell({
               className="w-5 h-5 text-primary bg-surface border-border rounded cursor-pointer focus:ring-2 focus:ring-primary focus:ring-offset-0 transition-all duration-200 hover:scale-110"
             />
           </div>
+        );
+
+      case ColumnType.AIRLINE:
+        return (
+          <AirlineCombobox
+            value={value !== null ? String(value) : null}
+            onChange={(val) => onChange(val)}
+            displayField={column.linkedField ?? "name"}
+            placeholder={column.placeholder}
+          />
         );
 
       case ColumnType.TEXT:

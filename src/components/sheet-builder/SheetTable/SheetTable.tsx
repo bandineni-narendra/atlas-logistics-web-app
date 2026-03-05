@@ -127,7 +127,7 @@ export function SheetTable({
                     colSpan={sheet.columns.length + 3}
                     className="text-center py-16"
                   >
-                    <p className="text-textSecondary text-sm">
+                    <p className="text-textSecondary text-sm px-4 py-2">
                       Click Add row to add data
                     </p>
                   </td>

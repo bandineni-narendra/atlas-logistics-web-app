@@ -30,6 +30,7 @@ export function TableHeader({
   const [editingColumnId, setEditingColumnId] = useState<string | null>(null);
 
   const startEditing = useCallback((column: Column) => {
+    if (column.required) return;
     setEditingColumnId(column.id);
   }, []);
 
@@ -182,9 +183,9 @@ export const SortableHeaderCell = memo(function SortableHeaderCell({
           <div className="flex-1 overflow-hidden">
             <div className="flex items-start gap-0.5 max-w-full">
               <span
-                onClick={() => startEditing(column)}
-                className="text-[10px] font-bold text-textPrimary cursor-pointer hover:text-primary transition-all duration-200 whitespace-pre-line overflow-hidden text-ellipsis leading-tight py-1"
-                title={column.label}
+                onClick={() => !column.required && startEditing(column)}
+                className={`text-[10px] font-bold text-textPrimary transition-all duration-200 whitespace-pre-line overflow-hidden text-ellipsis leading-tight py-1 ${column.required ? "cursor-default" : "cursor-pointer hover:text-primary"}`}
+                title={column.required ? `${column.label} (required — cannot rename)` : column.label}
               >
                 {column.label}
               </span>

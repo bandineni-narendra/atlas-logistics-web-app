@@ -11,6 +11,8 @@ export enum ColumnType {
   DATE = "date",
   SELECT = "select",
   BOOLEAN = "boolean",
+  /** Searchable airline dropdown — auto-fills the linked column (name ↔ code). */
+  AIRLINE = "airline",
 }
 
 export type CellValue = string | number | boolean | null;

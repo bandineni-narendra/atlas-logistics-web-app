@@ -45,10 +45,9 @@ export async function downloadFileAsXlsx(
     const blob = await response.blob();
     const objectUrl = URL.createObjectURL(blob);
 
-    const safeFileName = fileName.replace(/[^a-z0-9_\-. ]/gi, '_');
-    const downloadName = safeFileName.endsWith('.pdf')
-        ? safeFileName
-        : `${safeFileName}.pdf`;
+    const downloadName = fileName.endsWith('.pdf')
+        ? fileName
+        : `${fileName}.pdf`;
 
     const anchor = document.createElement('a');
     anchor.href = objectUrl;
