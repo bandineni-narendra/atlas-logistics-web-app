@@ -23,7 +23,7 @@ export default function Home() {
   }
 
   return (
-    <main className={`transition-all duration-300 mx-auto flex flex-col w-full h-full ${isSidebarCollapsed ? "max-w-[98%] px-2 py-4" : "px-6 py-5 max-w-7xl"}`}>
+    <main className={`transition-all duration-300 mx-auto flex flex-col w-full h-full ${isSidebarCollapsed ? "max-w-[98%] px-2 py-4" : "px-6 py-5 max-w-[98%]"}`}>
       {/* Top bar: Dashboard title left, Search right */}
       <div className="flex items-center justify-between pt-1 pb-4">
         <h1 className="text-xl font-semibold text-textPrimary tracking-tight">Dashboard</h1>

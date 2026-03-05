@@ -15,12 +15,13 @@ export interface UseFileUpdateOptions {
     defaultClientEmail?: string;
     defaultNotes?: string;
     validateSheets?: (sheets: Sheet[]) => ValidationResult;
+    validateShipment?: (shipment: any) => ValidationResult;
     onSuccess?: () => void;
     onError?: (error: string, issues?: ValidationIssue[]) => void;
 }
 
 interface UseFileUpdateReturn {
-    handleUpdateFile: (sheets: Sheet[]) => void;
+    handleUpdateFile: (sheets: Sheet[], shipmentDetails?: any) => void;
     isUpdating: boolean;
     fileNameModalProps: {
         isOpen: boolean;
@@ -80,12 +81,14 @@ export function useFileUpdate(options: UseFileUpdateOptions): UseFileUpdateRetur
         defaultClientEmail = "",
         defaultNotes = "",
         validateSheets,
+        validateShipment,
         onSuccess,
         onError,
     } = options;
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [pendingSheets, setPendingSheets] = useState<Sheet[]>([]);
+    const [pendingShipmentDetails, setPendingShipmentDetails] = useState<any | undefined>();
     const queryClient = useQueryClient();
 
     const updateFileMutation = useMutation({
@@ -99,6 +102,7 @@ export function useFileUpdate(options: UseFileUpdateOptions): UseFileUpdateRetur
 
             setIsModalOpen(false);
             setPendingSheets([]);
+            setPendingShipmentDetails(undefined);
             onSuccess?.();
         },
         onError: (error) => {
@@ -108,19 +112,27 @@ export function useFileUpdate(options: UseFileUpdateOptions): UseFileUpdateRetur
     });
 
     const handleUpdateFile = useCallback(
-        (sheets: Sheet[]) => {
+        (sheets: Sheet[], shipmentDetails?: any) => {
+            let combinedIssues: ValidationIssue[] = [];
+
             if (validateSheets) {
-                const validationResult = validateSheets(sheets);
-
-                if (!validationResult.isValid) {
-                    const errorMsg =
-                        validationResult.issues.length > 0
-                            ? `Validation failed: ${validationResult.issues.length} issue(s) found`
-                            : "No data to save. Please add at least one complete row.";
-
-                    onError?.(errorMsg, validationResult.issues);
-                    return;
+                const sheetValidation = validateSheets(sheets);
+                if (!sheetValidation.isValid) {
+                    combinedIssues = [...combinedIssues, ...sheetValidation.issues];
                 }
+            }
+
+            if (shipmentDetails && validateShipment) {
+                const shipmentValidation = validateShipment(shipmentDetails);
+                if (!shipmentValidation.isValid) {
+                    combinedIssues = [...combinedIssues, ...shipmentValidation.issues];
+                }
+            }
+
+            if (combinedIssues.length > 0) {
+                const errorMsg = `Validation failed: ${combinedIssues.length} issue(s) found`;
+                onError?.(errorMsg, combinedIssues);
+                return;
             }
 
             if (sheets.length === 0) {
@@ -129,6 +141,7 @@ export function useFileUpdate(options: UseFileUpdateOptions): UseFileUpdateRetur
             }
 
             setPendingSheets(sheets);
+            setPendingShipmentDetails(shipmentDetails);
             setIsModalOpen(true);
         },
         [validateSheets, onError],
@@ -160,17 +173,19 @@ export function useFileUpdate(options: UseFileUpdateOptions): UseFileUpdateRetur
                 sheets: sheetsData,
                 clientEmail,
                 notes,
+                shipmentDetails: pendingShipmentDetails,
             } as any;
 
             updateFileMutation.mutate(request);
         },
-        [pendingSheets, effectiveDate, updateFileMutation, onError],
+        [pendingSheets, pendingShipmentDetails, effectiveDate, updateFileMutation, onError],
     );
 
     const handleModalCancel = useCallback(() => {
         if (!updateFileMutation.isPending) {
             setIsModalOpen(false);
             setPendingSheets([]);
+            setPendingShipmentDetails(undefined);
         }
     }, [updateFileMutation.isPending]);
 

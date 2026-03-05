@@ -45,10 +45,11 @@ export function TableRow({
 
       {/* Row actions: Copy & Delete */}
       <td
-        className="border-b border-border bg-surface group-hover:bg-surface px-2 py-0 transition-all duration-200"
-        style={{ width: "80px", minWidth: "80px" }}
+        data-col-type="actions"
+        className="border-b border-border bg-surface group-hover:bg-surface px-2 py-0 transition-all duration-200 whitespace-nowrap"
+        style={{ width: "1%" }}
       >
-        <div className="flex items-center justify-center gap-1 h-8 opacity-70 group-hover:opacity-100 transition-opacity duration-200">
+        <div className="flex items-center justify-center gap-1 h-9 opacity-70 group-hover:opacity-100 transition-opacity duration-200">
           {/* Copy button */}
           <button
             onClick={onCopy}
@@ -75,8 +76,8 @@ export function TableRow({
 
       {/* Empty cell for Add Column header alignment */}
       <td
-        className="border-b border-border bg-surface"
-        style={{ minWidth: "100px" }}
+        data-col-type="add"
+        className="border-b border-border bg-surface whitespace-nowrap"
       ></td>
     </tr>
   );

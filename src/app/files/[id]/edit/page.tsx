@@ -12,6 +12,8 @@ import { filesService } from "@/services/filesService";
 import { Alert, Card, Button, FileNameModal } from "@/components/ui";
 import { airFreightColumns } from "@/domains/air-freight/config";
 import { oceanFreightColumns } from "@/domains/ocean-freight/config";
+import { validateShipmentDetails } from "@/domains/air-freight/validation";
+import { ShipmentDetails, ShipmentData } from "@/domains/air-freight/components/ShipmentDetails";
 
 /**
  * File Edit Page
@@ -24,6 +26,8 @@ export default function FileEditPage() {
     const fileId = params?.id as string;
 
     const [localSheets, setLocalSheets] = useState<Sheet[]>([]);
+    // Tracks user edits to shipment details; undefined means "no changes yet"
+    const [localShipmentData, setLocalShipmentData] = useState<ShipmentData | undefined>();
     const { openModal } = useFeedbackModal();
 
     // 1. Fetch File Metadata
@@ -103,6 +107,7 @@ export default function FileEditPage() {
             const hasData = sheets.some((s) => s.rows.length > 0);
             return { isValid: hasData, issues: [] };
         },
+        validateShipment: (shipment) => validateShipmentDetails(shipment),
         onSuccess: () => {
             openModal(
                 "success",
@@ -133,14 +138,14 @@ export default function FileEditPage() {
                 </Button>
                 <Button
                     variant="primary"
-                    onClick={() => handleUpdateFile(localSheets)}
+                    onClick={() => handleUpdateFile(localSheets, localShipmentData ?? fileDetail?.shipmentDetails)}
                     disabled={isUpdating || localSheets.length === 0}
                 >
                     {t("common.save")}
                 </Button>
             </div>
         ),
-        [localSheets, isUpdating, handleUpdateFile, router, fileId, t]
+        [localSheets, localShipmentData, fileDetail?.shipmentDetails, isUpdating, handleUpdateFile, router, fileId, t]
     );
 
     if (isLoading) {
@@ -162,7 +167,7 @@ export default function FileEditPage() {
     }
 
     return (
-        <main className="px-6 py-5 max-w-[1600px] mx-auto flex flex-col w-full h-full relative">
+        <main className="px-6 py-5 max-w-[98%] mx-auto flex flex-col w-full h-full relative">
             <header className="mb-5 flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <h1 className="text-xl font-medium text-textPrimary tracking-tight">
@@ -174,6 +179,18 @@ export default function FileEditPage() {
                 </div>
                 {headerActions}
             </header>
+
+            {/* Shipment Details Metadata (Only for AIR files) */}
+            {fileDetail.type === "AIR" && (
+                <div className="mb-6">
+                    {/* key ensures ShipmentDetails remounts once with real initialData after load */}
+                    <ShipmentDetails
+                        key={fileDetail.shipmentDetails ? "loaded" : "empty"}
+                        initialData={fileDetail.shipmentDetails}
+                        onChange={setLocalShipmentData}
+                    />
+                </div>
+            )}
 
             {/* Editor Component */}
             <Card padding="none" className="flex-1 flex flex-col min-h-0 min-h-[500px]">

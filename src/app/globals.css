@@ -295,7 +295,77 @@ main {
 }
 
 /* ── Selection ────────────────────────────────────────────────── */
+/* ── Selection ────────────────────────────────────────────────── */
 ::selection {
   background: var(--color-primary-soft);
   color: var(--color-primary);
+}
+
+/* ══ Sheet Builder — Responsive Column Widths ════════════════════
+   Laptop-first (≤1440px): compact but readable
+   Medium  (≥1600px):      slightly wider
+   Large   (≥1920px):      full-width comfortable
+   ════════════════════════════════════════════════════════════════ */
+
+/* — Wrapper — */
+.sheet-table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* — Table element — */
+.sheet-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+  /* columns flex to fill table; min-width is honored */
+}
+
+/* — Header cell padding — */
+.sheet-table th {
+  padding: 8px 10px;
+  white-space: nowrap;
+}
+
+/* — Data cells: no padding, clips content so it can't drive auto-layout width — */
+.sheet-table td {
+  padding: 0;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* — Cell hover: theme-relative tint — */
+.sheet-table-cell:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* — Inputs/selects: min-width:0 removes browser's intrinsic size contribution
+   so auto-layout measures 0 for cell content, leaving only min-width as the floor — */
+.sheet-table td input,
+.sheet-table td select {
+  min-width: 0;
+  width: 100%;
+  display: block;
+}
+
+/* ── Column sizing: content-driven ──────────────────────────────────────────
+   Data columns (text, number, date, select, boolean) have NO explicit width.
+   With table-layout:auto + white-space:nowrap on <th>, the browser sizes each
+   column to its header label + delete icon + padding, then distributes
+   remaining space proportionally so the table fills width:100%.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Utility columns stay pinned so they don't steal space from data columns */
+[data-col-type="actions"] {
+  width: 68px;
+  min-width: 68px;
+  max-width: 68px;
+}
+
+[data-col-type="add"] {
+  width: 84px;
+  min-width: 84px;
+  max-width: 84px;
 }

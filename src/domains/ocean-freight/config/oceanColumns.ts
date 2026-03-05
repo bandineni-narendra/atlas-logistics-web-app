@@ -106,7 +106,7 @@ export const oceanFreightColumns: Column[] = [
   createColumn({
     id: "freeDays",
     label: "Free Days",
-    type: ColumnType.NUMBER,
+    type: ColumnType.TEXT,
     placeholder: "e.g., 14",
     width: 110,
   }),

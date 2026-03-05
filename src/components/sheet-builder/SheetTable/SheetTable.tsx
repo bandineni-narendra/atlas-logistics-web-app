@@ -99,13 +99,16 @@ export function SheetTable({
   return (
     <div className="flex flex-col gap-4">
       {/* Modern minimalistic spreadsheet container */}
-      <div className="overflow-x-auto rounded-2xl bg-surface shadow-md border border-border p-4 overflow-hidden">
+      <div className="w-full max-w-full overflow-x-auto rounded-2xl bg-surface shadow-md border border-border p-4">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          <table className="border-collapse w-full">
+          <table
+            className="border-collapse border-spacing-0 sheet-table"
+            style={{ width: "100%" }}
+          >
             <SortableContext
               items={columnIds}
               strategy={horizontalListSortingStrategy}
@@ -121,7 +124,7 @@ export function SheetTable({
               {sheet.rows.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={sheet.columns.length + 1}
+                    colSpan={sheet.columns.length + 3}
                     className="text-center py-16"
                   >
                     <p className="text-textSecondary text-sm">

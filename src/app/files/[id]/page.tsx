@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useFileDetail, useFileSheets } from "@/hooks/queries/useFiles";
-import { SheetTabs, SheetDataTable, FileDetailHeader, BackButton } from "@/components/file-detail";
+import { SheetTabs, SheetDataTable, FileDetailHeader, BackButton, ShipmentDetailsSummary } from "@/components/file-detail";
 import { useUI } from "@/contexts/UIContext";
 import { FILE_TYPE_CONFIG, FILE_STATUS_CONFIG } from "@/constants";
 import { FileQuestion } from "lucide-react";
@@ -58,12 +58,17 @@ export default function FileDetailPage() {
     }
 
     return (
-        <div className={`mx-auto px-4 py-6 transition-all duration-300 ${isSidebarCollapsed ? "max-w-[98%]" : "max-w-7xl"}`}>
+        <div className={`mx-auto px-4 py-6 transition-all duration-300 ${isSidebarCollapsed ? "max-w-[98%]" : "max-w-[98%]"}`}>
             {/* Header & Back Button */}
             <div className="mb-6 flex flex-col gap-4">
                 <BackButton />
                 <FileDetailHeader file={file} />
             </div>
+
+            {/* Shipment Details Summary */}
+            {file.shipmentDetails && (
+                <ShipmentDetailsSummary shipmentDetails={file.shipmentDetails} />
+            )}
 
             {/* Sheet Tabs */}
             {sheets.length > 0 ? (

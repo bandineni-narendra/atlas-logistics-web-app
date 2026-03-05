@@ -11,16 +11,23 @@ import { useState } from "react";
 import { SheetBuilder, Sheet } from "@/core/sheet-builder";
 import { airFreightColumns } from "../config";
 import { mapToAirRate, AirRate } from "../models";
-import { validateAirSheets } from "../validation";
+import { validateAirSheets, validateShipmentDetails } from "../validation";
 import { useFeedbackModal, useFileSave } from "@/hooks";
 import { FeedbackModal, FileNameModal, Button } from "@/components/ui";
 import { useUI } from "@/contexts/UIContext";
 import { useTranslations } from "next-intl";
+import { ShipmentDetails, ShipmentData } from "../components/ShipmentDetails";
+import { OriginCharges, OriginChargesData } from "../components/OriginCharges";
+import { AirfreightRate, AirfreightData } from "../components/AirfreightRate";
+import { FinalQuotation } from "../components/FinalQuotation";
 
 export default function CreateAirSheet() {
   const t = useTranslations("air");
   const { isSidebarCollapsed } = useUI();
   const [sheets, setSheets] = useState<Sheet[]>([]);
+  const [shipmentData, setShipmentData] = useState<ShipmentData | undefined>();
+  const [originChargesData, setOriginChargesData] = useState<OriginChargesData | undefined>();
+  const [airfreightData, setAirfreightData] = useState<AirfreightData | undefined>();
   const {
     state,
     openSuccessModal,
@@ -35,6 +42,8 @@ export default function CreateAirSheet() {
     effectiveDate: new Date().toISOString().split("T")[0],
     validateSheets: (sheets) =>
       validateAirSheets(sheets, { skipEmptyRows: true }),
+    validateShipment: (shipment) =>
+      validateShipmentDetails(shipment),
     onSuccess: (fileId, sheetIds) => {
       // Collect valid rates for logging
       const rates: AirRate[] = [];
@@ -68,11 +77,11 @@ export default function CreateAirSheet() {
   };
 
   const handleSave = () => {
-    handleSaveFile(sheets);
+    handleSaveFile(sheets, shipmentData);
   };
 
   return (
-    <div className={`container mx-auto transition-all duration-300 ${isSidebarCollapsed ? "max-w-[98%] px-2 py-4" : "max-w-7xl p-6"}`}>
+    <div className={`container mx-auto transition-all duration-300 ${isSidebarCollapsed ? "max-w-[98%] px-2 py-4" : "max-w-[98%] p-6"}`}>
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-textPrimary mb-2">
           {t("createTitle")}
@@ -81,6 +90,51 @@ export default function CreateAirSheet() {
           {t("createDescription")}
         </p>
       </div>
+
+      {/* Shipment Details Metadata */}
+      <ShipmentDetails onChange={setShipmentData} />
+
+      {/* Origin Charges */}
+      {/* 
+      <OriginCharges
+        actualWeight={shipmentData?.stats.grossWeight || 0}
+        chargeableWeight={shipmentData?.stats.chargeableWeight || 0}
+        onChange={setOriginChargesData}
+      />
+      */}
+
+      {/* Airfreight Rate */}
+      {/* 
+      <AirfreightRate
+        chargeableWeight={shipmentData?.stats.chargeableWeight || 0}
+        onChange={setAirfreightData}
+      />
+      */}
+
+      {/* Final Totals */}
+      {/* 
+      <FinalQuotation
+        originTotal={originChargesData?.charges.reduce((acc, row) => {
+          const rate = typeof row.rate === "number" ? row.rate : 0;
+          const qty = typeof row.quantity === "number" ? row.quantity : 0;
+          const min = typeof row.minimum === "number" ? row.minimum : 0;
+          if (row.unit === "per kg") {
+            const weightToUse = row.applyToChargeableWeight ? (shipmentData?.stats.chargeableWeight || 0) : (shipmentData?.stats.grossWeight || 0);
+            return acc + Math.max(rate * weightToUse, min);
+          }
+          return acc + (rate * qty);
+        }, 0) || 0}
+        freightTotal={(typeof airfreightData?.ratePerKg === 'number' ? airfreightData.ratePerKg : 0) * (shipmentData?.stats.chargeableWeight || 0)}
+      />
+      */}
+
+      {/* Rate Management Header */}
+      {/* 
+      <div className="mt-12 mb-6 border-t pt-8">
+        <h2 className="text-2xl font-bold text-textPrimary mb-2">Rate Management</h2>
+        <p className="text-textSecondary">Manage the individual tariffs for this quotation below.</p>
+      </div>
+      */}
 
       {/* Sheet Builder */}
       <div className="mb-6">

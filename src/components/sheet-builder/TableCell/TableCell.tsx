@@ -49,6 +49,23 @@ export const TableCell = memo(function TableCell({
 
   const columnWidth = column.width || 150;
 
+  // Compute tooltip text (resolves labels for select options)
+  const getTooltipText = () => {
+    if (value === null || value === undefined || value === "") return undefined;
+    if (column.type === ColumnType.SELECT && column.options) {
+      const selectedOpt = column.options.find((opt) => {
+        const optVal = typeof opt === "string" ? opt : opt.value || opt.label;
+        return optVal === String(value);
+      });
+      if (selectedOpt) {
+        return typeof selectedOpt === "string" ? selectedOpt : selectedOpt.label;
+      }
+    }
+    return String(value);
+  };
+
+  const tooltipText = getTooltipText();
+
   const renderInput = () => {
     switch (column.type) {
       case ColumnType.NUMBER:
@@ -59,6 +76,7 @@ export const TableCell = memo(function TableCell({
             onChange={handleChange}
             placeholder={column.placeholder}
             className={BASE_INPUT_CLASSES}
+            title={tooltipText}
           />
         );
 
@@ -69,6 +87,7 @@ export const TableCell = memo(function TableCell({
             value={value !== null ? String(value) : ""}
             onChange={handleChange}
             className={`${BASE_INPUT_CLASSES} [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
+            title={tooltipText}
           />
         );
 
@@ -78,6 +97,7 @@ export const TableCell = memo(function TableCell({
             value={value !== null ? String(value) : ""}
             onChange={handleChange}
             className={`${BASE_INPUT_CLASSES} cursor-pointer appearance-none bg-right bg-no-repeat pr-8`}
+            title={tooltipText}
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
               backgroundPosition: "right 0.5rem center",
@@ -124,6 +144,7 @@ export const TableCell = memo(function TableCell({
             onChange={handleChange}
             placeholder={column.placeholder}
             className={BASE_INPUT_CLASSES}
+            title={tooltipText}
           />
         );
     }
@@ -131,14 +152,22 @@ export const TableCell = memo(function TableCell({
 
   return (
     <td
-      className="relative border-r border-b border-border bg-surface hover:bg-surface outline-none focus-within:bg-surface focus-within:shadow-md focus-within:border-primary focus-within:z-10"
+      data-col-type={column.type}
+      className="sheet-table-cell relative border-r border-b border-border bg-surface outline-none focus-within:z-10"
       style={{
-        width: `${columnWidth}px`,
-        transition:
-          "background-color 200ms, box-shadow 200ms, border-color 200ms",
+        transition: "background-color 200ms, box-shadow 200ms",
+      }}
+      onFocusCapture={(e) => {
+        e.currentTarget.style.boxShadow =
+          "inset 0 0 0 2px var(--color-primary)";
+      }}
+      onBlurCapture={(e) => {
+        e.currentTarget.style.boxShadow = "";
       }}
     >
-      <div className="relative h-8">{renderInput()}</div>
+      <div className="relative h-9 w-full">
+        {renderInput()}
+      </div>
     </td>
   );
 });

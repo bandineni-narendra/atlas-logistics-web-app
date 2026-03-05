@@ -89,4 +89,71 @@ describe("useFileSave Hook", () => {
         expect(filesService.createFile).toHaveBeenCalledTimes(1);
         expect(mockOnSuccess).toHaveBeenCalledWith("file-123", ["sheet-123"]);
     });
+
+    it("should include shipmentDetails in the createFile request (regression: stale closure)", async () => {
+        (filesService.createFile as any).mockResolvedValueOnce({
+            fileId: "file-456",
+            sheetIds: ["sheet-456"],
+        });
+
+        const shipment = {
+            rows: [
+                {
+                    id: "row-1",
+                    qty: 5,
+                    weight: 25,
+                    weightUnit: "kg",
+                    length: 60,
+                    lengthUnit: "cm",
+                    width: 40,
+                    widthUnit: "cm",
+                    height: 30,
+                    heightUnit: "cm",
+                },
+            ],
+            stats: {
+                totalQty: 5,
+                grossWeight: 25,
+                totalVolWeight: 28.8,
+                chargeableWeight: 28.8,
+                totalVolume: 0.072,
+            },
+        };
+
+        const { result } = renderHook(
+            () =>
+                useFileSave({
+                    fileType: "AIR",
+                    effectiveDate: "2026-03-01",
+                }),
+            { wrapper },
+        );
+
+        // Open modal, passing shipmentDetails
+        act(() => {
+            result.current.handleSaveFile(
+                [
+                    {
+                        id: "sheet-1",
+                        name: "Rates",
+                        columns: [{ id: "origin", label: "Origin", type: "text" as any }],
+                        rows: [{ id: "r1", cells: { origin: "BOM" as any } }],
+                    },
+                ],
+                shipment,
+            );
+        });
+
+        // Confirm save in modal
+        await act(async () => {
+            result.current.fileNameModalProps.onSave({
+                fileName: "Shipment Test File",
+            });
+        });
+
+        // Verify shipmentDetails was forwarded to the API
+        expect(filesService.createFile).toHaveBeenCalledTimes(1);
+        const callArg = (filesService.createFile as any).mock.calls[0][0];
+        expect(callArg.shipmentDetails).toEqual(shipment);
+    });
 });

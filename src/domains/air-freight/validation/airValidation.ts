@@ -11,6 +11,7 @@ import {
 } from "@/core/feedback";
 import { Sheet } from "@/core/sheet-builder";
 import { mapToAirRate, validateAirRate } from "../models/AirRate";
+import { ShipmentData } from "@/types/api";
 
 export interface AirValidationOptions {
   skipEmptyRows?: boolean;
@@ -82,5 +83,60 @@ export function validateAirSheets(
     issues,
     validCount,
     totalCount: totalProcessed,
+  };
+}
+
+export function validateShipmentDetails(
+  shipment: ShipmentData | undefined,
+): ValidationResult {
+  const issues: ValidationIssue[] = [];
+
+  if (!shipment || !shipment.rows || shipment.rows.length === 0) {
+    return {
+      isValid: false,
+      issues: [
+        createValidationIssue(
+          "Shipment",
+          1,
+          "General",
+          "At least one shipment dimension row is required",
+          "error",
+        ),
+      ],
+      validCount: 0,
+      totalCount: 0,
+    };
+  }
+
+  shipment.rows.forEach((row, index) => {
+    const rowNum = index + 1;
+    const sectionName = "Shipment";
+
+    if (row.qty === "" || row.qty === undefined || row.qty <= 0) {
+      issues.push(createValidationIssue(sectionName, rowNum, "Quantity", "Quantity must be a positive number", "error"));
+    }
+
+    if (row.weight === "" || row.weight === undefined || row.weight <= 0) {
+      issues.push(createValidationIssue(sectionName, rowNum, "Weight", "Weight must be a positive number", "error"));
+    }
+
+    if (row.length === "" || row.length === undefined || row.length <= 0) {
+      issues.push(createValidationIssue(sectionName, rowNum, "Length", "Length must be a positive number", "error"));
+    }
+
+    if (row.width === "" || row.width === undefined || row.width <= 0) {
+      issues.push(createValidationIssue(sectionName, rowNum, "Width", "Width must be a positive number", "error"));
+    }
+
+    if (row.height === "" || row.height === undefined || row.height <= 0) {
+      issues.push(createValidationIssue(sectionName, rowNum, "Height", "Height must be a positive number", "error"));
+    }
+  });
+
+  return {
+    isValid: issues.length === 0,
+    issues,
+    validCount: issues.length === 0 ? 1 : 0,
+    totalCount: 1,
   };
 }

@@ -69,6 +69,30 @@ export interface CreateSheet {
     data: SheetData;
 }
 
+export interface DimensionRowData {
+    id: string;
+    qty: number | "";
+    weight: number | "";
+    weightUnit: "kg" | "lb";
+    length: number | "";
+    lengthUnit: "cm" | "m" | "inch";
+    width: number | "";
+    widthUnit: "cm" | "m" | "inch";
+    height: number | "";
+    heightUnit: "cm" | "m" | "inch";
+}
+
+export interface ShipmentData {
+    rows: DimensionRowData[];
+    stats: {
+        totalQty: number;
+        grossWeight: number;
+        totalVolWeight: number;
+        chargeableWeight: number;
+        totalVolume: number;
+    };
+}
+
 export interface CreateFileRequest {
     name: string;
     type: FileType;
@@ -76,6 +100,7 @@ export interface CreateFileRequest {
     sheets: CreateSheet[];
     clientEmail?: string;
     notes?: string;
+    shipmentDetails?: ShipmentData;
 }
 
 export interface CreateFileResponse {
@@ -96,6 +121,7 @@ export interface FileSummary {
     createdBy: string;
     clientEmail?: string;
     notes?: string;
+    shipmentDetails?: ShipmentData;
 }
 
 export interface GetFilesParams {
@@ -135,6 +161,7 @@ export interface FileDetail {
     sheets: SheetSummary[];
     clientEmail?: string;
     notes?: string;
+    shipmentDetails?: ShipmentData;
 }
 
 export interface SheetWithData {
@@ -149,6 +176,9 @@ export interface UpdateFileRequest {
     effectiveDate?: string;
     status?: FileStatus;
     clientEmail?: string;
+    notes?: string;
+    sheets?: CreateSheet[];
+    shipmentDetails?: ShipmentData;
 }
 
 export interface UpdateFileResponse {

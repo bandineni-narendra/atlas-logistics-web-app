@@ -34,16 +34,22 @@ export interface UseFileSaveOptions {
   /** Custom validation function for sheets */
   validateSheets?: (sheets: Sheet[]) => ValidationResult;
 
+  /** Custom validation function for shipment details */
+  validateShipment?: (shipment: any) => ValidationResult;
+
   /** Called when file is successfully saved */
   onSuccess?: (fileId: string, sheetIds: string[]) => void;
 
   /** Called when there's an error */
   onError?: (error: string, issues?: ValidationIssue[]) => void;
+
+  /** Initial shipment data if editing */
+  initialShipmentData?: any;
 }
 
 interface UseFileSaveReturn {
   /** Initiate the save flow - shows modal if valid */
-  handleSaveFile: (sheets: Sheet[]) => void;
+  handleSaveFile: (sheets: Sheet[], shipmentDetails?: any) => void;
 
   /** Whether save is in progress */
   isSaving: boolean;
@@ -129,6 +135,7 @@ export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
     defaultFileName = "",
     defaultNotes,
     validateSheets,
+    validateShipment,
     onSuccess,
     onError,
   } = options;
@@ -139,6 +146,7 @@ export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pendingSheets, setPendingSheets] = useState<Sheet[]>([]);
+  const [pendingShipmentDetails, setPendingShipmentDetails] = useState<any | undefined>();
   const queryClient = useQueryClient();
 
   // Replace manual state with React Query's useMutation
@@ -162,20 +170,29 @@ export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
    * Start the save flow
    */
   const handleSaveFile = useCallback(
-    (sheets: Sheet[]) => {
+    (sheets: Sheet[], shipmentDetails?: any) => {
       // Validate sheets first (if validator provided)
+      let combinedIssues: ValidationIssue[] = [];
+
       if (validateSheets) {
-        const validationResult = validateSheets(sheets);
-
-        if (!validationResult.isValid) {
-          const errorMsg =
-            validationResult.issues.length > 0
-              ? `Validation failed: ${validationResult.issues.length} issue(s) found`
-              : "No data to save. Please add at least one complete row.";
-
-          onError?.(errorMsg, validationResult.issues);
-          return;
+        const sheetValidation = validateSheets(sheets);
+        if (!sheetValidation.isValid) {
+          combinedIssues = [...combinedIssues, ...sheetValidation.issues];
         }
+      }
+
+      // Validate shipment if it exists and a validator is provided
+      if (shipmentDetails && validateShipment) {
+        const shipmentValidation = validateShipment(shipmentDetails);
+        if (!shipmentValidation.isValid) {
+          combinedIssues = [...combinedIssues, ...shipmentValidation.issues];
+        }
+      }
+
+      if (combinedIssues.length > 0) {
+        const errorMsg = `Validation failed: ${combinedIssues.length} issue(s) found`;
+        onError?.(errorMsg, combinedIssues);
+        return;
       }
 
       // Check if there's at least one sheet
@@ -186,6 +203,7 @@ export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
 
       // Store sheets and open modal
       setPendingSheets(sheets);
+      setPendingShipmentDetails(shipmentDetails);
       setIsModalOpen(true);
     },
     [validateSheets, onError],
@@ -223,12 +241,13 @@ export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
         sheets: sheetsData,
         clientEmail,
         notes,
+        shipmentDetails: pendingShipmentDetails,
       };
 
       // Trigger mutation
       createFileMutation.mutate(request);
     },
-    [pendingSheets, fileType, effectiveDate, createFileMutation, onError],
+    [pendingSheets, pendingShipmentDetails, fileType, effectiveDate, createFileMutation, onError],
   );
 
   /**
@@ -238,6 +257,7 @@ export function useFileSave(options: UseFileSaveOptions): UseFileSaveReturn {
     if (!createFileMutation.isPending) {
       setIsModalOpen(false);
       setPendingSheets([]);
+      setPendingShipmentDetails(undefined);
     }
   }, [createFileMutation.isPending]);
 

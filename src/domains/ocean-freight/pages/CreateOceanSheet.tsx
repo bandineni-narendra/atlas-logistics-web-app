@@ -70,7 +70,7 @@ export default function CreateOceanSheet() {
   };
 
   return (
-    <div className={`container mx-auto transition-all duration-300 ${isSidebarCollapsed ? "max-w-[98%] px-2 py-4" : "max-w-7xl p-6"}`}>
+    <div className={`container mx-auto transition-all duration-300 ${isSidebarCollapsed ? "max-w-[98%] px-2 py-4" : "max-w-[98%] p-6"}`}>
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-textPrimary mb-2">
           {t("createTitle")}

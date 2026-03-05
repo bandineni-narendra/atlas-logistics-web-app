@@ -96,6 +96,25 @@ export function SheetBuilder({
     }
   }, [sheets, onChange]);
 
+  // Prevent accidental close/reload if there is any data entered
+  useEffect(() => {
+    const hasData = sheets.some((sheet) =>
+      sheet.rows.some((row) =>
+        Object.values(row.cells).some((val) => val !== null && val !== "")
+      )
+    );
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasData) {
+        e.preventDefault();
+        e.returnValue = ""; // Chrome requires returnValue to be set
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [sheets]);
+
   if (!activeSheet) {
     return <div className="p-8 text-center text-textSecondary">No active sheet</div>;
   }

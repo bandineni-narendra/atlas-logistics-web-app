@@ -18,7 +18,7 @@ export interface OceanRate {
   validFrom: string;
   validTo: string;
   transitTime?: string;
-  freeDays?: number;
+  freeDays?: string;
   remarks?: string;
 }
 
@@ -43,7 +43,7 @@ export function mapToOceanRate(rowData: Record<string, any>): OceanRate | null {
       validFrom: rowData.validFrom || "",
       validTo: rowData.validTo || "",
       transitTime: rowData.transitTime || undefined,
-      freeDays: rowData.freeDays ? parseInt(rowData.freeDays) : undefined,
+      freeDays: rowData.freeDays ? String(rowData.freeDays) : undefined,
       remarks: rowData.remarks || undefined,
     };
   } catch (error) {
@@ -76,9 +76,6 @@ export function validateOceanRate(rate: OceanRate): string[] {
   if (rate.container40HC < 0)
     errors.push("40' HC Container rate cannot be negative");
 
-  if (rate.freeDays && rate.freeDays < 0) {
-    errors.push("Free Days cannot be negative");
-  }
 
   return errors;
 }

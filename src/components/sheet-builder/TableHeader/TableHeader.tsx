@@ -69,8 +69,9 @@ export function TableHeader({
 
         {/* Delete row column header */}
         <th
-          className="bg-surface border-b border-border px-2 py-2 text-center"
-          style={{ width: "80px", minWidth: "80px" }}
+          data-col-type="actions"
+          className="bg-surface border-b border-border px-2 py-2 text-center whitespace-nowrap"
+          style={{ width: "1%" }}
         >
           <span className="text-xs font-semibold text-textSecondary uppercase tracking-wider">
             {t("columns.actions")}
@@ -79,8 +80,8 @@ export function TableHeader({
 
         {/* Add Column button */}
         <th
-          className="bg-surface border-b border-border px-2 py-2"
-          style={{ minWidth: "100px" }}
+          data-col-type="add"
+          className="bg-surface border-b border-border px-2 py-2 whitespace-nowrap"
         >
           <button
             onClick={onAddColumn}
@@ -136,7 +137,6 @@ export const SortableHeaderCell = memo(function SortableHeaderCell({
   const style = {
     transform: CSS.Translate.toString(transform),
     transition: isDragging ? "none" : transition,
-    width: `${columnWidth}px`,
     zIndex: isDragging ? 50 : 0,
     ...(isDragging ? {
       opacity: 0.95,
@@ -148,6 +148,7 @@ export const SortableHeaderCell = memo(function SortableHeaderCell({
   return (
     <th
       ref={setNodeRef}
+      data-col-type={column.type}
       style={style}
       {...attributes}
       {...listeners}
@@ -155,7 +156,9 @@ export const SortableHeaderCell = memo(function SortableHeaderCell({
       className={`bg-surface border-b border-border border-r border-border px-2 py-2 text-left group relative transition-all duration-200 ${isDragging ? "cursor-grabbing" : "cursor-pointer hover:bg-surface"
         }`}
     >
-      <div className="pr-8 flex items-center gap-1 w-full h-full">
+      <div
+        className="pr-8 flex items-center gap-1 h-full w-full"
+      >
         {isEditing ? (
           <input
             type="text"
@@ -163,6 +166,7 @@ export const SortableHeaderCell = memo(function SortableHeaderCell({
             onChange={(e) => setLocalValue(e.target.value)}
             onBlur={() => saveEdit(column.id, localValue)}
             onKeyDown={(e) => {
+              e.stopPropagation();
               if (e.key === "Enter") {
                 saveEdit(column.id, localValue);
               } else if (e.key === "Escape") {
@@ -175,37 +179,41 @@ export const SortableHeaderCell = memo(function SortableHeaderCell({
             className="text-sm bg-background border border-primary text-textPrimary rounded px-2 py-0.5 outline-none focus:ring-2 focus:ring-primary min-w-[120px] w-full shadow-sm"
           />
         ) : (
-          <>
-            <span
-              onClick={() => startEditing(column)}
-              className="text-[10px] font-bold text-textPrimary cursor-pointer hover:text-primary transition-all duration-200 block flex-1 whitespace-pre-line overflow-hidden text-ellipsis leading-tight py-1"
-              title={column.label}
-            >
-              {column.label}
-            </span>
-            {column.required && (
+          <div className="flex-1 overflow-hidden">
+            <div className="flex items-start gap-0.5 max-w-full">
               <span
-                className="text-error text-xs font-bold flex-shrink-0"
-                title="Required"
+                onClick={() => startEditing(column)}
+                className="text-[10px] font-bold text-textPrimary cursor-pointer hover:text-primary transition-all duration-200 whitespace-pre-line overflow-hidden text-ellipsis leading-tight py-1"
+                title={column.label}
               >
-                *
+                {column.label}
               </span>
-            )}
-          </>
+              {column.required && (
+                <span
+                  className="text-error text-xs font-bold leading-tight py-1"
+                  title="Required"
+                >
+                  *
+                </span>
+              )}
+            </div>
+          </div>
         )}
       </div>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onDeleteColumn(column.id);
-        }}
-        className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-textSecondary hover:text-error hover:bg-error rounded-md p-1.5 transition-all duration-200 hover:scale-110"
-        title={t("columns.delete") || "Delete column"}
-        type="button"
-        aria-label={`Delete ${column.label} column`}
-      >
-        <X className="w-3.5 h-3.5" />
-      </button>
+      {!column.required && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDeleteColumn(column.id);
+          }}
+          className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-textSecondary hover:text-white hover:bg-error rounded-md p-1.5 transition-all duration-200 hover:scale-110"
+          title={t("columns.delete") || "Delete column"}
+          type="button"
+          aria-label={`Delete ${column.label} column`}
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
+      )}
     </th>
   );
 });

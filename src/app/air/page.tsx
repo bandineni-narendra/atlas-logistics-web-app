@@ -92,7 +92,7 @@ export default function AirPage() {
   );
 
   return (
-    <main className="px-6 py-5 max-w-7xl mx-auto flex flex-col w-full h-full">
+    <main className="px-6 py-5 max-w-[98%] mx-auto flex flex-col w-full h-full">
       <header className="mb-5 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-medium text-textPrimary tracking-tight">
