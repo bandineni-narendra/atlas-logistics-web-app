@@ -7,6 +7,7 @@ import { SheetTabs, SheetDataTable, FileDetailHeader, BackButton, ShipmentDetail
 import { useUI } from "@/contexts/UIContext";
 import { FILE_TYPE_CONFIG, FILE_STATUS_CONFIG } from "@/constants";
 import { FileQuestion } from "lucide-react";
+import { LoadingState } from "@/components/home";
 
 /**
  * File Detail Page
@@ -42,7 +43,7 @@ export default function FileDetailPage() {
     // --- Loading ---
     // Will be partially intercepted if suspense is true, otherwise minimal return
     if (detailLoading || sheetsLoading) {
-        return null; // Prevents flashing while waiting for data
+        return <LoadingState />;
     }
 
     // --- Error ---
