@@ -87,6 +87,7 @@ export function AirlineCombobox({
     (airline: AirlineData) => {
       onChange(displayField === "name" ? airline.name : airline.code);
       closeDropdown();
+      setTimeout(() => triggerRef.current?.focus(), 0);
     },
     [onChange, displayField, closeDropdown],
   );
@@ -152,11 +153,13 @@ export function AirlineCombobox({
   // ── Keyboard navigation ────────────────────────────────────────────────────
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     // Specifically block Ctrl+D from bubbling to the browser's bookmark shortcut
-    // Since this is in a portal, it skips the SheetBuilder's main listener in some edge cases.
+    // specifically bypass complex React Portal event bubbling issues.
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "d") {
+      if (e.shiftKey) return; // Let Ctrl+Shift+D bubble to the global Row Duplicator
       e.preventDefault();
       closeDropdown();
       onFillDown?.();
+      setTimeout(() => triggerRef.current?.focus(), 0);
       return;
     }
 
@@ -171,7 +174,9 @@ export function AirlineCombobox({
       e.preventDefault();
       if (filtered[highlighted]) handleSelect(filtered[highlighted]);
     } else if (e.key === "Escape") {
+      e.preventDefault();
       closeDropdown();
+      setTimeout(() => triggerRef.current?.focus(), 0);
     }
   };
 
@@ -196,6 +201,7 @@ export function AirlineCombobox({
         onClick={openDropdown}
         onKeyDown={(e) => {
           if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "d") {
+            if (e.shiftKey) return; // Let Ctrl+Shift+D bubble to the global Row Duplicator
             e.preventDefault();
             onFillDown?.();
             return;

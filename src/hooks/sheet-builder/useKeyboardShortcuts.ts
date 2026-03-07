@@ -347,7 +347,7 @@ export function useKeyboardShortcuts({
             }
 
             // Ctrl+D — fill down
-            if (!shift && !alt && e.key === "d") {
+            if (!shift && !alt && e.key.toLowerCase() === "d") {
                 if (!activeCell) return;
                 e.preventDefault();
 
@@ -409,7 +409,7 @@ export function useKeyboardShortcuts({
             }
 
             // Ctrl+Shift+D — duplicate row (row selected) or fill column (column selected)
-            if (shift && !alt && e.key === "D") {
+            if (shift && !alt && e.key.toLowerCase() === "d") {
                 e.preventDefault();
 
                 if (selection && selection.type === "column") {
