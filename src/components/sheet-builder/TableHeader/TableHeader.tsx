@@ -13,11 +13,17 @@ import { X, Plus } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+import { Selection } from "@/hooks/sheet-builder/useSpreadsheetSelection";
+
 interface TableHeaderProps {
   columns: Column[];
   onDeleteColumn: (columnId: string) => void;
   onAddColumn: () => void;
   onUpdateColumnName: (columnId: string, newName: string) => void;
+  /** Index of the active (focused) column, if any */
+  activeColumnIndex?: number | null;
+  /** Current selection state to highlight entire columns */
+  selection?: Selection | null;
 }
 
 export function TableHeader({
@@ -25,6 +31,8 @@ export function TableHeader({
   onDeleteColumn,
   onAddColumn,
   onUpdateColumnName,
+  activeColumnIndex,
+  selection,
 }: TableHeaderProps) {
   const t = useTranslations("sheetBuilder");
   const [editingColumnId, setEditingColumnId] = useState<string | null>(null);
@@ -52,8 +60,14 @@ export function TableHeader({
     <thead className="sticky top-0 z-10">
       <tr>
         {/* Data column headers */}
-        {columns.map((column) => {
+        {columns.map((column, colIndex) => {
           const columnWidth = column.width || 150;
+          const isColActive = activeColumnIndex === colIndex;
+          const isColSelected =
+            !isColActive &&
+            selection?.type === "column" &&
+            colIndex >= selection.startColumn &&
+            colIndex <= selection.endColumn;
           return (
             <SortableHeaderCell
               key={column.id}
@@ -64,6 +78,8 @@ export function TableHeader({
               saveEdit={saveEdit}
               cancelEdit={cancelEdit}
               onDeleteColumn={onDeleteColumn}
+              isSelected={isColSelected}
+              isActive={isColActive}
             />
           );
         })}
@@ -107,6 +123,8 @@ interface SortableHeaderCellProps {
   saveEdit: (id: string, value: string) => void;
   cancelEdit: () => void;
   onDeleteColumn: (id: string) => void;
+  isSelected?: boolean;
+  isActive?: boolean;
 }
 
 export const SortableHeaderCell = memo(function SortableHeaderCell({
@@ -117,6 +135,8 @@ export const SortableHeaderCell = memo(function SortableHeaderCell({
   saveEdit,
   cancelEdit,
   onDeleteColumn,
+  isSelected = false,
+  isActive = false,
 }: SortableHeaderCellProps) {
   const t = useTranslations("sheetBuilder");
   const [localValue, setLocalValue] = useState(column.label);
@@ -146,6 +166,10 @@ export const SortableHeaderCell = memo(function SortableHeaderCell({
     } : {}),
   };
 
+  const selectionClass = isSelected
+    ? "sheet-column-selected"
+    : "";
+
   return (
     <th
       ref={setNodeRef}
@@ -154,7 +178,7 @@ export const SortableHeaderCell = memo(function SortableHeaderCell({
       {...attributes}
       {...listeners}
       title={isEditing ? undefined : "Press and hold to drag column"}
-      className={`bg-surface border-b border-border border-r border-border px-2 py-2 text-left group relative transition-all duration-200 ${isDragging ? "cursor-grabbing" : "cursor-pointer hover:bg-surface"
+      className={`bg-surface border-b border-border border-r border-border px-2 py-2 text-left group relative transition-all duration-200 ${selectionClass} ${isDragging ? "cursor-grabbing" : "cursor-pointer hover:bg-surface"
         }`}
     >
       <div

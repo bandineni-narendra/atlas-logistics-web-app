@@ -26,12 +26,24 @@ interface TableCellProps {
   column: Column;
   value: CellValue;
   onChange: (value: CellValue) => void;
+  rowIndex: number;
+  columnIndex: number;
+  isActive?: boolean;
+  isSelected?: boolean;
+  onCellFocus?: (rowIndex: number, columnIndex: number) => void;
+  onFillDown?: () => void;
 }
 
 export const TableCell = memo(function TableCell({
   column,
   value,
   onChange,
+  rowIndex,
+  columnIndex,
+  isActive = false,
+  isSelected = false,
+  onCellFocus,
+  onFillDown,
 }: TableCellProps) {
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -143,6 +155,7 @@ export const TableCell = memo(function TableCell({
             onChange={(val) => onChange(val)}
             displayField={column.linkedField ?? "name"}
             placeholder={column.placeholder}
+            onFillDown={onFillDown}
           />
         );
 
@@ -161,20 +174,29 @@ export const TableCell = memo(function TableCell({
     }
   };
 
+  const handleFocusCapture = useCallback(
+    (e: React.FocusEvent<HTMLTableCellElement>) => {
+      onCellFocus?.(rowIndex, columnIndex);
+    },
+    [onCellFocus, rowIndex, columnIndex]
+  );
+
+  const selectionClass = isActive
+    ? "sheet-cell-active"
+    : isSelected
+      ? "sheet-cell-selected"
+      : "";
+
   return (
     <td
       data-col-type={column.type}
-      className="sheet-table-cell relative border-r border-b border-border bg-surface outline-none focus-within:z-10"
+      data-row-index={rowIndex}
+      data-col-index={columnIndex}
+      className={`sheet-table-cell relative border-r border-b border-border bg-surface outline-none focus-within:z-10 ${selectionClass}`}
       style={{
         transition: "background-color 200ms, box-shadow 200ms",
       }}
-      onFocusCapture={(e) => {
-        e.currentTarget.style.boxShadow =
-          "inset 0 0 0 2px var(--color-primary)";
-      }}
-      onBlurCapture={(e) => {
-        e.currentTarget.style.boxShadow = "";
-      }}
+      onFocusCapture={handleFocusCapture}
     >
       <div className="relative h-9 w-full">
         {renderInput()}

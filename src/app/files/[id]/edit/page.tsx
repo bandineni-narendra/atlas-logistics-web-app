@@ -79,6 +79,8 @@ export default function FileEditPage() {
                         required: domainCol?.required ?? false,
                         placeholder: domainCol?.placeholder || (col as any).placeholder,
                         width: domainCol?.width || (col as any).width,
+                        linkedColumn: domainCol?.linkedColumn || (col as any).linkedColumn,
+                        linkedField: domainCol?.linkedField || (col as any).linkedField,
                     } as Column;
                 });
 

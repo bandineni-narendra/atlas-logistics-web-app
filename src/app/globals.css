@@ -369,3 +369,42 @@ main {
   min-width: 84px;
   max-width: 84px;
 }
+
+.sheet-cell-active {
+  box-shadow: inset 0 0 0 2px var(--color-primary) !important;
+  z-index: 2;
+}
+
+.sheet-cell-selected {
+  background-color: var(--color-primary-soft) !important;
+  box-shadow: inset 0 0 0 1px var(--color-primary) !important;
+  z-index: 1;
+}
+
+.sheet-row-selected>td {
+  background-color: var(--color-primary-soft) !important;
+  box-shadow: inset 0 0 0 1px var(--color-primary) !important;
+  z-index: 1;
+}
+
+.sheet-column-selected {
+  background-color: var(--color-primary-soft) !important;
+  box-shadow: inset 0 0 0 2px var(--color-primary) !important;
+  z-index: 2;
+}
+
+/* Ensure inputs are completely transparent inside selected cells */
+.sheet-cell-active input,
+.sheet-cell-active textarea,
+.sheet-cell-active select,
+.sheet-cell-selected input,
+.sheet-cell-selected textarea,
+.sheet-cell-selected select,
+.sheet-row-selected>td input,
+.sheet-row-selected>td textarea,
+.sheet-row-selected>td select,
+.sheet-column-selected input,
+.sheet-column-selected textarea,
+.sheet-column-selected select {
+  background-color: transparent !important;
+}

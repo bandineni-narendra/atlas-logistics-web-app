@@ -33,6 +33,11 @@ export interface AirlineComboboxProps {
    */
   displayField: "name" | "code";
   placeholder?: string;
+  /**
+   * Called when the user presses Ctrl+D explicitly inside the combobox.
+   * Helps bypass complex React Portal event bubbling issues.
+   */
+  onFillDown?: () => void;
 }
 
 const BASE_INPUT =
@@ -43,6 +48,7 @@ export function AirlineCombobox({
   onChange,
   displayField,
   placeholder,
+  onFillDown,
 }: AirlineComboboxProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -111,8 +117,22 @@ export function AirlineCombobox({
       }
     };
 
+    const onFocusOut = (e: FocusEvent) => {
+      const target = (e.relatedTarget as Node) || null;
+      if (
+        !triggerRef.current?.contains(target) &&
+        !dropdownRef.current?.contains(target)
+      ) {
+        closeDropdown();
+      }
+    };
+
     document.addEventListener("mousedown", onMousedown);
-    return () => document.removeEventListener("mousedown", onMousedown);
+    document.addEventListener("focusout", onFocusOut);
+    return () => {
+      document.removeEventListener("mousedown", onMousedown);
+      document.removeEventListener("focusout", onFocusOut);
+    };
   }, [open, closeDropdown]);
 
   // ── Re-position on scroll / resize while open ─────────────────────────────
@@ -131,10 +151,20 @@ export function AirlineCombobox({
 
   // ── Keyboard navigation ────────────────────────────────────────────────────
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "ArrowDown") {
+    // Specifically block Ctrl+D from bubbling to the browser's bookmark shortcut
+    // Since this is in a portal, it skips the SheetBuilder's main listener in some edge cases.
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "d") {
+      e.preventDefault();
+      closeDropdown();
+      onFillDown?.();
+      return;
+    }
+
+    // We strictly require Shift to cycle options, so bare arrows can be used for grid navigation
+    if (e.shiftKey && e.key === "ArrowDown") {
       e.preventDefault();
       setHighlighted((h) => Math.min(h + 1, filtered.length - 1));
-    } else if (e.key === "ArrowUp") {
+    } else if (e.shiftKey && e.key === "ArrowUp") {
       e.preventDefault();
       setHighlighted((h) => Math.max(h - 1, 0));
     } else if (e.key === "Enter") {
@@ -148,12 +178,12 @@ export function AirlineCombobox({
   // ── Compute dropdown rect ──────────────────────────────────────────────────
   const dropdownStyle: React.CSSProperties = rect
     ? {
-        position: "fixed",
-        top: rect.bottom + 2,
-        left: rect.left,
-        width: Math.max(rect.width, 240),
-        zIndex: 99999,
-      }
+      position: "fixed",
+      top: rect.bottom + 2,
+      left: rect.left,
+      width: Math.max(rect.width, 240),
+      zIndex: 99999,
+    }
     : { display: "none" };
 
   const displayValue = value ?? "";
@@ -162,16 +192,27 @@ export function AirlineCombobox({
     <div ref={triggerRef} className="relative w-full h-full">
       {/* ── Trigger ───────────────────────────────────────────────────────── */}
       <div
-        className="flex items-center gap-1 w-full h-full px-2 py-1.5 cursor-pointer select-none"
+        className="flex items-center gap-1 w-full h-full px-2 py-1.5 cursor-pointer select-none focus:outline-none"
         onClick={openDropdown}
+        onKeyDown={(e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "d") {
+            e.preventDefault();
+            onFillDown?.();
+            return;
+          }
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openDropdown();
+          }
+        }}
         role="combobox"
+        tabIndex={0}
         aria-expanded={open}
         aria-haspopup="listbox"
       >
         <span
-          className={`flex-1 text-xs truncate ${
-            displayValue ? "text-textPrimary" : "text-textSecondary"
-          }`}
+          className={`flex-1 text-xs truncate ${displayValue ? "text-textPrimary" : "text-textSecondary"
+            }`}
         >
           {displayValue ||
             placeholder ||
@@ -191,9 +232,8 @@ export function AirlineCombobox({
         )}
 
         <ChevronDown
-          className={`w-3 h-3 flex-shrink-0 text-textSecondary transition-transform duration-150 ${
-            open ? "rotate-180" : ""
-          }`}
+          className={`w-3 h-3 flex-shrink-0 text-textSecondary transition-transform duration-150 ${open ? "rotate-180" : ""
+            }`}
         />
       </div>
 
@@ -235,7 +275,11 @@ export function AirlineCombobox({
             </div>
 
             {/* Results */}
-            <div className="max-h-52 overflow-y-auto" role="presentation">
+            <div
+              className="max-h-52 overflow-y-auto"
+              role="presentation"
+              onMouseDown={(e) => e.preventDefault()}
+            >
               {filtered.length === 0 ? (
                 <div className="px-4 py-3 text-xs text-textSecondary text-center">
                   No airlines found
@@ -253,15 +297,18 @@ export function AirlineCombobox({
                       key={airline.code}
                       role="option"
                       aria-selected={isSelected}
-                      className={`flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-colors duration-100 ${
-                        isHighlighted
-                          ? "bg-primary-soft"
-                          : isSelected
-                            ? "bg-primary/10"
-                            : "hover:bg-surface"
-                      }`}
+                      className={`flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-colors duration-100 ${isHighlighted
+                        ? "bg-primary-soft"
+                        : isSelected
+                          ? "bg-primary/10"
+                          : "hover:bg-surface"
+                        }`}
                       onMouseEnter={() => setHighlighted(idx)}
-                      onClick={() => handleSelect(airline)}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleSelect(airline);
+                      }}
                     >
                       {/* IATA code badge */}
                       <span className="inline-flex items-center justify-center w-9 h-5 rounded text-[10px] font-mono font-bold bg-primary/10 text-primary flex-shrink-0">

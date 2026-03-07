@@ -2,15 +2,17 @@
  * Core Sheet Builder - Table Row
  *
  * Material 3 inspired row with subtle hover states and end-positioned actions.
+ * Extended with active cell and selection support.
  */
 
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, memo } from "react";
 import { useTranslations } from "next-intl";
 import { Row as RowModel, Column, CellValue } from "@/core/sheet-builder";
 import { TableCell } from "../TableCell";
 import { Copy, Trash2 } from "lucide-react";
+import { Selection } from "@/hooks/sheet-builder/useSpreadsheetSelection";
 
 interface TableRowProps {
   row: RowModel;
@@ -19,29 +21,76 @@ interface TableRowProps {
   onCellChange: (columnId: string, value: CellValue) => void;
   onDelete: () => void;
   onCopy: () => void;
+  /** Explicit fallback for Ctrl+D when standard event bubbling fails (e.g., inside Portals) */
+  onFillDown: (columnId: string) => void;
+  /** Index of the currently active column (or null) */
+  activeColumnIndex: number | null;
+  /** Current sheet-level selection to determine highlighting */
+  selection: Selection | null;
+  /** Notify SheetTable that a cell received focus */
+  onCellFocus: (rowIndex: number, columnIndex: number) => void;
 }
 
-export function TableRow({
+export const TableRow = memo(function TableRow({
   row,
   columns,
   rowIndex,
   onCellChange,
   onDelete,
   onCopy,
+  onFillDown,
+  activeColumnIndex,
+  selection,
+  onCellFocus,
 }: TableRowProps) {
   const t = useTranslations("sheetBuilder");
 
+  // Determine if this entire row is highlighted (row selection)
+  const isRowSelected =
+    selection?.type === "row" &&
+    rowIndex >= selection.startRow &&
+    rowIndex <= selection.endRow;
+
   return (
-    <tr className="group hover:bg-surface transition-all duration-200">
+    <tr
+      className={`group transition-all duration-200 ${isRowSelected ? "sheet-row-selected" : "hover:bg-surface"
+        }`}
+    >
       {/* Data cells */}
-      {columns.map((column) => (
-        <TableCell
-          key={column.id}
-          column={column}
-          value={row.cells[column.id]}
-          onChange={(val) => onCellChange(column.id, val)}
-        />
-      ))}
+      {columns.map((column, colIndex) => {
+        const isActive =
+          activeColumnIndex === colIndex;
+        let isSelected = false;
+        if (!isActive && selection) {
+          if (selection.type === "column") {
+            isSelected = colIndex >= selection.startColumn && colIndex <= selection.endColumn;
+          } else if (selection.type === "row") {
+            isSelected = rowIndex >= selection.startRow && rowIndex <= selection.endRow;
+          } else {
+            // cell or range
+            isSelected =
+              rowIndex >= selection.startRow &&
+              rowIndex <= selection.endRow &&
+              colIndex >= selection.startColumn &&
+              colIndex <= selection.endColumn;
+          }
+        }
+
+        return (
+          <TableCell
+            key={column.id}
+            column={column}
+            value={row.cells[column.id]}
+            onChange={(val) => onCellChange(column.id, val)}
+            rowIndex={rowIndex}
+            columnIndex={colIndex}
+            isActive={isActive}
+            isSelected={isSelected}
+            onCellFocus={onCellFocus}
+            onFillDown={() => onFillDown(column.id)}
+          />
+        );
+      })}
 
       {/* Row actions: Copy & Delete */}
       <td
@@ -81,4 +130,4 @@ export function TableRow({
       ></td>
     </tr>
   );
-}
+});
