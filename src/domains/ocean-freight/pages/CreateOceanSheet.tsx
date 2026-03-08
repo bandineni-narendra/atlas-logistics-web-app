@@ -45,7 +45,7 @@ export default function CreateOceanSheet() {
     if (copySheets) {
       sessionStorage.removeItem("atlas-copy-draft");
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const {
     state,
@@ -58,7 +58,7 @@ export default function CreateOceanSheet() {
   const { handleSaveFile, fileNameModalProps } = useFileSave({
     fileType: "OCEAN",
     effectiveDate: new Date().toISOString().split("T")[0],
-    validateSheets: (sheets) => validateOceanSheets(sheets, { skipEmptyRows: true }),
+    validateSheets: (sheets) => validateOceanSheets(sheets, { skipEmptyRows: false }),
     onSuccess: (fileId, sheetIds) => {
       // Collect valid rates for logging
       const rates: OceanRate[] = [];

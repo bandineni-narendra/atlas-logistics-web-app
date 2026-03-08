@@ -122,10 +122,10 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
                   </div>
                   <div className={`text-sm ${styles.textColor} leading-relaxed pl-4`}>
                     <span className="font-semibold text-primary mr-2">
-                      Missing:
+                      {t("feedback.missing", { defaultValue: "Missing" })}:
                     </span>
                     <span className="opacity-90 italic">
-                      {group.columns.join(", ")}
+                      {group.columns.map(col => t(`feedback.${col}`, { defaultValue: col })).join(", ")}
                     </span>
                   </div>
                 </div>

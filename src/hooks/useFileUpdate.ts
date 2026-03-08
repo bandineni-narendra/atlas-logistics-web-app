@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { Sheet } from "@/core/sheet-builder";
 import { filesService } from "@/services/filesService";
 import { ValidationResult, ValidationIssue } from "@/core/feedback";
@@ -89,6 +90,7 @@ export function useFileUpdate(options: UseFileUpdateOptions): UseFileUpdateRetur
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [pendingSheets, setPendingSheets] = useState<Sheet[]>([]);
     const [pendingShipmentDetails, setPendingShipmentDetails] = useState<any | undefined>();
+    const t = useTranslations();
     const queryClient = useQueryClient();
 
     const updateFileMutation = useMutation({
@@ -129,8 +131,10 @@ export function useFileUpdate(options: UseFileUpdateOptions): UseFileUpdateRetur
                 }
             }
 
-            if (combinedIssues.length > 0) {
-                const errorMsg = `Validation failed: ${combinedIssues.length} issue(s) found`;
+            if (combinedIssues.length > 0 || (validateSheets && !validateSheets(sheets).isValid)) {
+                const errorMsg = combinedIssues.length > 0
+                    ? t("feedback.validationFailed", { count: combinedIssues.length })
+                    : t("feedback.addDataToSave");
                 onError?.(errorMsg, combinedIssues);
                 return;
             }

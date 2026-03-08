@@ -60,7 +60,7 @@ export default function CreateAirSheet() {
     if (copyDraft) {
       sessionStorage.removeItem("atlas-copy-draft");
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const [shipmentData, setShipmentData] = useState<ShipmentData | undefined>();
   const [originChargesData, setOriginChargesData] = useState<OriginChargesData | undefined>();
@@ -78,7 +78,7 @@ export default function CreateAirSheet() {
     fileType: "AIR",
     effectiveDate: new Date().toISOString().split("T")[0],
     validateSheets: (sheets) =>
-      validateAirSheets(sheets, { skipEmptyRows: true }),
+      validateAirSheets(sheets, { skipEmptyRows: false }),
     validateShipment: (shipment) =>
       validateShipmentDetails(shipment),
     onSuccess: (fileId, sheetIds) => {

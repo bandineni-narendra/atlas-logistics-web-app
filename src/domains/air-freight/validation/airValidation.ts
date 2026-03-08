@@ -78,6 +78,18 @@ export function validateAirSheets(
     });
   });
 
+  if (validCount === 0 && issues.length === 0) {
+    issues.push(
+      createValidationIssue(
+        sheets[0]?.name || "Sheet 1",
+        1,
+        "noDataFound",
+        "addDataToSave",
+        "error",
+      ),
+    );
+  }
+
   return {
     isValid: issues.length === 0 && validCount > 0,
     issues,

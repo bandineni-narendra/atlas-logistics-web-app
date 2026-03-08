@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
@@ -9,10 +9,11 @@ import { Loader2 } from "lucide-react";
 import { SheetBuilder, Sheet, Column, ColumnType } from "@/core/sheet-builder";
 import { useFileUpdate, useFeedbackModal } from "@/hooks";
 import { filesService } from "@/services/filesService";
-import { Alert, Card, Button, FileNameModal } from "@/components/ui";
+import { Alert, Card, Button, FileNameModal, FeedbackModal } from "@/components/ui";
 import { airFreightColumns } from "@/domains/air-freight/config";
 import { oceanFreightColumns } from "@/domains/ocean-freight/config";
-import { validateShipmentDetails } from "@/domains/air-freight/validation";
+import { validateAirSheets, validateShipmentDetails } from "@/domains/air-freight/validation";
+import { validateOceanSheets } from "@/domains/ocean-freight/validation";
 import { ShipmentDetails, ShipmentData } from "@/domains/air-freight/components/ShipmentDetails";
 
 /**
@@ -28,7 +29,7 @@ export default function FileEditPage() {
     const [localSheets, setLocalSheets] = useState<Sheet[]>([]);
     // Tracks user edits to shipment details; undefined means "no changes yet"
     const [localShipmentData, setLocalShipmentData] = useState<ShipmentData | undefined>();
-    const { openModal } = useFeedbackModal();
+    const { state: feedbackState, openSuccessModal, openErrorModal, closeModal } = useFeedbackModal();
 
     // 1. Fetch File Metadata
     const { data: fileData, isLoading: fileLoading, error: fileError } = useQuery({
@@ -103,51 +104,47 @@ export default function FileEditPage() {
         defaultFileName: fileDetail?.name,
         defaultClientEmail: fileDetail?.clientEmail,
         defaultNotes: fileDetail?.notes,
-        validateSheets: (sheets: Sheet[]) => {
-            // Basic validation: at least 1 sheet with 1 row
-            if (sheets.length === 0) return { isValid: false, issues: [] };
-            const hasData = sheets.some((s) => s.rows.length > 0);
-            return { isValid: hasData, issues: [] };
-        },
-        validateShipment: (shipment) => validateShipmentDetails(shipment),
+        validateSheets: useCallback((sheets: Sheet[]) => {
+            if (fileDetail?.type === "AIR") {
+                return validateAirSheets(sheets, { skipEmptyRows: false });
+            }
+            return validateOceanSheets(sheets, { skipEmptyRows: false });
+        }, [fileDetail?.type]),
+        validateShipment: useCallback((shipment: any) => validateShipmentDetails(shipment), []),
         onSuccess: () => {
-            openModal(
-                "success",
+            openSuccessModal(
                 "File Updated",
-                "The file was successfully updated.",
+                "The file was successfully updated."
             );
             // Route back to the file overview page
             router.push(`/files/${fileId}`);
         },
-        onError: (msg) => {
-            openModal(
-                "error",
+        onError: (msg, issues) => {
+            openErrorModal(
                 "Update Failed",
-                msg
+                msg,
+                issues
             );
         },
     });
 
-    const headerActions = useMemo(
-        () => (
-            <div className="flex gap-2">
-                <Button
-                    variant="outline"
-                    onClick={() => router.push(`/files/${fileId}`)}
-                    disabled={isUpdating}
-                >
-                    {t("common.cancel")}
-                </Button>
-                <Button
-                    variant="primary"
-                    onClick={() => handleUpdateFile(localSheets, localShipmentData ?? fileDetail?.shipmentDetails)}
-                    disabled={isUpdating || localSheets.length === 0}
-                >
-                    {t("common.save")}
-                </Button>
-            </div>
-        ),
-        [localSheets, localShipmentData, fileDetail?.shipmentDetails, isUpdating, handleUpdateFile, router, fileId, t]
+    const headerActions = (
+        <div className="flex gap-2">
+            <Button
+                variant="outline"
+                onClick={() => router.push(`/files/${fileId}`)}
+                disabled={isUpdating}
+            >
+                {t("common.cancel")}
+            </Button>
+            <Button
+                variant="primary"
+                onClick={() => handleUpdateFile(localSheets, localShipmentData ?? fileDetail?.shipmentDetails)}
+                disabled={isUpdating || localSheets.length === 0}
+            >
+                {t("common.save")}
+            </Button>
+        </div>
     );
 
     if (isLoading) {
@@ -170,7 +167,7 @@ export default function FileEditPage() {
 
     return (
         <main className="px-6 py-5 max-w-[98%] mx-auto flex flex-col w-full h-full relative">
-            <header className="mb-5 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <header className="mb-5 flex flex-col md:flex-row md:items-end justify-between gap-4 relative z-10">
                 <div>
                     <h1 className="text-xl font-medium text-textPrimary tracking-tight">
                         Editing {fileDetail.name}
@@ -209,6 +206,7 @@ export default function FileEditPage() {
             </Card>
 
             <FileNameModal {...fileNameModalProps} />
+            <FeedbackModal state={feedbackState} onClose={closeModal} />
         </main>
     );
 }
